@@ -486,6 +486,17 @@ describe('eventState', () => {
     expect(eventState(start, end, start)).toBe('live');
   });
 
+  // The decisive boundary: at this exact instant the booking button must still
+  // be there, one millisecond later it must be gone. Without both assertions,
+  // flipping <= to < would pass the whole suite.
+  it('is still live at the exact end instant', () => {
+    expect(eventState(start, end, end)).toBe('live');
+  });
+
+  it('is past one millisecond after the end instant', () => {
+    expect(eventState(start, end, new Date(end.getTime() + 1))).toBe('past');
+  });
+
   it('is past after the end', () => {
     expect(eventState(start, end, new Date('2026-11-14T18:00:01+02:00'))).toBe('past');
   });
@@ -497,6 +508,18 @@ describe('eventState', () => {
   it('falls back to the default duration when no end date is given', () => {
     expect(eventState(start, null, new Date('2026-11-14T12:00:00+02:00'))).toBe('live');
     expect(eventState(start, null, new Date('2026-11-14T13:30:00+02:00'))).toBe('past');
+  });
+
+  it('applies the same end boundary to the default duration', () => {
+    const defaultEnd = new Date(start.getTime() + DEFAULT_EVENT_DURATION_MS);
+    expect(eventState(start, null, defaultEnd)).toBe('live');
+    expect(eventState(start, null, new Date(defaultEnd.getTime() + 1))).toBe('past');
+  });
+
+  it('stays past well after a malformed end date that precedes the start', () => {
+    const broken = new Date('2026-11-13T09:00:00+02:00');
+    expect(eventState(start, broken, new Date('2026-11-14T10:00:00+02:00'))).toBe('live');
+    expect(eventState(start, broken, new Date('2026-11-15T00:30:00+02:00'))).toBe('past');
   });
 });
 
