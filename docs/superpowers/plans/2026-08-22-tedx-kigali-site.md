@@ -1774,13 +1774,50 @@ git commit -m "feat: add talks page with edition filters"
 ## Task 9: Pagina Events con correzione dello stato nel browser
 
 **Files:**
-- Create: `src/components/EventCard.astro`, `src/pages/events/index.astro`, `src/scripts/event-status.ts`
+- Create: `src/content/events/tedxkigali-2024.md`, `src/content/talks/2024-09-21-the-market-at-dawn.md`, `src/components/EventCard.astro`, `src/pages/events/index.astro`, `src/scripts/event-status.ts`
 
 **Interfaces:**
 - Consumes: `eventState`, `eventEnd`, `isBookable`, `ticketStatusLabel` (Task 3); `resolveUploadedImage` (Task 4); collection `events` (Task 5)
 - Produces:
   - `EventCard` con props `{ event: CollectionEntry<'events'>; now?: Date }`
   - contratto DOM: `article[data-event]` con `data-event-start`, `data-event-end`, `data-ticket-status`; contenitori `#events-upcoming`, `#events-past`; sezioni `#events-upcoming-section`, `#events-past-section`; il pulsante di prenotazione ha `data-booking`
+
+- [ ] **Step 0: Arricchire i contenuti di esempio**
+
+I due talk di esempio appartengono alla stessa edizione e hanno la stessa data, quindi né l'ordinamento né il filtro per edizione né l'archivio delle edizioni passate sono esercitati da dati reali. Una terza edizione risolve tutti e tre.
+
+`src/content/events/tedxkigali-2024.md`:
+
+```markdown
+---
+title: "TEDxKigali 2024 — Threads"
+startDate: 2024-09-21T09:00:00+02:00
+endDate: 2024-09-21T17:00:00+02:00
+venue: "Kigali Convention Centre"
+theme: "Threads"
+summary: "Eight speakers on the invisible threads that connect a city to its people."
+ticketStatus: "closed"
+---
+
+The 2024 edition followed the theme **Threads**: the connections that hold a
+growing city together.
+```
+
+`src/content/talks/2024-09-21-the-market-at-dawn.md`:
+
+```markdown
+---
+title: "The market at dawn"
+speaker: "Claudine Mukamana"
+youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+date: 2024-09-21
+edition: "tedxkigali-2024"
+summary: "What Kimironko market at five in the morning reveals about how cities really work."
+tags: ["public speaking", "community"]
+---
+```
+
+> Il tag `public speaking` contiene volutamente uno spazio: è la prova permanente che la serializzazione dei tag regge un contenuto legittimo che una redazione scriverebbe davvero. Con il vecchio delimitatore a spazio quel talk sarebbe sparito dai propri filtri.
 
 - [ ] **Step 1: Scrivere `src/scripts/event-status.ts`**
 
@@ -1820,6 +1857,12 @@ function refresh(): void {
 
   toggleSection('#events-upcoming-section', upcoming);
   toggleSection('#events-past-section', past);
+
+  // The empty-state paragraph is the inverse of the upcoming section: if every
+  // event turned out to be over, the page must say so rather than showing
+  // nothing but the archive.
+  const none = document.querySelector<HTMLElement>('#events-none');
+  if (none && upcoming) none.hidden = upcoming.children.length > 0;
 }
 
 function toggleSection(selector: string, list: HTMLElement | null): void {
