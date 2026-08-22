@@ -16,6 +16,7 @@ Valgono per **ogni** task; non vanno ripetuti nei singoli requisiti.
 
 - **Lingua**: tutto ciò che è visibile a un utente o a un redattore — testi del sito, etichette e testi di aiuto del CMS, messaggi di errore di validazione, `docs/EDITING.md` — è **in inglese**. Commenti nel codice in inglese. Questo piano e la spec sono in italiano.
 - **Node 22.12 o superiore**, npm. Nessun altro package manager. (Astro 7 ha abbandonato Node 18 e 20.)
+- **Zod 4**: `astro/zod` espone Zod 4, dove `z.string().url()` e `z.string().email()` sono deprecati. Usare `z.url()` e `z.email()`.
 - **Zod si importa da `astro/zod`**, mai da `astro:content` (rimosso in Astro 6) e mai dal pacchetto `zod` autonomo: `astro/zod` è risolvibile anche dentro Vitest, quindi vale sia negli schemi delle collection sia nei moduli di libreria.
 - **I blocchi JSON-LD portano `is:inline`**: `<script type="application/ld+json" is:inline set:html={...}></script>`. Senza `is:inline` Astro tratta il tag come script da processare ed emette un hint in `astro check`, moltiplicato per ogni pagina che ne contiene uno.
 - **Nessun tag auto-chiuso per elementi non-void**: `<script ...></script>`, mai `<script ... />`. Il compilatore Rust di Astro 7 rifiuta l'HTML semanticamente invalido e non lo corregge più in automatico.
@@ -857,12 +858,12 @@ const events = defineCollection({
       endDate: z.coerce.date().optional(),
       venue: z.string().min(1),
       address: z.string().optional(),
-      mapUrl: z.string().url().optional(),
+      mapUrl: z.url().optional(),
       image: uploadPath.optional(),
       imageAlt: z.string().optional(),
       theme: z.string().optional(),
       summary: z.string().min(1).max(300),
-      bookingUrl: z.string().url().optional(),
+      bookingUrl: z.url().optional(),
       bookingLabel: z.string().default('Book your seat'),
       ticketStatus: z.enum(TICKET_STATUSES),
       draft: z.boolean().default(false),
@@ -891,7 +892,7 @@ import raw from '~/content/settings/site.json';
 
 const socialLink = z.object({
   label: z.string().min(1),
-  url: z.string().url(),
+  url: z.url(),
 });
 
 export const siteSettingsSchema = z.object({
@@ -900,7 +901,7 @@ export const siteSettingsSchema = z.object({
   heroTitle: z.string().min(1),
   heroSubtitle: z.string().min(1),
   aboutShort: z.string().min(1),
-  contactEmail: z.string().email(),
+  contactEmail: z.email(),
   socials: z.array(socialLink).default([]),
   seoDescription: z.string().min(1).max(300),
   tedxLicenceNotice: z.string().min(1),
@@ -2754,7 +2755,7 @@ const speakers = defineCollection({
       photoAlt: z.string().optional(),
       talk: reference('talks').optional(),
       links: z
-        .array(z.object({ label: z.string().min(1), url: z.string().url() }))
+        .array(z.object({ label: z.string().min(1), url: z.url() }))
         .default([]),
       order: z.number().int().optional(),
       draft: z.boolean().default(false),
@@ -2955,7 +2956,7 @@ const sponsors = defineCollection({
     name: z.string().min(1),
     logo: uploadPath,
     logoAlt: z.string().min(1, 'Describe the logo, for example "Acme Ltd logo".'),
-    url: z.string().url().optional(),
+    url: z.url().optional(),
     tier: z.enum(['headline', 'gold', 'partner', 'community']),
     order: z.number().int().optional(),
     draft: z.boolean().default(false),
