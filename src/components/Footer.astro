@@ -1,0 +1,41 @@
+---
+import { siteSettings } from '~/lib/settings';
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-line bg-surface">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">
+    <div>
+      <p class="text-xl font-black">
+        <span class="text-ted-red">TED</span>xKigali
+      </p>
+      <p class="mt-2 text-sm text-muted">{siteSettings.tedxXExplanation}</p>
+    </div>
+
+    <div>
+      <h2 class="text-sm font-semibold uppercase tracking-wide">Contact</h2>
+      <p class="mt-2 text-sm">
+        <a class="underline hover:no-underline" href={`mailto:${siteSettings.contactEmail}`}>
+          {siteSettings.contactEmail}
+        </a>
+      </p>
+      <ul class="mt-3 flex flex-wrap gap-4 text-sm">
+        {siteSettings.socials.map((social) => (
+          <li>
+            <a class="underline hover:no-underline" href={social.url} rel="noopener noreferrer" target="_blank">
+              {social.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="text-sm text-muted">
+      <p>{siteSettings.tedxLicenceNotice}</p>
+      <p class="mt-3">
+        <a class="underline hover:no-underline" href="/privacy">Privacy</a>
+      </p>
+      <p class="mt-3">© {year} TEDxKigali</p>
+    </div>
+  </div>
+</footer>

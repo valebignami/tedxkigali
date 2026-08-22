@@ -1,0 +1,52 @@
+---
+import { siteSettings } from '~/lib/settings';
+
+const links = [
+  { href: '/talks', label: 'Talks' },
+  { href: '/events', label: 'Events' },
+  { href: '/speakers', label: 'Speakers' },
+  { href: '/about', label: 'About' },
+  { href: '/partners', label: 'Partners' },
+];
+
+const { pathname } = Astro.url;
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
+    <a href="/" class="text-2xl font-black tracking-tight">
+      <span class="text-ted-red">TED</span><span class="text-ink">x</span><span class="text-ink">Kigali</span>
+      <span class="sr-only">— {siteSettings.tagline}</span>
+    </a>
+
+    <button
+      id="nav-toggle"
+      type="button"
+      class="rounded border border-line px-3 py-2 text-sm uppercase md:hidden"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      Menu
+    </button>
+
+    <nav id="site-nav" class="hidden w-full md:block md:w-auto" aria-label="Main">
+      <ul class="flex flex-col gap-1 py-2 md:flex-row md:items-center md:gap-6 md:py-0">
+        {links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="block py-2 text-sm font-semibold uppercase tracking-wide text-muted hover:text-ink aria-[current=page]:text-ink"
+              aria-current={pathname.startsWith(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  import '~/scripts/nav.ts';
+</script>
