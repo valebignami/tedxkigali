@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0A0A0A;
+  --color-surface: #161616;
+  --color-line: #2A2A2A;
+  --color-ink: #FFFFFF;
+  --color-muted: #A3A3A3;
+  --color-ted-red: #EB0028;
+  --color-kigali-green: #2E7D5B;
+  --color-kigali-sky: #3B7EA1;
+  --color-kigali-sun: #E8B44A;
+
+  --font-sans: "Inter Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body { margin: 0; }
+
+  :focus-visible {
+    outline: 3px solid var(--color-kigali-sun);
+    outline-offset: 3px;
+  }
+
+  /* NOTE: #EB0028 on a dark background is below the AA contrast ratio for
+     normal-size text. Use it for large headings, button fills, borders and
+     icons only — never for body copy or inline links. */
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
