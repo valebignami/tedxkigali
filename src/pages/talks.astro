@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import TalkCard from '~/components/TalkCard.astro';
+
+const talks = (await getCollection('talks', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const events = await getCollection('events', ({ data }) => !data.draft);
+const editionTitle = new Map(events.map((event) => [event.id, event.data.title]));
+
+const usedEditionIds = [...new Set(talks.map((talk) => talk.data.edition?.id).filter(Boolean))] as string[];
+const editions = usedEditionIds
+  .map((id) => ({ id, title: editionTitle.get(id) ?? id }))
+  .sort((a, b) => b.title.localeCompare(a.title));
+---
+
+<BaseLayout
+  title="Talks"
+  description="Every TEDxKigali talk, ready to watch without leaving the site."
+>
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h1 class="text-4xl font-black uppercase md:text-6xl">Talks</h1>
+    <p class="mt-4 max-w-2xl text-lg text-muted">
+      Ideas from the TEDxKigali stage. Press play — the talk opens right here.
+    </p>
+
+    {editions.length > 0 && (
+      <div id="talk-filters" class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter talks by edition">
+        <button
+          type="button"
+          data-filter-value="all"
+          aria-pressed="true"
+          class="rounded-full border border-line px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted aria-pressed:border-ted-red aria-pressed:text-ink"
+        >
+          All
+        </button>
+        {editions.map((edition) => (
+          <button
+            type="button"
+            data-filter-value={edition.id}
+            aria-pressed="false"
+            class="rounded-full border border-line px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted aria-pressed:border-ted-red aria-pressed:text-ink"
+          >
+            {edition.title}
+          </button>
+        ))}
+      </div>
+    )}
+
+    {talks.length === 0 ? (
+      <p class="mt-12 text-muted">No talks published yet. Come back after the next event.</p>
+    ) : (
+      <>
+        <div id="talks-grid" class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {talks.map((talk) => (
+            <TalkCard talk={talk} editionTitle={talk.data.edition ? editionTitle.get(talk.data.edition.id) : undefined} />
+          ))}
+        </div>
+        <p id="talks-empty" hidden class="mt-10 text-muted">No talks in this edition yet.</p>
+      </>
+    )}
+  </section>
+
+  <!-- Astro bundles this script and injects it as a deferred module, so it
+       always runs after the DOM is parsed, wherever it sits in the file. -->
+  <script>
+    import '~/scripts/talk-filters.ts';
+  </script>
+</BaseLayout>
