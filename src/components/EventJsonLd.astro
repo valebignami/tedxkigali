@@ -1,22 +1,30 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { eventEnd } from '~/lib/events';
+import { eventEnd, type EventState } from '~/lib/events';
+import { toJsonLd } from '~/lib/seo';
+import { siteSettings } from '~/lib/settings';
 
 interface Props {
   event: CollectionEntry<'events'>;
-  url: string;
+  state: EventState;
+  organiserUrl: string;
 }
 
-const { event, url } = Astro.props;
+const { event, state, organiserUrl } = Astro.props;
 const data = event.data;
 const status = data.ticketStatus;
 
+// An offer is emitted only when the page itself still offers a way to book, so
+// the structured data cannot advertise tickets the page has already withdrawn.
+// The case that matters: an editor closes registrations but leaves the old
+// booking link in the field — the button disappears, and Google must not be
+// told the tickets are still on sale there.
+const offerable =
+  state !== 'past' && (status === 'open' || status === 'free' || status === 'sold-out');
+const showOffer = offerable && !!data.bookingUrl;
+
 const availability =
-  status === 'sold-out'
-    ? 'https://schema.org/SoldOut'
-    : status === 'open' || status === 'free'
-      ? 'https://schema.org/InStock'
-      : 'https://schema.org/PreOrder';
+  status === 'sold-out' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -32,19 +40,24 @@ const jsonLd = {
     name: data.venue,
     address: data.address ?? 'Kigali, Rwanda',
   },
-  organizer: { '@type': 'Organization', name: 'TEDxKigali', url },
-  ...(data.bookingUrl
+  organizer: { '@type': 'Organization', name: siteSettings.siteName, url: organiserUrl },
+  ...(showOffer
     ? {
         offers: {
           '@type': 'Offer',
           url: data.bookingUrl,
           availability,
-          price: status === 'free' ? '0' : undefined,
-          priceCurrency: status === 'free' ? 'RWF' : undefined,
+          // price and priceCurrency are deliberately omitted for paid events.
+          // Google treats them as recommended, not required: the rich result
+          // still shows the date and the ticket link. The price itself lives on
+          // the external ticketing platform, and a copy kept here would sooner
+          // or later be stale — a wrong price in Google's results is worse than
+          // no price at all. A free event is the one case we can state safely.
+          ...(status === 'free' ? { price: '0', priceCurrency: 'RWF' } : {}),
         },
       }
     : {}),
 };
 ---
 
-<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+<script type="application/ld+json" is:inline set:html={toJsonLd(jsonLd)}></script>

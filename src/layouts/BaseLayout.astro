@@ -5,7 +5,7 @@ import Header from '~/components/Header.astro';
 import Footer from '~/components/Footer.astro';
 import VideoDialog from '~/components/VideoDialog.astro';
 import { siteSettings } from '~/lib/settings';
-import { buildPageTitle, canonicalUrl } from '~/lib/seo';
+import { buildPageTitle, canonicalUrl, toJsonLd } from '~/lib/seo';
 
 interface Props {
   title?: string;
@@ -50,7 +50,7 @@ const organisationJsonLd = {
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
 
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(organisationJsonLd)}></script>
+    <script type="application/ld+json" is:inline set:html={toJsonLd(organisationJsonLd)}></script>
     <slot name="head" />
   </head>
 
