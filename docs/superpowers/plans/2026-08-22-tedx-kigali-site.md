@@ -1887,6 +1887,14 @@ function refresh(): void {
     if (state !== 'past' && upcoming && card.parentElement !== upcoming) upcoming.append(card);
   });
 
+  // Any page can host event cards outside the events index — the home page's
+  // "Next event" block does. Such a section hides itself once every card in it
+  // has passed, so the home never announces a finished event as the next one.
+  document.querySelectorAll<HTMLElement>('[data-event-section]').forEach((section) => {
+    const live = section.querySelectorAll('article[data-event]:not([data-event-state="past"])');
+    section.hidden = live.length === 0;
+  });
+
   toggleSection('#events-upcoming-section', upcoming);
   toggleSection('#events-past-section', past);
 
@@ -2357,7 +2365,7 @@ const highlighted = (featured.length > 0 ? featured : allTalks).slice(0, 6);
   </section>
 
   {nextEvent && (
-    <section class="mx-auto max-w-6xl px-4 pb-16">
+    <section data-event-section class="mx-auto max-w-6xl px-4 pb-16">
       <h2 class="text-2xl font-bold uppercase tracking-wide">Next event</h2>
       <div class="mt-6 grid gap-6 md:grid-cols-2">
         <EventCard event={nextEvent} now={now} />
@@ -2384,6 +2392,13 @@ const highlighted = (featured.length > 0 ? featured : allTalks).slice(0, 6);
       <a class="mt-6 inline-block text-sm underline hover:no-underline" href="/about">Read more</a>
     </div>
   </section>
+
+  <!-- The home page carries an event card, so it needs the same runtime date
+       check as the events page: without it a stale build would keep offering a
+       finished event as the next one, booking button and all. -->
+  <script>
+    import '~/scripts/event-status.ts';
+  </script>
 </BaseLayout>
 ```
 
