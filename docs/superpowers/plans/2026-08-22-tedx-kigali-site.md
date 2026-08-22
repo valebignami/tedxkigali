@@ -1508,7 +1508,7 @@ const year = date.getUTCFullYear();
   data-talk
   data-year={year}
   data-edition={talk.data.edition?.id ?? ''}
-  data-tags={tags.join(' ')}
+  data-tags={tags.join('|')}
 >
   <button
     type="button"
@@ -3165,7 +3165,9 @@ git commit -m "feat: add sponsors collection, partners page and home strip"
 
 **Files:**
 - Create: `src/components/VideoJsonLd.astro`
-- Modify: `src/pages/talks.astro`, `src/scripts/talk-filters.ts`, `src/pages/events/[slug].astro`
+- Modify: `src/pages/talks.astro`, `src/scripts/talk-filters.ts`, `src/pages/events/[slug].astro`, `src/components/TalkCard.astro`
+
+> **Correzione obbligatoria da riportare prima dei filtri per tag.** `TalkCard.astro` serializza i tag con `tags.join(' ')`, ma un tag legittimo può contenere spazi (`public speaking`), e dividere sugli spazi produrrebbe token inesistenti facendo sparire il talk dai filtri. Cambiare in `data-tags={tags.join('|')}` e leggere con `split('|')`. Il carattere `|` non compare nei tag reali e non richiede escaping in un attributo HTML.
 
 **Interfaces:**
 - Consumes: `parseYouTubeId`, `youtubeThumbnails`, `youtubeWatchUrl`, `youtubeEmbedUrl` (Task 2)
@@ -3233,7 +3235,7 @@ function apply(kind: string, value: string): void {
     const matches =
       value === 'all' ||
       (kind === 'edition' && card.dataset.edition === value) ||
-      (kind === 'tag' && (card.dataset.tags ?? '').split(' ').includes(value));
+      (kind === 'tag' && (card.dataset.tags ?? '').split('|').includes(value));
 
     card.hidden = !matches;
     if (matches) visible += 1;
