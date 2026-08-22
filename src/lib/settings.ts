@@ -6,7 +6,7 @@ import raw from '~/content/settings/site.json';
 
 const socialLink = z.object({
   label: z.string().min(1),
-  url: z.string().url(),
+  url: z.url(),
 });
 
 export const siteSettingsSchema = z.object({
@@ -15,7 +15,7 @@ export const siteSettingsSchema = z.object({
   heroTitle: z.string().min(1),
   heroSubtitle: z.string().min(1),
   aboutShort: z.string().min(1),
-  contactEmail: z.string().email(),
+  contactEmail: z.email(),
   socials: z.array(socialLink).default([]),
   seoDescription: z.string().min(1).max(300),
   tedxLicenceNotice: z.string().min(1),
