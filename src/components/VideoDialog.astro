@@ -1,0 +1,22 @@
+<dialog
+  id="video-dialog"
+  aria-labelledby="video-dialog-title"
+  class="w-[min(96vw,1100px)] rounded-lg border border-line bg-surface p-0 text-ink backdrop:bg-black/85"
+>
+  <div class="flex items-center justify-between gap-4 px-4 py-3">
+    <h2 id="video-dialog-title" class="truncate text-sm font-semibold uppercase tracking-wide"></h2>
+    <button
+      type="button"
+      data-close-video
+      class="rounded border border-line px-3 py-1 text-sm hover:bg-bg"
+      aria-label="Close video"
+    >
+      Close
+    </button>
+  </div>
+  <div id="video-dialog-frame" class="aspect-video w-full bg-black"></div>
+</dialog>
+
+<script>
+  import '~/scripts/video-dialog.ts';
+</script>
