@@ -85,7 +85,7 @@ Se il comando segnala che la cartella non è vuota, confermare di procedere: i f
 ```bash
 npm install
 npm install astro@^7 @astrojs/sitemap @fontsource-variable/inter
-npm install -D tailwindcss @tailwindcss/vite vitest
+npm install -D tailwindcss @tailwindcss/vite vitest @astrojs/check typescript
 ```
 
 - [ ] **Step 4: Scrivere `astro.config.mjs`**
