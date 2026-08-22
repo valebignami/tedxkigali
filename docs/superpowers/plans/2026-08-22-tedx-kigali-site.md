@@ -669,13 +669,13 @@ describe('pickImage', () => {
   });
 
   it('throws an editor-friendly error when the file is missing', () => {
-    expect(() => pickImage(map, 'missing.jpg')).toThrowError(
+    expect(() => pickImage(map, 'missing.jpg')).toThrow(
       /Image not found: src\/assets\/uploads\/missing\.jpg/,
     );
   });
 
   it('mentions how to fix the problem', () => {
-    expect(() => pickImage(map, 'missing.jpg')).toThrowError(/upload it again/i);
+    expect(() => pickImage(map, 'missing.jpg')).toThrow(/upload it again/i);
   });
 });
 ```
@@ -692,16 +692,21 @@ import type { ImageMetadata } from 'astro';
 
 export const UPLOADS_PREFIX = '/src/assets/uploads/';
 
+// This pattern MUST stay a string literal. Vite resolves import.meta.glob at
+// build time by static analysis and cannot follow a variable or a template
+// string, so this is the one place UPLOADS_PREFIX cannot be reused. Keep the
+// two in sync by hand if the uploads folder ever moves.
 const uploads = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/uploads/**/*.{jpg,jpeg,png,webp,avif,svg}',
   { eager: true },
 );
 
+const STRIP_PREFIX = new RegExp(`^${UPLOADS_PREFIX.slice(1)}`);
+
 /** Turns whatever the CMS stored into a repo-root absolute path. */
 export function normaliseUploadPath(value: string): string {
   const trimmed = (value ?? '').trim().replace(/^\.?\//, '');
-  const withoutPrefix = trimmed.replace(/^src\/assets\/uploads\//, '');
-  return `${UPLOADS_PREFIX}${withoutPrefix}`;
+  return `${UPLOADS_PREFIX}${trimmed.replace(STRIP_PREFIX, '')}`;
 }
 
 export function pickImage<T>(map: Record<string, T>, value: string): T {
