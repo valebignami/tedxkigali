@@ -1078,7 +1078,7 @@ Creare `src/lib/seo.test.ts`:
 
 ```ts
 import { describe, expect, it } from 'vitest';
-import { buildPageTitle, canonicalUrl } from '~/lib/seo';
+import { buildPageTitle, canonicalUrl, toJsonLd } from '~/lib/seo';
 
 describe('buildPageTitle', () => {
   it('appends the site name', () => {
@@ -1106,6 +1106,23 @@ describe('canonicalUrl', () => {
     expect(canonicalUrl('/talks', undefined)).toBe('/talks');
   });
 });
+
+describe('toJsonLd', () => {
+  it('serialises a payload', () => {
+    expect(toJsonLd({ '@type': 'Event', name: 'Rising' })).toBe('{"@type":"Event","name":"Rising"}');
+  });
+
+  it('escapes < so an editor-typed closing tag cannot break out of the script', () => {
+    const serialised = toJsonLd({ name: 'Talks </script><img onerror=alert(1)>' });
+    expect(serialised).not.toContain('</script>');
+    expect(serialised).toContain('\\u003c');
+  });
+
+  it('still round-trips to the original value', () => {
+    const payload = { name: 'A < B', nested: { url: 'https://example.com' } };
+    expect(JSON.parse(toJsonLd(payload))).toEqual(payload);
+  });
+});
 ```
 
 - [ ] **Step 2: Eseguire i test e verificare che falliscano**
@@ -1126,6 +1143,17 @@ export function buildPageTitle(pageTitle?: string): string {
 export function canonicalUrl(pathname: string, site: URL | undefined): string {
   const clean = pathname !== '/' ? pathname.replace(/\/+$/, '') : '/';
   return site ? new URL(clean, site).toString() : clean;
+}
+
+/**
+ * Serialises a JSON-LD payload for embedding in a <script> tag.
+ *
+ * Escaping `<` is the point: every value in these blocks is text an editor
+ * typed into the CMS, and a title containing `</script>` would otherwise close
+ * the tag early and break the page. Editors cannot be expected to know that.
+ */
+export function toJsonLd(value: unknown): string {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
 }
 ```
 
@@ -1259,7 +1287,7 @@ import '~/styles/global.css';
 import Header from '~/components/Header.astro';
 import Footer from '~/components/Footer.astro';
 import { siteSettings } from '~/lib/settings';
-import { buildPageTitle, canonicalUrl } from '~/lib/seo';
+import { buildPageTitle, canonicalUrl, toJsonLd } from '~/lib/seo';
 
 interface Props {
   title?: string;
@@ -1304,7 +1332,7 @@ const organisationJsonLd = {
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
 
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(organisationJsonLd)}></script>
+    <script type="application/ld+json" is:inline set:html={toJsonLd(organisationJsonLd)}></script>
     <slot name="head" />
   </head>
 
@@ -2049,30 +2077,38 @@ git commit -m "feat: list events and re-check their state in the browser"
 
 **Interfaces:**
 - Consumes: `eventEnd`, `eventState`, `isBookable`, `ticketStatusLabel` (Task 3); `resolveUploadedImage` (Task 4); `TalkCard` (Task 7); collection `events`, `talks` (Task 5)
-- Produces: `EventJsonLd` con props `{ event: CollectionEntry<'events'>; url: string }`
+- Produces: `EventJsonLd` con props `{ event: CollectionEntry<'events'>; state: EventState; organiserUrl: string }`
 
 - [ ] **Step 1: Scrivere `src/components/EventJsonLd.astro`**
 
 ```astro
 ---
 import type { CollectionEntry } from 'astro:content';
-import { eventEnd } from '~/lib/events';
+import { eventEnd, type EventState } from '~/lib/events';
+import { toJsonLd } from '~/lib/seo';
+import { siteSettings } from '~/lib/settings';
 
 interface Props {
   event: CollectionEntry<'events'>;
-  url: string;
+  state: EventState;
+  organiserUrl: string;
 }
 
-const { event, url } = Astro.props;
+const { event, state, organiserUrl } = Astro.props;
 const data = event.data;
 const status = data.ticketStatus;
 
+// An offer is emitted only when the page itself still offers a way to book, so
+// the structured data cannot advertise tickets the page has already withdrawn.
+// The case that matters: an editor closes registrations but leaves the old
+// booking link in the field — the button disappears, and Google must not be
+// told the tickets are still on sale there.
+const offerable =
+  state !== 'past' && (status === 'open' || status === 'free' || status === 'sold-out');
+const showOffer = offerable && !!data.bookingUrl;
+
 const availability =
-  status === 'sold-out'
-    ? 'https://schema.org/SoldOut'
-    : status === 'open' || status === 'free'
-      ? 'https://schema.org/InStock'
-      : 'https://schema.org/PreOrder';
+  status === 'sold-out' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -2088,22 +2124,27 @@ const jsonLd = {
     name: data.venue,
     address: data.address ?? 'Kigali, Rwanda',
   },
-  organizer: { '@type': 'Organization', name: 'TEDxKigali', url },
-  ...(data.bookingUrl
+  organizer: { '@type': 'Organization', name: siteSettings.siteName, url: organiserUrl },
+  ...(showOffer
     ? {
         offers: {
           '@type': 'Offer',
           url: data.bookingUrl,
           availability,
-          price: status === 'free' ? '0' : undefined,
-          priceCurrency: status === 'free' ? 'RWF' : undefined,
+          // price and priceCurrency are deliberately omitted for paid events.
+          // Google treats them as recommended, not required: the rich result
+          // still shows the date and the ticket link. The price itself lives on
+          // the external ticketing platform, and a copy kept here would sooner
+          // or later be stale — a wrong price in Google's results is worse than
+          // no price at all. A free event is the one case we can state safely.
+          ...(status === 'free' ? { price: '0', priceCurrency: 'RWF' } : {}),
         },
       }
     : {}),
 };
 ---
 
-<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
+<script type="application/ld+json" is:inline set:html={toJsonLd(jsonLd)}></script>
 ```
 
 - [ ] **Step 2: Scrivere `src/pages/events/[slug].astro`**
@@ -2148,11 +2189,13 @@ const talks = (await getCollection('talks', ({ data: talk }) => !talk.draft && t
   (a, b) => a.data.title.localeCompare(b.data.title),
 );
 
-const url = canonicalUrl(Astro.url.pathname, Astro.site);
+// The organiser is TEDxKigali itself, not this page: schema.org expects an
+// Organization.url that identifies the organisation.
+const organiserUrl = Astro.site?.toString() ?? canonicalUrl(Astro.url.pathname, Astro.site);
 ---
 
 <BaseLayout title={data.title} description={data.summary} image={ogImage}>
-  <EventJsonLd slot="head" event={event} url={url} />
+  <EventJsonLd slot="head" event={event} state={state} organiserUrl={organiserUrl} />
 
   <article class="mx-auto max-w-4xl px-4 py-16">
     {data.theme && <p class="text-sm font-bold uppercase tracking-widest text-muted">{data.theme}</p>}
@@ -3226,6 +3269,7 @@ git commit -m "feat: add sponsors collection, partners page and home strip"
 ---
 import type { CollectionEntry } from 'astro:content';
 import { parseYouTubeId, youtubeEmbedUrl, youtubeThumbnails, youtubeWatchUrl } from '~/lib/youtube';
+import { toJsonLd } from '~/lib/seo';
 
 interface Props {
   talks: CollectionEntry<'talks'>[];
@@ -3252,7 +3296,7 @@ const items = talks.flatMap((talk) => {
 });
 ---
 
-{items.map((item) => <script type="application/ld+json" is:inline set:html={JSON.stringify(item)}></script>)}
+{items.map((item) => <script type="application/ld+json" is:inline set:html={toJsonLd(item)}></script>)}
 ```
 
 - [ ] **Step 2: Aggiungere i dati strutturati alle pagine con i talk**
