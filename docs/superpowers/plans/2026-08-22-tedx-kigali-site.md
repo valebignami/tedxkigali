@@ -1563,7 +1563,7 @@ const year = date.getUTCFullYear();
 
 - [ ] **Step 5: Verificare a mano il comportamento del player**
 
-Aggiungere temporaneamente in `src/pages/index.astro`, dentro `<BaseLayout>`:
+Aggiungere temporaneamente in `src/pages/index.astro`, dentro `<BaseLayout>` — **questa modifica è solo un banco di prova e non va committata**: viene annullata nello Step 6.5, prima del commit.
 
 ```astro
 ---
@@ -1597,10 +1597,19 @@ npm run build
 
 Expected: entrambi verdi.
 
+- [ ] **Step 6.5: Annullare il banco di prova**
+
+```bash
+git checkout -- src/pages/index.astro
+git diff --stat
+```
+
+Expected: `src/pages/index.astro` torna alla versione del Task 6 e non compare fra i file modificati. La griglia temporanea serviva solo a provare il player a mano: la home vera arriva nel Task 11, e committare impalcature usa e getta sporca la storia del repo.
+
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/components/VideoDialog.astro src/components/TalkCard.astro src/scripts/video-dialog.ts src/layouts/BaseLayout.astro src/pages/index.astro
+git add src/components/VideoDialog.astro src/components/TalkCard.astro src/scripts/video-dialog.ts src/layouts/BaseLayout.astro
 git commit -m "feat: play talks in an accessible in-page dialog with a lazy YouTube facade"
 ```
 
@@ -1724,9 +1733,13 @@ const editions = usedEditionIds
 </BaseLayout>
 ```
 
-- [ ] **Step 3: Ripulire la home dalla griglia temporanea**
+- [ ] **Step 3: Verificare che la home sia rimasta pulita**
 
-Riportare `src/pages/index.astro` alla versione dello Step 9 del Task 6 (hero soltanto): la home definitiva arriva nel Task 11.
+```bash
+git diff HEAD --stat -- src/pages/index.astro
+```
+
+Expected: nessuna modifica. Il banco di prova del Task 7 è stato annullato prima del commit (Task 7, Step 6.5), quindi `src/pages/index.astro` deve essere ancora la versione hero del Task 6. Se invece contiene una griglia di talk, riportarlo a quella versione. La home definitiva arriva nel Task 11.
 
 - [ ] **Step 4: Verificare a mano**
 
