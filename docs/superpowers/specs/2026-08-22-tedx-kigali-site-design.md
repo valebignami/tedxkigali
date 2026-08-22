@@ -32,7 +32,7 @@ Pubblico secondario: potenziali speaker, sponsor e stampa internazionale.
 |---|---|
 | Aggiornamento contenuti | CMS visuale su Git: **Pages CMS** (pagescms.org), gratuito e open source |
 | Sorgente dei contenuti | File Markdown + JSON nel repo GitHub |
-| Generatore | **Astro 5**, output statico puro |
+| Generatore | **Astro 7**, output statico puro |
 | Stile | **Tailwind CSS**, nessun framework JS |
 | Hosting | **Vercel** (piano Hobby), deploy automatico da GitHub |
 | Biglietteria | Campo URL generico per evento: qualsiasi piattaforma |

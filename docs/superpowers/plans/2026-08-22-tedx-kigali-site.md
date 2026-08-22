@@ -4,9 +4,9 @@
 
 **Goal:** Costruire il sito statico di TEDx Kigali: archivio dei talk YouTube riproducibili senza lasciare il sito, eventi con link alla biglietteria esterna, tutto aggiornabile da una persona non tecnica tramite un CMS visuale su Git.
 
-**Architecture:** Astro 5 in output statico puro, contenuti in file Markdown/JSON nel repo validati da schemi Zod, immagini ottimizzate dalla pipeline di Astro, JavaScript vanilla minimo (player video, stato eventi, filtri, menu). Nessun backend: la biglietteria è esterna e il CMS (Pages CMS) scrive direttamente sul repo GitHub. Deploy statico su Vercel.
+**Architecture:** Astro 7 in output statico puro, contenuti in file Markdown/JSON nel repo validati da schemi Zod, immagini ottimizzate dalla pipeline di Astro, JavaScript vanilla minimo (player video, stato eventi, filtri, menu). Nessun backend: la biglietteria è esterna e il CMS (Pages CMS) scrive direttamente sul repo GitHub. Deploy statico su Vercel.
 
-**Tech Stack:** Astro 5, TypeScript strict, Tailwind CSS 4 (plugin Vite), Vitest 3, `@astrojs/sitemap`, `@fontsource-variable/inter`, Pages CMS, GitHub Actions, Vercel.
+**Tech Stack:** Astro 7, TypeScript strict, Tailwind CSS 4 (plugin Vite), Vitest 4, `@astrojs/sitemap`, `@fontsource-variable/inter`, Pages CMS, GitHub Actions, Vercel.
 
 **Spec:** [`docs/superpowers/specs/2026-08-22-tedx-kigali-site-design.md`](../specs/2026-08-22-tedx-kigali-site-design.md)
 
@@ -15,7 +15,9 @@
 Valgono per **ogni** task; non vanno ripetuti nei singoli requisiti.
 
 - **Lingua**: tutto ciò che è visibile a un utente o a un redattore — testi del sito, etichette e testi di aiuto del CMS, messaggi di errore di validazione, `docs/EDITING.md` — è **in inglese**. Commenti nel codice in inglese. Questo piano e la spec sono in italiano.
-- **Node 22 LTS**, npm. Nessun altro package manager.
+- **Node 22.12 o superiore**, npm. Nessun altro package manager. (Astro 7 ha abbandonato Node 18 e 20.)
+- **Zod si importa da `astro/zod`**, mai da `astro:content` (rimosso in Astro 6) e mai dal pacchetto `zod` autonomo: `astro/zod` è risolvibile anche dentro Vitest, quindi vale sia negli schemi delle collection sia nei moduli di libreria.
+- **Nessun tag auto-chiuso per elementi non-void**: `<script ...></script>`, mai `<script ... />`. Il compilatore Rust di Astro 7 rifiuta l'HTML semanticamente invalido e non lo corregge più in automatico.
 - **Nessun backend, nessuna funzione serverless, nessuna API route.** L'output di build deve essere solo file statici.
 - **Nessuna richiesta a domini terzi al caricamento della pagina.** Font ospitati localmente; l'unica risorsa esterna ammessa prima di un clic è la miniatura YouTube da `i.ytimg.com`. Nessun analytics.
 - **Embed video**: solo `https://www.youtube-nocookie.com/embed/<id>`, inserito nel DOM **dopo** il clic dell'utente e rimosso alla chiusura.
@@ -82,7 +84,7 @@ Se il comando segnala che la cartella non è vuota, confermare di procedere: i f
 
 ```bash
 npm install
-npm install @astrojs/sitemap @fontsource-variable/inter zod
+npm install astro@^7 @astrojs/sitemap @fontsource-variable/inter
 npm install -D tailwindcss @tailwindcss/vite vitest
 ```
 
@@ -780,7 +782,8 @@ Expected: PASS.
 - [ ] **Step 5: Scrivere `src/content.config.ts`**
 
 ```ts
-import { defineCollection, reference, z } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { parseYouTubeId, YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { TICKET_STATUSES } from '~/lib/events';
@@ -851,9 +854,10 @@ export const collections = { talks, events };
 - [ ] **Step 6: Scrivere `src/lib/settings.ts`**
 
 ```ts
-// Import from 'zod', not from 'astro:content': this module is also loaded by
-// Vitest (through src/lib/seo.ts), where the astro: virtual modules do not exist.
-import { z } from 'zod';
+// Import from 'astro/zod', not from 'astro:content': this module is also loaded
+// by Vitest (through src/lib/seo.ts), where the astro: virtual modules do not
+// exist, while 'astro/zod' is a normal package subpath that resolves anywhere.
+import { z } from 'astro/zod';
 import raw from '~/content/settings/site.json';
 
 const socialLink = z.object({
@@ -1270,7 +1274,7 @@ const organisationJsonLd = {
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
 
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <script type="application/ld+json" set:html={JSON.stringify(organisationJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(organisationJsonLd)}></script>
     <slot name="head" />
   </head>
 
@@ -2009,7 +2013,7 @@ const jsonLd = {
 };
 ---
 
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 ```
 
 - [ ] **Step 2: Scrivere `src/pages/events/[slug].astro`**
@@ -3156,7 +3160,7 @@ const items = talks.flatMap((talk) => {
 });
 ---
 
-{items.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+{items.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)}></script>)}
 ```
 
 - [ ] **Step 2: Aggiungere i dati strutturati alle pagine con i talk**
