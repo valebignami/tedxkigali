@@ -1,0 +1,50 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { eventEnd } from '~/lib/events';
+
+interface Props {
+  event: CollectionEntry<'events'>;
+  url: string;
+}
+
+const { event, url } = Astro.props;
+const data = event.data;
+const status = data.ticketStatus;
+
+const availability =
+  status === 'sold-out'
+    ? 'https://schema.org/SoldOut'
+    : status === 'open' || status === 'free'
+      ? 'https://schema.org/InStock'
+      : 'https://schema.org/PreOrder';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: data.title,
+  description: data.summary,
+  startDate: data.startDate.toISOString(),
+  endDate: eventEnd(data.startDate, data.endDate).toISOString(),
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: data.venue,
+    address: data.address ?? 'Kigali, Rwanda',
+  },
+  organizer: { '@type': 'Organization', name: 'TEDxKigali', url },
+  ...(data.bookingUrl
+    ? {
+        offers: {
+          '@type': 'Offer',
+          url: data.bookingUrl,
+          availability,
+          price: status === 'free' ? '0' : undefined,
+          priceCurrency: status === 'free' ? 'RWF' : undefined,
+        },
+      }
+    : {}),
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
