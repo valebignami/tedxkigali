@@ -28,12 +28,12 @@ describe('pickImage', () => {
   });
 
   it('throws an editor-friendly error when the file is missing', () => {
-    expect(() => pickImage(map, 'missing.jpg')).toThrowError(
+    expect(() => pickImage(map, 'missing.jpg')).toThrow(
       /Image not found: src\/assets\/uploads\/missing\.jpg/,
     );
   });
 
   it('mentions how to fix the problem', () => {
-    expect(() => pickImage(map, 'missing.jpg')).toThrowError(/upload it again/i);
+    expect(() => pickImage(map, 'missing.jpg')).toThrow(/upload it again/i);
   });
 });
