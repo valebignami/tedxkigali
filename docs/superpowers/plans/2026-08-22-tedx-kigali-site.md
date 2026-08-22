@@ -17,6 +17,7 @@ Valgono per **ogni** task; non vanno ripetuti nei singoli requisiti.
 - **Lingua**: tutto ciò che è visibile a un utente o a un redattore — testi del sito, etichette e testi di aiuto del CMS, messaggi di errore di validazione, `docs/EDITING.md` — è **in inglese**. Commenti nel codice in inglese. Questo piano e la spec sono in italiano.
 - **Node 22.12 o superiore**, npm. Nessun altro package manager. (Astro 7 ha abbandonato Node 18 e 20.)
 - **Zod si importa da `astro/zod`**, mai da `astro:content` (rimosso in Astro 6) e mai dal pacchetto `zod` autonomo: `astro/zod` è risolvibile anche dentro Vitest, quindi vale sia negli schemi delle collection sia nei moduli di libreria.
+- **I blocchi JSON-LD portano `is:inline`**: `<script type="application/ld+json" is:inline set:html={...}></script>`. Senza `is:inline` Astro tratta il tag come script da processare ed emette un hint in `astro check`, moltiplicato per ogni pagina che ne contiene uno.
 - **Nessun tag auto-chiuso per elementi non-void**: `<script ...></script>`, mai `<script ... />`. Il compilatore Rust di Astro 7 rifiuta l'HTML semanticamente invalido e non lo corregge più in automatico.
 - **Nessun backend, nessuna funzione serverless, nessuna API route.** L'output di build deve essere solo file statici.
 - **Nessuna richiesta a domini terzi al caricamento della pagina.** Font ospitati localmente; l'unica risorsa esterna ammessa prima di un clic è la miniatura YouTube da `i.ytimg.com`. Nessun analytics.
@@ -1302,7 +1303,7 @@ const organisationJsonLd = {
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
 
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <script type="application/ld+json" set:html={JSON.stringify(organisationJsonLd)}></script>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(organisationJsonLd)}></script>
     <slot name="head" />
   </head>
 
@@ -2041,7 +2042,7 @@ const jsonLd = {
 };
 ---
 
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
 ```
 
 - [ ] **Step 2: Scrivere `src/pages/events/[slug].astro`**
@@ -3188,7 +3189,7 @@ const items = talks.flatMap((talk) => {
 });
 ---
 
-{items.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)}></script>)}
+{items.map((item) => <script type="application/ld+json" is:inline set:html={JSON.stringify(item)}></script>)}
 ```
 
 - [ ] **Step 2: Aggiungere i dati strutturati alle pagine con i talk**
