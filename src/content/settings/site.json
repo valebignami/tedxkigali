@@ -1,0 +1,17 @@
+{
+  "siteName": "TEDxKigali",
+  "tagline": "Ideas worth spreading, from the heart of Rwanda",
+  "heroTitle": "Ideas worth spreading, from the heart of Rwanda",
+  "heroSubtitle": "TEDxKigali brings together thinkers, builders and storytellers shaping the future of Rwanda and the continent.",
+  "aboutShort": "TEDxKigali is an independently organised TED event that gathers speakers from across Rwanda to share ideas worth spreading.",
+  "contactEmail": "hello@tedxkigali.rw",
+  "socials": [
+    { "label": "Instagram", "url": "https://www.instagram.com/tedxkigali" },
+    { "label": "X", "url": "https://x.com/tedxkigali" },
+    { "label": "LinkedIn", "url": "https://www.linkedin.com/company/tedxkigali" },
+    { "label": "YouTube", "url": "https://www.youtube.com/@tedxkigali" }
+  ],
+  "seoDescription": "Talks, speakers and events from TEDxKigali, an independently organised TED event in Kigali, Rwanda.",
+  "tedxLicenceNotice": "This independent TEDx event is operated under license from TED.",
+  "tedxXExplanation": "x = independently organized TED event"
+}
