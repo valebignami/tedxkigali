@@ -1,13 +1,75 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import TalkCard from '~/components/TalkCard.astro';
+import EventCard from '~/components/EventCard.astro';
+import { eventState } from '~/lib/events';
 import { siteSettings } from '~/lib/settings';
+
+const now = new Date();
+
+const events = await getCollection('events', ({ data }) => !data.draft);
+const nextEvent = events
+  .filter((event) => eventState(event.data.startDate, event.data.endDate, now) !== 'past')
+  .sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime())[0];
+
+const allTalks = (await getCollection('talks', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const featured = allTalks.filter((talk) => talk.data.featured);
+const highlighted = (featured.length > 0 ? featured : allTalks).slice(0, 6);
 ---
 
 <BaseLayout>
-  <section class="mx-auto max-w-6xl px-4 py-20">
-    <h1 class="text-5xl font-black uppercase leading-tight md:text-7xl">
+  <section class="mx-auto max-w-6xl px-4 py-20 md:py-28">
+    <p class="text-sm font-bold uppercase tracking-widest text-muted">Kigali, Rwanda</p>
+    <h1 class="mt-4 text-5xl font-black uppercase leading-[0.95] md:text-8xl">
       {siteSettings.heroTitle}
     </h1>
-    <p class="mt-6 max-w-2xl text-lg text-muted">{siteSettings.heroSubtitle}</p>
+    <p class="mt-8 max-w-2xl text-lg text-muted md:text-xl">{siteSettings.heroSubtitle}</p>
+
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a
+        href="/talks"
+        class="rounded bg-ted-red px-6 py-3 font-bold uppercase tracking-wide text-ink hover:bg-ted-red/90"
+      >
+        Watch the talks
+      </a>
+      <a
+        href="/events"
+        class="rounded border border-line px-6 py-3 font-bold uppercase tracking-wide hover:bg-surface"
+      >
+        See the events
+      </a>
+    </div>
+  </section>
+
+  {nextEvent && (
+    <section class="mx-auto max-w-6xl px-4 pb-16">
+      <h2 class="text-2xl font-bold uppercase tracking-wide">Next event</h2>
+      <div class="mt-6 grid gap-6 md:grid-cols-2">
+        <EventCard event={nextEvent} now={now} />
+      </div>
+    </section>
+  )}
+
+  {highlighted.length > 0 && (
+    <section class="mx-auto max-w-6xl px-4 pb-16">
+      <div class="flex items-baseline justify-between gap-4">
+        <h2 class="text-2xl font-bold uppercase tracking-wide">Talks to start with</h2>
+        <a class="text-sm underline hover:no-underline" href="/talks">All talks</a>
+      </div>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {highlighted.map((talk) => <TalkCard talk={talk} />)}
+      </div>
+    </section>
+  )}
+
+  <section class="mx-auto max-w-6xl px-4 pb-24">
+    <div class="rounded-lg border border-line bg-surface p-8">
+      <h2 class="text-2xl font-bold uppercase tracking-wide">About TEDxKigali</h2>
+      <p class="mt-4 max-w-3xl text-lg text-muted">{siteSettings.aboutShort}</p>
+      <a class="mt-6 inline-block text-sm underline hover:no-underline" href="/about">Read more</a>
+    </div>
   </section>
 </BaseLayout>
