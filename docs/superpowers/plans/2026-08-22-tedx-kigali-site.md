@@ -1824,15 +1824,19 @@ tags: ["public speaking", "community"]
 ```ts
 // The site is static: an event could otherwise stay "upcoming" until the next
 // build. This re-checks every card against the visitor's clock on page load.
+//
+// The duration is imported, never re-declared: the build stamps data-event-end
+// with it and this script falls back to it, so two copies drifting apart would
+// make the page disagree with itself about when an event ends.
+import { DEFAULT_EVENT_DURATION_MS } from '~/lib/events';
+
 const upcoming = document.querySelector<HTMLElement>('#events-upcoming');
 const past = document.querySelector<HTMLElement>('#events-past');
-
-const DEFAULT_DURATION_MS = 4 * 60 * 60 * 1000;
 
 function endOf(card: HTMLElement, start: number): number {
   const raw = card.dataset.eventEnd;
   const end = raw ? Date.parse(raw) : Number.NaN;
-  return Number.isFinite(end) && end > start ? end : start + DEFAULT_DURATION_MS;
+  return Number.isFinite(end) && end > start ? end : start + DEFAULT_EVENT_DURATION_MS;
 }
 
 function refresh(): void {
