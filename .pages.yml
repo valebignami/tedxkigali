@@ -111,7 +111,13 @@ content:
       - { name: title, label: Talk title, type: string, required: true }
       - { name: speaker, label: Speaker name, type: string, required: true, description: 'The full name of the person who gave the talk, as it should appear under the video. This is only text: it does not create a page for them. To give this person a page, add them under Speakers as well and write the name there the same way.' }
       - { name: youtubeUrl, label: YouTube link, type: string, required: true, description: 'Open the talk on YouTube and copy the link from the address bar. A link to a single video is what is needed: a playlist, a channel page, a music.youtube.com link or anything copied out of YouTube Studio will not be accepted.' }
-      - { name: date, label: Talk date, type: date, options: { format: 'yyyy-MM-dd' }, required: true, description: 'The day of the event where the talk was filmed, not the day the video was uploaded. It sets the order of the talks page and the year printed on the card when no edition is chosen below.' }
+      # `default: ''` for the same reason as an event's end date: a date field
+      # with no default of its own starts out holding today. Here that is a
+      # plausible wrong answer rather than a broken one — today is the day the
+      # video went up, which is exactly the date this field must not hold — and
+      # nothing would ever say so. Empty, the form stops the save until somebody
+      # picks a day.
+      - { name: date, label: Talk date, type: date, default: '', options: { format: 'yyyy-MM-dd' }, required: true, description: 'The day of the event where the talk was filmed, not the day the video was uploaded. It sets the order of the talks page and the year printed on the card when no edition is chosen below.' }
       # value: '{name}' writes the event's *file name*, extension included —
       # `test.md` for the event whose Astro id is `test`, proved by the first
       # real CMS session on 23/08/2026. It is left as it is because none of the
