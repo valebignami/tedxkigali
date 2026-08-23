@@ -4,6 +4,7 @@ import { glob } from 'astro/loaders';
 import { parseYouTubeId, YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { TICKET_STATUSES } from '~/lib/events';
 import { BOOKING_URL_MESSAGE, requiresBookingUrl } from '~/lib/content-rules';
+import { WEB_ADDRESS_MESSAGE } from '~/lib/content-messages';
 import { SPONSOR_TIERS } from '~/lib/sponsors';
 
 const uploadPath = z
@@ -45,12 +46,12 @@ const events = defineCollection({
       endDate: z.coerce.date().optional(),
       venue: z.string().min(1),
       address: z.string().optional(),
-      mapUrl: z.url().optional(),
+      mapUrl: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
       image: uploadPath.optional(),
       imageAlt: z.string().optional(),
       theme: z.string().optional(),
       summary: z.string().min(1).max(300),
-      bookingUrl: z.url().optional(),
+      bookingUrl: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
       bookingLabel: z.string().default('Book your seat'),
       ticketStatus: z.enum(TICKET_STATUSES),
       draft: z.boolean().default(false),
@@ -75,7 +76,7 @@ const speakers = defineCollection({
       photoAlt: z.string().optional(),
       talk: reference('talks').optional(),
       links: z
-        .array(z.object({ label: z.string().min(1), url: z.url() }))
+        .array(z.object({ label: z.string().min(1), url: z.url({ message: WEB_ADDRESS_MESSAGE }) }))
         .default([]),
       order: z.number().int().optional(),
       draft: z.boolean().default(false),
@@ -92,7 +93,7 @@ const sponsors = defineCollection({
     name: z.string().min(1),
     logo: uploadPath,
     logoAlt: z.string().min(1, 'Describe the logo, for example "Acme Ltd logo".'),
-    url: z.url().optional(),
+    url: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
     tier: z.enum(SPONSOR_TIERS),
     order: z.number().int().optional(),
     draft: z.boolean().default(false),

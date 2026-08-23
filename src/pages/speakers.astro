@@ -2,9 +2,10 @@
 import { getCollection, getEntry, render } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import SpeakerCard from '~/components/SpeakerCard.astro';
+import { compareOrder } from '~/lib/order';
 
 const speakers = (await getCollection('speakers', ({ data }) => !data.draft)).sort((a, b) => {
-  const byOrder = (a.data.order ?? 9999) - (b.data.order ?? 9999);
+  const byOrder = compareOrder(a.data.order, b.data.order);
   return byOrder !== 0 ? byOrder : a.data.name.localeCompare(b.data.name);
 });
 
@@ -18,9 +19,11 @@ const published = <T extends { data: { draft: boolean } }>(entry: T | undefined)
 const rendered = await Promise.all(
   speakers.map(async (speaker) => {
     const talk = published(speaker.data.talk ? await getEntry(speaker.data.talk) : undefined);
-    const edition = published(talk?.data.edition ? await getEntry(talk.data.edition) : undefined);
     const { Content } = await render(speaker);
-    return { speaker, Content, talkHref: edition ? `/events/${edition.id}` : '/talks' };
+    // The talk card on /talks is the only thing on the site that addresses a
+    // single talk, so that is where "Watch the talk" goes. Without a published
+    // talk there is nothing to point at but the archive.
+    return { speaker, Content, talkHref: talk ? `/talks#${talk.id}` : '/talks' };
   }),
 );
 ---

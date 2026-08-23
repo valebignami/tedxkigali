@@ -8,6 +8,7 @@ import TalkCard from '~/components/TalkCard.astro';
 import { eventEnd, eventState, isBookable, ticketStatusLine } from '~/lib/events';
 import { resolveUploadedImage } from '~/lib/images';
 import { canonicalUrl } from '~/lib/seo';
+import { formatEventDate } from '~/lib/dates';
 
 export async function getStaticPaths() {
   const events = await getCollection('events', ({ data }) => !data.draft);
@@ -26,11 +27,7 @@ const image = data.image ? resolveUploadedImage(data.image) : null;
 // Absolute url, required by social networks for the preview image.
 const ogImage = image && Astro.site ? new URL(image.src, Astro.site).toString() : undefined;
 
-const dateLabel = new Intl.DateTimeFormat('en-GB', {
-  dateStyle: 'full',
-  timeStyle: 'short',
-  timeZone: 'Africa/Kigali',
-}).format(data.startDate);
+const dateLabel = formatEventDate(data.startDate);
 
 const { Content } = await render(event);
 

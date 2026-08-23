@@ -21,10 +21,13 @@ const uploaded = thumbnail ? resolveUploadedImage(thumbnail) : null;
 const year = date.getUTCFullYear();
 ---
 
+<!-- The id makes a single talk addressable: /talks#<id> is the only link on
+     the site that reaches one talk, and scroll-mt keeps it clear of the
+     sticky header when a visitor arrives on the fragment. -->
 <article
-  class="group flex flex-col overflow-hidden rounded-lg border border-line bg-surface"
+  id={talk.id}
+  class="group flex scroll-mt-24 flex-col overflow-hidden rounded-lg border border-line bg-surface"
   data-talk
-  data-year={year}
   data-edition={talk.data.edition?.id ?? ''}
   data-tags={tags.join('|')}
 >

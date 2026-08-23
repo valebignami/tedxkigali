@@ -1,28 +1,28 @@
 // The site is static: an event could otherwise stay "upcoming" until the next
 // build. This re-checks every card against the visitor's clock on page load.
 //
-// The duration is imported, never re-declared: the build stamps data-event-end
-// with it and this script falls back to it, so two copies drifting apart would
-// make the page disagree with itself about when an event ends.
-import { DEFAULT_EVENT_DURATION_MS, PAST_EVENT_TICKET_LABEL } from '~/lib/events';
+// eventState is imported, never re-implemented. Its tests were hardened around
+// the exact end instant, and a second copy of that comparison here would let a
+// <= turned into a < ship with a green suite — the booking button would vanish
+// a millisecond early, or linger, with nothing to catch it.
+import { eventState, PAST_EVENT_TICKET_LABEL } from '~/lib/events';
 
 const upcoming = document.querySelector<HTMLElement>('#events-upcoming');
 const past = document.querySelector<HTMLElement>('#events-past');
 
-function endOf(card: HTMLElement, start: number): number {
-  const raw = card.dataset.eventEnd;
-  const end = raw ? Date.parse(raw) : Number.NaN;
-  return Number.isFinite(end) && end > start ? end : start + DEFAULT_EVENT_DURATION_MS;
-}
-
 function refresh(): void {
-  const now = Date.now();
+  const now = new Date();
 
   document.querySelectorAll<HTMLElement>('article[data-event]').forEach((card) => {
-    const start = Date.parse(card.dataset.eventStart ?? '');
-    if (!Number.isFinite(start)) return;
+    const start = new Date(card.dataset.eventStart ?? '');
+    if (Number.isNaN(start.getTime())) return;
 
-    const state = now < start ? 'upcoming' : now <= endOf(card, start) ? 'live' : 'past';
+    // An unparsable or missing end date becomes null, which is what eventEnd
+    // inside eventState turns into the default duration.
+    const rawEnd = card.dataset.eventEnd;
+    const end = rawEnd ? new Date(rawEnd) : null;
+
+    const state = eventState(start, end, now);
     card.dataset.eventState = state;
 
     const badge = card.querySelector<HTMLElement>('[data-live-badge]');

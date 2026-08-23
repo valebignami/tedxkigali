@@ -20,6 +20,9 @@ const past = events
   <section class="mx-auto max-w-6xl px-4 py-16">
     <h1 class="text-4xl font-black uppercase md:text-6xl">Events</h1>
 
+    <!-- No data-event-section here: that attribute hides a section once every
+         card inside it is past, which is what the home page needs and what this
+         page must not do — its own id is toggled by the same script instead. -->
     <div id="events-upcoming-section" class="mt-12" hidden={upcoming.length === 0}>
       <h2 class="text-2xl font-bold uppercase tracking-wide">Upcoming</h2>
       <div id="events-upcoming" class="mt-6 grid gap-6 md:grid-cols-2">
@@ -31,6 +34,8 @@ const past = events
       No event is scheduled right now. Follow us on social media to hear about the next one first.
     </p>
 
+    <!-- Same here, and more sharply: every card in the archive is past, so
+         data-event-section would make the archive hide itself. -->
     <div id="events-past-section" class="mt-16" hidden={past.length === 0}>
       <h2 class="text-2xl font-bold uppercase tracking-wide">Past editions</h2>
       <div id="events-past" class="mt-6 grid gap-6 md:grid-cols-2">

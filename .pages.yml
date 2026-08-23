@@ -1,7 +1,7 @@
 media:
   input: src/assets/uploads
   output: src/assets/uploads
-  extensions: [jpg, jpeg, png, webp, svg]
+  extensions: [jpg, jpeg, png, webp, avif, svg]
 
 content:
   - name: events
@@ -136,7 +136,8 @@ content:
       - { name: tagline, label: Tagline, type: string, required: true }
       - { name: heroTitle, label: Home page headline, type: string, required: true }
       - { name: heroSubtitle, label: Home page intro, type: text, required: true }
-      - { name: aboutShort, label: Short about text, type: text, required: true }
+      - { name: aboutShort, label: Short about text, type: text, required: true, description: 'One or two sentences. Shown on the home page and at the top of the About page.' }
+      - { name: aboutBody, label: About page text, type: text, required: true, description: 'The main text of the About page. Leave a blank line between two paragraphs to start a new paragraph.' }
       - { name: contactEmail, label: Contact email, type: string, required: true }
       - name: socials
         label: Social links

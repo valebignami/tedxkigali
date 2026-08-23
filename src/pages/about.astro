@@ -1,6 +1,13 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import { siteSettings } from '~/lib/settings';
+
+// The CMS field is plain text, which is all a volunteer needs: a blank line
+// starts a new paragraph, and nothing an editor types can produce markup.
+const aboutParagraphs = siteSettings.aboutBody
+  .split(/\n\s*\n/)
+  .map((paragraph) => paragraph.trim())
+  .filter((paragraph) => paragraph !== '');
 ---
 
 <BaseLayout title="About" description="What TEDxKigali is and how to take part.">
@@ -18,11 +25,7 @@ import { siteSettings } from '~/lib/settings';
       </p>
 
       <h2>TEDxKigali</h2>
-      <p>
-        TEDxKigali gathers speakers from across Rwanda — researchers, entrepreneurs, artists,
-        teachers and activists — and gives them a stage to share the idea they care about most.
-        Every talk is recorded and published here, free to watch.
-      </p>
+      {aboutParagraphs.map((paragraph) => <p>{paragraph}</p>)}
 
       <h2>Take part</h2>
       <p>

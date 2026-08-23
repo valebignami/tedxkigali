@@ -15,17 +15,24 @@ import { siteSettings } from '~/lib/settings';
       </p>
       <p>
         Two things are worth knowing all the same: the servers that host this site keep
-        standard logs that include IP addresses, and choosing to play a talk hands your
-        request to YouTube. Both are explained below.
+        standard logs that include IP addresses, and the preview images of the talks are
+        served by Google, so opening a page that lists talks reaches Google even before
+        you press play. Both are explained below.
       </p>
 
       <h2>Videos</h2>
       <p>
-        Talks are hosted on YouTube. Until you press play, your browser only loads the
-        preview image from <code>i.ytimg.com</code>. When you press play, the video is loaded
-        from <code>youtube-nocookie.com</code> and, from that moment, YouTube (Google) may
-        store data on your device and process your IP address under its own privacy policy.
-        Pressing play is your choice, and it is the only way this site contacts YouTube.
+        Talks are hosted on YouTube. Wherever a talk is listed, your browser loads its
+        still preview image from <code>i.ytimg.com</code>, a YouTube image server run by
+        Google. That happens as the page loads, without asking you, and it lets Google
+        see your IP address. It is the only request this site makes on load: no cookie
+        is set, no analytics run, and no video player is loaded.
+      </p>
+      <p>
+        The player itself only appears when you press play. From that moment the video is
+        loaded from <code>youtube-nocookie.com</code>, and YouTube (Google) may store data
+        on your device and process your IP address under its own privacy policy. That step
+        never happens unless you choose it.
       </p>
 
       <h2>Booking tickets</h2>

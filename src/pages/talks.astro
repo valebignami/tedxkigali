@@ -3,18 +3,21 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import TalkCard from '~/components/TalkCard.astro';
 import VideoJsonLd from '~/components/VideoJsonLd.astro';
+import { resolveEditions } from '~/lib/editions';
 
 const talks = (await getCollection('talks', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
 
+// Drafts are left out on purpose: an event hidden with "Hide from the website"
+// has no page, so resolveEditions must treat it as missing and stop the build
+// rather than let a talk advertise an edition nobody can open.
 const events = await getCollection('events', ({ data }) => !data.draft);
-const editionTitle = new Map(events.map((event) => [event.id, event.data.title]));
 
-const usedEditionIds = [...new Set(talks.map((talk) => talk.data.edition?.id).filter(Boolean))] as string[];
-const editions = usedEditionIds
-  .map((id) => ({ id, title: editionTitle.get(id) ?? id }))
-  .sort((a, b) => b.title.localeCompare(a.title));
+const { titleById, used: editions } = resolveEditions(
+  talks.map((talk) => ({ id: talk.id, editionId: talk.data.edition?.id })),
+  events.map((event) => ({ id: event.id, title: event.data.title, startDate: event.data.startDate })),
+);
 
 const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
 ---
@@ -32,7 +35,7 @@ const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
     </p>
 
     {editions.length > 0 && (
-      <div id="talk-filters" class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter talks by edition">
+      <div id="talk-filters" class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter talks by edition or tag">
         <button
           type="button"
           data-filter-kind="all"
@@ -78,10 +81,10 @@ const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
       <>
         <div id="talks-grid" class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {talks.map((talk) => (
-            <TalkCard talk={talk} editionTitle={talk.data.edition ? editionTitle.get(talk.data.edition.id) : undefined} />
+            <TalkCard talk={talk} editionTitle={talk.data.edition ? titleById.get(talk.data.edition.id) : undefined} />
           ))}
         </div>
-        <p id="talks-empty" hidden class="mt-10 text-muted">No talks in this edition yet.</p>
+        <p id="talks-empty" hidden class="mt-10 text-muted">No talks match this filter yet.</p>
       </>
     )}
   </section>

@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import { eventEnd, eventState, isBookable, ticketStatusLine } from '~/lib/events';
 import { resolveUploadedImage } from '~/lib/images';
+import { formatEventDate } from '~/lib/dates';
 
 interface Props {
   event: CollectionEntry<'events'>;
@@ -17,11 +18,7 @@ const state = eventState(data.startDate, data.endDate, now);
 const bookable = isBookable(state, ticketStatus) && !!data.bookingUrl;
 const image = data.image ? resolveUploadedImage(data.image) : null;
 
-const dateLabel = new Intl.DateTimeFormat('en-GB', {
-  dateStyle: 'full',
-  timeStyle: 'short',
-  timeZone: 'Africa/Kigali',
-}).format(data.startDate);
+const dateLabel = formatEventDate(data.startDate);
 ---
 
 <article

@@ -79,6 +79,11 @@ Tip: both talks and events have a **Hide from the website** toggle. Turn it on t
 take an entry off the site temporarily without deleting it (for example, to
 postpone an event) — turn it off again to bring it back.
 
+One thing to know before you hide an event: if any visible talk is linked to
+that edition, the rebuild stops and tells you which talk it is. That is on
+purpose — the talk would otherwise advertise an edition nobody can open. Either
+hide those talks too, or leave the event visible.
+
 ## 4. Adding a speaker or a partner
 
 Same steps, under **Speakers** and **Partners**. Every uploaded photo needs a short
@@ -89,6 +94,11 @@ are read aloud to visitors who use a screen reader.
 
 Open **Site texts**. These fields appear across the whole website, so read them
 twice before saving.
+
+- **Short about text** is the paragraph on the home page and at the top of the
+  About page.
+- **About page text** is the main text of the About page. Leave a blank line
+  between two paragraphs to start a new paragraph.
 
 The **TED licence notice** field is required by TED. Change its wording only if
 TED itself updates the required text.

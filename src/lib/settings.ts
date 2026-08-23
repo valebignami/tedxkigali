@@ -3,10 +3,11 @@
 // exist, while 'astro/zod' is a normal package subpath that resolves anywhere.
 import { z } from 'astro/zod';
 import raw from '~/content/settings/site.json';
+import { WEB_ADDRESS_MESSAGE } from '~/lib/content-messages';
 
 const socialLink = z.object({
   label: z.string().min(1),
-  url: z.url(),
+  url: z.url({ message: WEB_ADDRESS_MESSAGE }),
 });
 
 export const siteSettingsSchema = z.object({
@@ -15,6 +16,7 @@ export const siteSettingsSchema = z.object({
   heroTitle: z.string().min(1),
   heroSubtitle: z.string().min(1),
   aboutShort: z.string().min(1),
+  aboutBody: z.string().min(1),
   contactEmail: z.email(),
   socials: z.array(socialLink).default([]),
   seoDescription: z.string().min(1).max(300),
