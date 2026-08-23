@@ -17,7 +17,7 @@ import {
   BOOKING_LABEL_MESSAGE,
   DATE_MESSAGE,
   DISPLAY_ORDER_MESSAGE,
-  EVENT_END_BEFORE_START_MESSAGE,
+  EVENT_END_NOT_AFTER_START_MESSAGE,
   EVENT_IMAGE_ALT_MESSAGE,
   EVENT_SUMMARY_MESSAGE,
   EVENT_THEME_MESSAGE,
@@ -53,8 +53,7 @@ import { eventFilesInSubFolders, eventInSubFolderMessage } from '~/lib/event-fil
 import {
   missingTimeOfDayFields,
   missingTimeOfDayMessage,
-  offKigaliTimeFields,
-  offKigaliTimeMessage,
+  withKigaliEventTimes,
   writtenEventTitle,
 } from '~/lib/event-times';
 import { isValidScheduleTime } from '~/lib/schedule';
@@ -148,21 +147,27 @@ const talks = defineCollection({
 const EVENTS_DIR = './src/content/events';
 
 /**
- * The glob loader, plus the two checks that cannot be made from the loaded
- * data: whether the file sits somewhere the site can build a page for it, and
- * whether the times written in it are Kigali's.
+ * The glob loader, with the written times re-read as Kigali's on their way into
+ * the schema, plus the two checks that cannot be made from the loaded data:
+ * whether the file sits somewhere the site can build a page for it, and whether
+ * it carries a day with no time of day on it.
  *
- * These run whenever `load` runs, which is every `astro build` and every cold
- * start of `astro dev` — so nothing is ever published without them. They do
- * *not* run when the dev server picks up a change to a file it is already
- * watching: astro/dist/content/loaders/glob.js registers `watcher.on("change")`
- * and answers it with syncData() for that one entry, never with another call to
- * `load`. A maintainer who edits an event against a running dev server can
- * therefore see a wrong hour rendered green, and then be stopped by the next
- * build. Worse, `astro dev` daemonises: the error thrown here on a cold start
- * kills the server and the CLI prints only "Dev server process exited before
- * becoming ready", so the sentence written for the editor never reaches the
- * screen. Both are dev-only; production is gated by `astro build`.
+ * The re-reading survives everything, because it is wrapped around the
+ * `parseData` the glob loader closes over: astro/dist/content/loaders/glob.js
+ * destructures it once inside `load` and its watcher handlers reuse that same
+ * closure, so a file changed under a running dev server is corrected too.
+ *
+ * The two checks are weaker. They run whenever `load` runs, which is every
+ * `astro build` and every cold start of `astro dev` — so nothing is ever
+ * published without them — but *not* when the dev server picks up a change to a
+ * file it is already watching: that path calls syncData() for the one entry,
+ * never `load` again. A maintainer who moves an event into a sub-folder, or
+ * takes the time off its date, against a running dev server can therefore see
+ * it rendered green and be stopped by the next build. Worse, `astro dev`
+ * daemonises: the error thrown here on a cold start kills the server and the
+ * CLI prints only "Dev server process exited before becoming ready", so the
+ * sentence written for the editor never reaches the screen. Both are dev-only;
+ * production is gated by `astro build`.
  *
  * One mistake is reported per build, and a schema error in any event file is
  * reported before either of these, because files.load() throws on the first
@@ -173,7 +178,22 @@ function eventsLoader(): Loader {
   return {
     ...files,
     load: async (context) => {
-      await files.load(context);
+      // The one place an event's start and end can still be corrected. The
+      // frontmatter parser has already turned them into instants by applying
+      // whatever offset the file carried, and Pages CMS stamps an offset that
+      // means nothing (see src/lib/event-times.ts), so the written numbers are
+      // read again from the file and re-read as Kigali time on their way into
+      // the schema. Doing it here rather than in the schema is what lets the
+      // end-after-start rule below compare two instants that are both right.
+      await files.load({
+        ...context,
+        parseData: (props) =>
+          context.parseData(
+            props.filePath
+              ? { ...props, data: withKigaliEventTimes(props.data, readFileSync(props.filePath, 'utf8')) }
+              : props,
+          ),
+      });
       // Recursive, because a file one folder down is exactly what has to be
       // caught: the events route is single-segment, so such an event cannot be
       // published at all — see src/lib/event-files.ts. Without the recursion it
@@ -188,9 +208,6 @@ function eventsLoader(): Loader {
         if (undated.length > 0) {
           throw editorError(missingTimeOfDayMessage(writtenEventTitle(source) || fileName, undated));
         }
-        const wrong = offKigaliTimeFields(source);
-        if (wrong.length === 0) continue;
-        throw editorError(offKigaliTimeMessage(writtenEventTitle(source) || fileName, wrong));
       }
     },
   };
@@ -229,7 +246,7 @@ const events = defineCollection({
     // is not later than it, so without this the editor's mistake would be
     // swallowed and an invented end time published to Google as fact.
     .refine((data) => !data.endDate || data.endDate.getTime() > data.startDate.getTime(), {
-      message: EVENT_END_BEFORE_START_MESSAGE,
+      message: EVENT_END_NOT_AFTER_START_MESSAGE,
       path: ['endDate'],
     })
     .refine((data) => !requiresBookingUrl(data.ticketStatus) || !!data.bookingUrl, {

@@ -1,7 +1,7 @@
 ---
 title: "TEDxKigali 2026 — Rising"
-startDate: 2026-11-14T09:00:00+02:00
-endDate: 2026-11-14T18:00:00+02:00
+startDate: 2026-11-14T09:00:00
+endDate: 2026-11-14T18:00:00
 venue: "Kigali Convention Centre"
 address: "KG 2 Roundabout, Kigali, Rwanda"
 theme: "Rising"

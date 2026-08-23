@@ -3,7 +3,7 @@ import * as messages from '~/lib/content-messages';
 import { BOOKING_URL_MESSAGE, unknownFieldMessage } from '~/lib/content-rules';
 import { hiddenEditionMessage, missingEditionMessage } from '~/lib/editions';
 import { eventInSubFolderMessage } from '~/lib/event-files';
-import { missingTimeOfDayMessage, offKigaliTimeMessage } from '~/lib/event-times';
+import { missingTimeOfDayMessage } from '~/lib/event-times';
 import { notAnImageMessage } from '~/lib/image-files';
 import { imageNotFoundMessage } from '~/lib/images';
 import { missingTalkMessage } from '~/lib/speaker-talk';
@@ -23,7 +23,6 @@ const entries: Array<[string, string]> = [
   ['missingEditionMessage', missingEditionMessage('The market at dawn', 'tedxkigali-2027')],
   ['hiddenEditionMessage', hiddenEditionMessage('The market at dawn', 'TEDxKigali 2025 — Roots')],
   ['missingTalkMessage', missingTalkMessage('Aline Uwase', 'the-hills-that-listen')],
-  ['offKigaliTimeMessage', offKigaliTimeMessage('TEDxKigali 2026', ['Start date and time'])],
   ['missingTimeOfDayMessage', missingTimeOfDayMessage('TEDxKigali 2026', ['Start date and time'])],
   ['eventInSubFolderMessage', eventInSubFolderMessage('2027/tedxkigali-2027.md')],
   ['imageNotFoundMessage', imageNotFoundMessage('IMG_1234.JPG')],
