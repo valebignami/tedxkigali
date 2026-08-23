@@ -41,6 +41,64 @@ describe('resolveEditions', () => {
     expect(used.map((edition) => edition.id)).toEqual(['later', 'earlier']);
   });
 
+  // What the CMS writes. `value: '{name}'` in .pages.yml stores the file name,
+  // extension and all, and the site looks an event up by its id — see
+  // src/lib/stored-reference.ts. Both spellings are in the repository today.
+  it('resolves an edition stored as a file name, exactly like a bare id', () => {
+    const fromCms = resolveEditions([{ title: 'A talk', editionId: 'tedxkigali-2024.md' }], editions);
+    const byHand = resolveEditions([{ title: 'A talk', editionId: 'tedxkigali-2024' }], editions);
+    expect(fromCms.used.map((edition) => edition.id)).toEqual(['tedxkigali-2024']);
+    expect(fromCms.used).toEqual(byHand.used);
+  });
+
+  it('resolves an edition stored as a whole path', () => {
+    const { used } = resolveEditions(
+      [{ title: 'A talk', editionId: 'src/content/events/tedxkigali-2024.md' }],
+      editions,
+    );
+    expect(used.map((edition) => edition.id)).toEqual(['tedxkigali-2024']);
+  });
+
+  // Astro slugifies ids to lower case, so an event renamed to "Tedxkigali-2024"
+  // still has the id below and the reference still means it.
+  it('resolves an edition stored with capitals in it', () => {
+    const { used } = resolveEditions([{ title: 'A talk', editionId: 'TEDxKigali-2024.md' }], editions);
+    expect(used.map((edition) => edition.id)).toEqual(['tedxkigali-2024']);
+  });
+
+  it('treats an edition of nothing but spaces as no edition at all', () => {
+    const { used } = resolveEditions([{ title: 'A talk', editionId: '   ' }], editions);
+    expect(used).toEqual([]);
+  });
+
+  // Normalising must not soften the guard: a reference to an event that is not
+  // there still has to stop the build.
+  it('throws when the file name stored has no event behind it', () => {
+    expect(() =>
+      resolveEditions([{ title: 'The market at dawn', editionId: 'tedxkigali-2027.md' }], editions),
+    ).toThrow(/tedxkigali-2027\.md/);
+  });
+
+  // The volunteer is answered with the value that is actually written in their
+  // talk, not with the id the site derived from it: "tedxkigali-2027.md" is the
+  // string they, or the maintainer the message sends them to, can go and find.
+  it('quotes the value as it was stored, not the id looked up', () => {
+    expect(() =>
+      resolveEditions([{ title: 'The market at dawn', editionId: 'tedxkigali-2027.md' }], editions),
+    ).toThrow(missingEditionMessage('The market at dawn', 'tedxkigali-2027.md'));
+  });
+
+  // The hidden-event message is found through the normalised id too, or a talk
+  // filed from the CMS under a hidden event would fall through to the general
+  // message and be told to re-pick an edition that is still right there.
+  it('names a hidden edition by title even when the file name was stored', () => {
+    const published = editions.filter((edition) => edition.id !== 'tedxkigali-2025');
+    const allTitles = new Map(editions.map((edition) => [edition.id, edition.title]));
+    expect(() =>
+      resolveEditions([{ title: 'A talk', editionId: 'tedxkigali-2025.md' }], published, allTitles),
+    ).toThrow(/TEDxKigali 2025 — Roots/);
+  });
+
   it('throws when the edition does not exist', () => {
     expect(() =>
       resolveEditions([{ title: 'The market at dawn', editionId: 'tedxkigali-2027' }], editions),

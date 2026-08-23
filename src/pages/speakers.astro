@@ -16,17 +16,17 @@ const speakers = (await getCollection('speakers', ({ data }) => !data.draft)).so
 // volunteer and says the same thing in the vocabulary the message exists to
 // keep out. The draft flag has to travel with the talk either way, because a
 // hidden talk and a deleted one need opposite answers.
-const talksById = new Map((await getCollection('talks')).map((talk) => [talk.id, talk]));
+//
+// The map is handed whole to speakerTalkLink, which does the lookup: what
+// "Their talk" stores is the talk's file name, not its id, so the reference has
+// to be normalised first and that belongs in one place.
+const talksById = new Map(
+  (await getCollection('talks')).map((talk) => [talk.id, { id: talk.id, draft: talk.data.draft }]),
+);
 
 const rendered = await Promise.all(
   speakers.map(async (speaker) => {
-    const stored = speaker.data.talk;
-    const found = stored ? talksById.get(stored) : undefined;
-    const { href: talkHref } = speakerTalkLink(
-      speaker.data.name,
-      stored,
-      found && { id: found.id, draft: found.data.draft },
-    );
+    const { href: talkHref } = speakerTalkLink(speaker.data.name, speaker.data.talk, talksById);
     const { Content } = await render(speaker);
     return { speaker, Content, talkHref };
   }),

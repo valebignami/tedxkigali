@@ -6,10 +6,16 @@
 // caller cannot take the titles and forget the check.
 
 import { editorError } from '~/lib/editor-error';
+import { referencedId } from '~/lib/stored-reference';
 
 export interface TalkEditionRef {
   /** The talk's title, which is how the CMS lists it and how a volunteer finds it. */
   title: string;
+  /**
+   * The edition exactly as the talk file stores it, not an id: the CMS writes a
+   * file name here and the files written by hand write a bare id.
+   * referencedId() turns either into the id to look up.
+   */
   editionId?: string;
 }
 
@@ -93,14 +99,19 @@ export function resolveEditions(
   const used = new Map<string, EditionSummary>();
 
   for (const talk of talks) {
-    if (!talk.editionId) continue;
-    const edition = byId.get(talk.editionId);
+    // The stored value is kept for the message and never used to look anything
+    // up: it is the string written in the talk file, so it is the one a
+    // volunteer — or the maintainer the message sends them to — can go and find.
+    // The id is what the site searches by.
+    const wanted = referencedId(talk.editionId);
+    if (!wanted) continue;
+    const edition = byId.get(wanted);
     if (!edition) {
-      const hiddenTitle = titlesOfEveryEdition?.get(talk.editionId);
+      const hiddenTitle = titlesOfEveryEdition?.get(wanted);
       throw editorError(
         hiddenTitle
           ? hiddenEditionMessage(talk.title, hiddenTitle)
-          : missingEditionMessage(talk.title, talk.editionId),
+          : missingEditionMessage(talk.title, talk.editionId ?? wanted),
       );
     }
     used.set(edition.id, edition);

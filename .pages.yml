@@ -68,6 +68,14 @@ content:
       - { name: speaker, label: Speaker name, type: string, required: true }
       - { name: youtubeUrl, label: YouTube link, type: string, required: true, description: 'Open the talk on YouTube and copy the link from the address bar. A link to a single video is what is needed: a playlist, a channel page, a music.youtube.com link or anything copied out of YouTube Studio will not be accepted.' }
       - { name: date, label: Talk date, type: date, options: { format: 'yyyy-MM-dd' }, required: true }
+      # value: '{name}' writes the event's *file name*, extension included —
+      # `test.md` for the event whose Astro id is `test`, proved by the first
+      # real CMS session on 23/08/2026. It is left as it is because none of the
+      # tokens the reference field offers ({path}, {name}, {primary},
+      # {fields.<path>}, {<path>}) yields the name without the extension. The
+      # site normalises it instead, in src/lib/stored-reference.ts, which also
+      # keeps the bare ids in the hand-written files working. Changing this
+      # token, or removing that normalising, breaks every talk filed from the CMS.
       - name: edition
         label: Event edition
         type: reference
@@ -99,6 +107,8 @@ content:
       - { name: role, label: Role or organisation, type: string, description: 'Optional. Shown under the name, for example: Environmental researcher, University of Rwanda.' }
       - { name: photo, label: Photo, type: image }
       - { name: photoAlt, label: Photo description, type: string, description: 'Required if you upload a photo.' }
+      # Same reference field, same '{name}', same file name written into the
+      # file — see the note on a talk's edition above.
       - name: talk
         label: Their talk
         type: reference

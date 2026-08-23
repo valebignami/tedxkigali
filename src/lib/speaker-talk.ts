@@ -10,6 +10,7 @@
 //     particular and nobody was told.
 
 import { editorError } from '~/lib/editor-error';
+import { referencedId } from '~/lib/stored-reference';
 
 /** The build-failure message for a speaker whose talk is no longer there. */
 export function missingTalkMessage(speakerName: string, talkId: string): string {
@@ -29,16 +30,29 @@ export interface SpeakerTalkLink {
 }
 
 /**
- * The link for one speaker card. `talk` is what the site found for the stored
- * id: undefined means no such talk exists, which stops the build.
+ * The link for one speaker card.
+ *
+ * The talk is looked up here rather than by the page, because what is stored in
+ * "Their talk" is not an id: it is a reference field with `value: '{name}'` in
+ * .pages.yml, so the CMS writes the talk's file name — see
+ * src/lib/stored-reference.ts. Doing the lookup where the normalising happens
+ * is what keeps the two from drifting apart again.
+ *
+ * `talksById` must hold the hidden talks as well, because a hidden talk and a
+ * deleted one need opposite answers.
  */
 export function speakerTalkLink(
   speakerName: string,
   storedId: string | undefined,
-  talk: { id: string; draft: boolean } | undefined,
+  talksById: ReadonlyMap<string, { id: string; draft: boolean }>,
 ): SpeakerTalkLink {
-  if (!storedId) return { href: TALKS_ARCHIVE_HREF };
-  if (!talk) throw editorError(missingTalkMessage(speakerName, storedId));
+  const wanted = referencedId(storedId);
+  if (!wanted) return { href: TALKS_ARCHIVE_HREF };
+  const talk = talksById.get(wanted);
+  // The message quotes the value the speaker file actually holds, not the id
+  // derived from it: that is the string the volunteer, or the maintainer they
+  // forward the message to, can search for.
+  if (!talk) throw editorError(missingTalkMessage(speakerName, storedId ?? wanted));
   // The talk card on /talks is the only thing on the site that addresses a
   // single talk, so that is where "Watch the talk" goes. A hidden talk has no
   // card, so there is nothing to point at but the archive.

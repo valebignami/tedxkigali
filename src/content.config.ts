@@ -98,13 +98,21 @@ const scheduleEntry = strictObject({
   note: z.string(SCHEDULE_NOTE_MESSAGE).trim().optional(),
 });
 
-// The edition and the talk a speaker gave are plain stored ids, not Astro
+// The edition and the talk a speaker gave are plain stored strings, not Astro
 // reference() values. Astro checks a reference() by logging "Invalid content
 // reference: entry … in collection …" and then finishing the build with exit 0:
 // the raw sentence lands above the written one in the same log, and a talk
 // deleted out from under a speaker publishes a half-broken card. src/lib/
-// editions.ts and src/pages/speakers.astro make the same check themselves, in
+// editions.ts and src/lib/speaker-talk.ts make the same check themselves, in
 // words an editor can act on, and stop the build.
+//
+// What is stored is not the id either. Both fields are `reference` fields with
+// `value: '{name}'` in .pages.yml, and the CMS writes the referenced file's
+// name — `test.md` — where the site looks entries up by id — `test`. The files
+// written by hand hold the bare id. src/lib/stored-reference.ts turns both into
+// the id, and every lookup goes through it; nothing is validated about the
+// shape here, because a value in the wrong shape is not a mistake the volunteer
+// made or can fix.
 //
 // Every mistake these two fields can hold reaches the same message, because
 // the CMS only ever writes them by picking from a list: anything else in there

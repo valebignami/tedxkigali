@@ -4,6 +4,7 @@ import BaseLayout from '~/layouts/BaseLayout.astro';
 import TalkCard from '~/components/TalkCard.astro';
 import VideoJsonLd from '~/components/VideoJsonLd.astro';
 import { resolveEditions } from '~/lib/editions';
+import { referencedId } from '~/lib/stored-reference';
 
 const talks = (await getCollection('talks', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
@@ -26,6 +27,14 @@ const { titleById, used: editions } = resolveEditions(
   events.map((event) => ({ id: event.id, title: event.data.title, startDate: event.data.startDate })),
   everyEditionTitle,
 );
+
+// titleById is keyed by edition id, and a talk stores a file name, so the
+// stored value is normalised before it is used to look anything up — the same
+// step resolveEditions has already taken to decide the build may go on.
+const editionTitleOf = (stored: string | undefined) => {
+  const id = referencedId(stored);
+  return id ? titleById.get(id) : undefined;
+};
 
 const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
 ---
@@ -89,7 +98,7 @@ const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
       <>
         <div id="talks-grid" class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {talks.map((talk) => (
-            <TalkCard talk={talk} editionTitle={talk.data.edition ? titleById.get(talk.data.edition) : undefined} />
+            <TalkCard talk={talk} editionTitle={editionTitleOf(talk.data.edition)} />
           ))}
         </div>
         <p id="talks-empty" hidden class="mt-10 text-muted">No talks match this filter yet.</p>

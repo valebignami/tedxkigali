@@ -10,6 +10,7 @@ import { eventMapUrl } from '~/lib/maps';
 import { resolveUploadedImage } from '~/lib/images';
 import { canonicalUrl } from '~/lib/seo';
 import { formatEventDate } from '~/lib/dates';
+import { referencedId } from '~/lib/stored-reference';
 
 export async function getStaticPaths() {
   const events = await getCollection('events', ({ data }) => !data.draft);
@@ -38,7 +39,14 @@ const mapAriaLabel = `${venueLabel} — open in Google Maps`;
 
 const { Content } = await render(event);
 
-const talks = (await getCollection('talks', ({ data: talk }) => !talk.draft && talk.edition === event.id)).sort(
+// referencedId, not a plain comparison: the CMS files a talk under an edition
+// by writing the event's file name, and this page has only the event's id to
+// match it against. Without it the whole "Talks from this edition" section, and
+// the video structured data built from the same list, would be empty for every
+// talk a volunteer filed through the CMS.
+const talks = (
+  await getCollection('talks', ({ data: talk }) => !talk.draft && referencedId(talk.edition) === event.id)
+).sort(
   (a, b) => a.data.title.localeCompare(b.data.title),
 );
 

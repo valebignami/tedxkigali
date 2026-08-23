@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import { parseYouTubeId, youtubeThumbnails } from '~/lib/youtube';
 import { resolveUploadedImage } from '~/lib/images';
+import { referencedId } from '~/lib/stored-reference';
 
 interface Props {
   talk: CollectionEntry<'talks'>;
@@ -19,6 +20,12 @@ if (!videoId) throw new Error(`Talk "${talk.id}" has an unusable YouTube link.`)
 const thumbs = youtubeThumbnails(videoId);
 const uploaded = thumbnail ? resolveUploadedImage(thumbnail) : null;
 const year = date.getUTCFullYear();
+
+// The filter buttons on /talks carry edition ids, and this attribute is what
+// talk-filters.ts compares them against, so it has to hold the id and not the
+// file name the CMS stores. Left raw, a talk filed through the CMS would
+// disappear from its own edition's filter.
+const editionId = referencedId(talk.data.edition) ?? '';
 ---
 
 <!-- The id makes a single talk addressable: /talks#<id> is the only link on
@@ -28,7 +35,7 @@ const year = date.getUTCFullYear();
   id={talk.id}
   class="group flex scroll-mt-24 flex-col overflow-hidden rounded-lg border border-line bg-surface"
   data-talk
-  data-edition={talk.data.edition ?? ''}
+  data-edition={editionId}
   data-tags={tags.join('|')}
 >
   <button
