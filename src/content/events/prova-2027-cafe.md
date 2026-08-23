@@ -5,7 +5,7 @@ endDate: 2026-08-26T16:11:00
 venue: Convention center kigali
 summary: |
   test test test
-ticketStatus: open
+ticketStatus: coming-soon
 bookingLabel: Book your seat
 draft: false
 ---
