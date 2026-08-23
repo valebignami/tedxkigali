@@ -1,7 +1,12 @@
-// A speaker card can name the talk that speaker gave. Two things can go wrong
-// with that link and they need opposite answers, which is why they are told
-// apart here rather than both falling back to the talks archive:
+// A speaker card can name the talk that speaker gave. Three things can happen
+// and they need different answers, which is why they are told apart here rather
+// than all falling back to the talks archive:
 //
+//   - no talk was chosen. There is no button: a speaker can be on the site
+//     before their talk is filmed, or instead of ever giving one, and a button
+//     reading "Watch the talk" that lands on the archive promises a video that
+//     does not exist. This used to share the hidden-talk answer, and the first
+//     speaker added without a talk got exactly that button.
 //   - the talk is hidden. "Hide from the website" is documented as safe to use,
 //     and the card degrades on purpose — the button goes to the archive.
 //   - the talk was deleted. Nobody chose that consequence for this speaker, and
@@ -25,8 +30,11 @@ export function missingTalkMessage(speakerName: string, talkId: string): string 
 export const TALKS_ARCHIVE_HREF = '/talks';
 
 export interface SpeakerTalkLink {
-  /** The talk's own card when there is one, the archive when there is not. */
-  href: string;
+  /**
+   * The talk's own card; the archive when the talk is hidden; nothing at all
+   * when the speaker has no talk, which is what takes the button off the card.
+   */
+  href?: string;
 }
 
 /**
@@ -47,7 +55,7 @@ export function speakerTalkLink(
   talksById: ReadonlyMap<string, { id: string; draft: boolean }>,
 ): SpeakerTalkLink {
   const wanted = referencedId(storedId);
-  if (!wanted) return { href: TALKS_ARCHIVE_HREF };
+  if (!wanted) return {};
   const talk = talksById.get(wanted);
   // The message quotes the value the speaker file actually holds, not the id
   // derived from it: that is the string the volunteer, or the maintainer they

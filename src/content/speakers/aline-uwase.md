@@ -4,7 +4,7 @@ role: "Environmental researcher, University of Rwanda"
 talk: "2025-10-18-the-hills-that-listen"
 links:
   - { label: "LinkedIn", url: "https://www.linkedin.com/in/example" }
-order: 1
+order: 10
 ---
 
 Aline studies how Rwanda's landscape shapes the way communities talk to each other,

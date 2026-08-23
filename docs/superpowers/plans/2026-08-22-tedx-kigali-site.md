@@ -3461,7 +3461,7 @@ Aggiornare `contactEmail`, `socials` e `tedxLicenceNotice` in `src/content/setti
 
 - [ ] **Step 3: Sostituire i contenuti di esempio con quelli reali**
 
-Rimuovere tutti i contenuti di esempio (ventidue talk, undici eventi, una scheda speaker), inserendo i contenuti reali:
+Rimuovere tutti i contenuti di esempio (ventidue talk, undici eventi, dodici schede speaker), inserendo i contenuti reali:
 
 ```bash
 rm src/content/talks/2023-05-27-the-question-that-got-me-sent-out.md
@@ -3498,9 +3498,20 @@ rm src/content/events/tedxkigali-youth-2023.md
 rm src/content/events/tedxkigali-youth-2024.md
 rm src/content/events/tedxkigali-youth-2025.md
 rm src/content/speakers/aline-uwase.md
+rm src/content/speakers/ange-uwitonze.md
+rm src/content/speakers/beatrice-mukantwari.md
+rm src/content/speakers/chantal-mukagasana.md
+rm src/content/speakers/claudine-mukamana.md
+rm src/content/speakers/immaculee-nyirahabimana.md
+rm src/content/speakers/jean-paul-habimana.md
+rm src/content/speakers/keza-munyaneza.md
+rm src/content/speakers/kiza-saddam.md
+rm src/content/speakers/olivier-bizimana.md
+rm src/content/speakers/shema-ndayisaba.md
+rm src/content/speakers/sifa-mutoni.md
 ```
 
-> **Nessun contenuto di esempio deve sopravvivere al lancio.** I trentaquattro file elencati sopra sono l'intero contenuto di esempio del sito: ventidue talk che puntano tutti allo stesso video segnaposto, undici eventi inventati e una scheda speaker inventata. Sei di quei talk hanno `featured: true` e sono quelli che riempiono la home; sostituendoli con contenuti reali, ricordarsi di rimettere il flag su sei talk veri, altrimenti la home mostra semplicemente i sei piu' recenti. `src/content/sponsors/` e' vuoto e `src/content/settings/site.json` non e' contenuto di esempio, ma va comunque rivisto allo Step 2. L'edizione 2026 ha in piu' un `bookingUrl` verso `example-ticketing.com`, una `schedule` di esempio e una descrizione estesa con nomi di relatori inventati (Diane Uwimana, Eric Niyonzima, Aline Mukamana, Jean Bosco Habimana, Grace Ingabire, Patrick Nsengimana, Solange Umutoni, Claudine Mutesi, Robert Kayitare, Belise Ishimwe): anche questi sono fittizi e vanno via con il resto del file quando viene rimosso, non copiati nel contenuto reale. Su un sito TEDx reale sarebbero contenuti falsi.
+> **Nessun contenuto di esempio deve sopravvivere al lancio.** I quarantacinque file elencati sopra sono l'intero contenuto di esempio del sito: ventidue talk che puntano tutti allo stesso video segnaposto, undici eventi inventati e dodici schede speaker. Sei di quei talk hanno `featured: true` e sono quelli che riempiono la home; sostituendoli con contenuti reali, ricordarsi di rimettere il flag su sei talk veri, altrimenti la home mostra semplicemente i sei piu' recenti. `src/content/sponsors/` e' vuoto e `src/content/settings/site.json` non e' contenuto di esempio, ma va comunque rivisto allo Step 2. L'edizione 2026 ha in piu' un `bookingUrl` verso `example-ticketing.com`, una `schedule` di esempio e una descrizione estesa con nomi di relatori inventati (Diane Uwimana, Eric Niyonzima, Aline Mukamana, Jean Bosco Habimana, Grace Ingabire, Patrick Nsengimana, Solange Umutoni, Claudine Mutesi, Robert Kayitare, Belise Ishimwe): anche questi sono fittizi e vanno via con il resto del file quando viene rimosso, non copiati nel contenuto reale. Su un sito TEDx reale sarebbero contenuti falsi.
 >
 > **I contenuti di esempio non si dichiarano piu' tali.** Portavano un avviso "Sample content" visibile in cima a ogni pagina e in testa a ogni riassunto; il cliente ha chiesto di toglierlo il 23 agosto 2026 e l'avviso e' stato rimosso. Non c'e' quindi piu' alcun segnale, ne' sulla pagina ne' nel testo, che distingua un'edizione inventata da una vera: l'unico modo di accorgersene e' la lista qui sotto. Chi pubblica il sito deve fidarsi di questa checklist, non della pagina.
 >
@@ -3511,6 +3522,13 @@ rm src/content/speakers/aline-uwase.md
 > ricerca si costruiscono da quei campi, non dalla descrizione, quindi nessun avviso
 > visibile li raggiunge. E' un altro motivo per cui il contenuto di esempio deve
 > sparire **prima** che il dominio sia collegato, non dopo.
+>
+> **"Kiza Saddam" e' l'unico nome del sito che non e' inventato da qui.** L'ha
+> chiesto il committente il 23 agosto 2026. La scheda porta solo il nome, un ruolo
+> generico e un testo che dice di se' che e' un segnaposto: ruolo, biografia e foto
+> vanno sostituiti, oppure la scheda va tolta, prima del lancio. Se e' una persona
+> vera, il sito e' pubblico: tutto quello che c'e' scritto su quella scheda e'
+> gia' online.
 >
 > **Le otto edizioni Women, Youth, Kids e Countdown sono li' per far vedere una funzione, non per raccontare un fatto.** Sono state aggiunte il 23 agosto 2026 insieme ai programmi TEDx: sono le uniche edizioni di esempio con un `programme` diverso da `flagship`, e sono quelle che fanno comparire i titoli per programma nell'archivio, i gruppi di pulsanti nella pagina Talks e le cinque righe del blocco "Our programmes" nella pagina About. Rimuovendole, tutte e tre quelle cose spariscono da sole finche' non esiste una seconda edizione vera in un programma diverso: e' il comportamento voluto, non un guasto — con un solo programma il sito torna esattamente all'aspetto che aveva prima. Anche i nomi che contengono sono inventati (Chantal Mukagasana, Josiane Uwera, Divine Kamikazi, Immaculee Nyirahabimana, Sandrine Ineza, Keza Munyaneza, Yves Rugema, Neema Byiringiro, Alain Tuyishime, Peace Iradukunda, Ange Uwitonze, Fabrice Mugabo, Gloria Umurerwa, Olivier Bizimana, Shema Ndayisaba, Kevin Rurangwa, Innocent Habineza, Beatrice Mukantwari, Clarisse Uwamahoro, Nadine Gatera, Esperance Nyiraneza, Aimable Ndikumana, Sifa Mutoni, Emmanuel Ntwari, Liliane Uwineza, Bruno Habyarimana, Theoneste Mukeshimana, Aurore Uwase), come i 18 talk collegati. Inventate sono anche le sedi accostate a questi eventi (Lycee de Kigali, Groupe Scolaire Officiel de Butare, Norrsken House Kigali, Impact Hub Kigali e Kigali Public Library sono luoghi reali che non hanno mai ospitato nulla di tutto questo).
 >

@@ -15,8 +15,11 @@ describe('speakerTalkLink', () => {
     });
   });
 
-  it('points at the archive when no talk was chosen', () => {
-    expect(speakerTalkLink('Aline Uwase', undefined, talks)).toEqual({ href: TALKS_ARCHIVE_HREF });
+  // No button at all, rather than one pointing at the archive: a speaker can be
+  // on the site before their talk is filmed, and "Watch the talk" landing on a
+  // list of other people's talks is a promise the card cannot keep.
+  it('gives no link at all when no talk was chosen', () => {
+    expect(speakerTalkLink('Aline Uwase', undefined, talks)).toEqual({});
   });
 
   // "Hide from the website" is documented as safe, so a hidden talk has to keep
@@ -64,7 +67,7 @@ describe('speakerTalkLink', () => {
   });
 
   it('treats a field holding nothing but spaces as no talk chosen', () => {
-    expect(speakerTalkLink('Aline Uwase', '   ', talks)).toEqual({ href: TALKS_ARCHIVE_HREF });
+    expect(speakerTalkLink('Aline Uwase', '   ', talks)).toEqual({});
   });
 });
 
@@ -80,5 +83,19 @@ describe('missingTalkMessage', () => {
     expect(message).toMatch(/"Their talk"/);
     expect(message).toMatch(/add the talk back/i);
     expect(message).not.toMatch(/reference|collection|zod|undefined/i);
+  });
+});
+
+// The three answers are different on purpose, and this is the test that says so
+// in one place: the first speaker added with no talk got the hidden-talk answer
+// and shipped a "Watch the talk" button that landed on a list of other people's
+// talks.
+describe('the three answers are told apart', () => {
+  it('gives a card link, an archive link and no link at all', () => {
+    expect(speakerTalkLink('Aline Uwase', 'the-hills-that-listen', talks).href).toBe(
+      `${TALKS_ARCHIVE_HREF}#the-hills-that-listen`,
+    );
+    expect(speakerTalkLink('Aline Uwase', 'a-quiet-year', talks).href).toBe(TALKS_ARCHIVE_HREF);
+    expect(speakerTalkLink('Aline Uwase', undefined, talks).href).toBeUndefined();
   });
 });
