@@ -176,9 +176,11 @@ one into a heading on the website.
 Picking a programme changes three things, all by itself:
 
 - **Events** groups the past editions under a heading for each programme.
-- **Talks** groups the filter buttons the same way — but there is only a
-  button for an edition that has talks in it, so this one waits until two
-  programmes have a published talk between them.
+- **Talks** puts the programmes across the top as buttons. Press one and the
+  row of its editions opens underneath, with the programme name trimmed off the
+  front of each — *2025 — In the Room*, because the button you just pressed
+  already says Women. There is only a button for an edition that has talks in
+  it, so this row waits until two programmes have a published talk between them.
 - **About** gains an "Our programmes" block explaining what each one is.
 
 Each of the three appears only once that page has more than one programme to

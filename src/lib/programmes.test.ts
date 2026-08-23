@@ -5,6 +5,7 @@ import {
   PROGRAMMES,
   PROGRAMME_BLURBS,
   PROGRAMME_NAMES,
+  editionLabelUnder,
   programmesInOrder,
   type Programme,
 } from '~/lib/programmes';
@@ -109,5 +110,50 @@ describe('programmesInOrder', () => {
   it('returns one entry for a site that only runs the main edition', () => {
     const everyEventIsFlagship: Programme[] = ['flagship', 'flagship', 'flagship'];
     expect(programmesInOrder(everyEventIsFlagship)).toHaveLength(1);
+  });
+});
+
+describe('editionLabelUnder', () => {
+  it('drops the programme name the row above already carries', () => {
+    expect(editionLabelUnder('TEDxKigali Women 2025 — In the Room', 'women')).toBe(
+      '2025 — In the Room',
+    );
+    expect(editionLabelUnder('TEDxKigali Youth 2024 — First Draft', 'youth')).toBe(
+      '2024 — First Draft',
+    );
+  });
+
+  // The main edition's name is the prefix of every other programme's, so a
+  // flagship title must not be cut at "TEDxKigali " when it reads
+  // "TEDxKigali Women …" — it never does, because a title only reaches this
+  // function under its own programme.
+  it('leaves the main edition its year and theme', () => {
+    expect(editionLabelUnder('TEDxKigali 2026 — Rising', 'flagship')).toBe('2026 — Rising');
+  });
+
+  // An editor can title an edition anything. Cutting at a prefix that is not
+  // there, or cutting a title down to nothing, both lose the editor's words.
+  it('returns a title that does not start with the programme name unchanged', () => {
+    expect(editionLabelUnder("Women's Day 2025", 'women')).toBe("Women's Day 2025");
+    expect(editionLabelUnder('The Kigali Youth Forum', 'youth')).toBe('The Kigali Youth Forum');
+  });
+
+  it('returns a title that is only the programme name unchanged', () => {
+    expect(editionLabelUnder('TEDxKigali Kids', 'kids')).toBe('TEDxKigali Kids');
+    expect(editionLabelUnder('TEDxKigali Kids   ', 'kids')).toBe('TEDxKigali Kids   ');
+  });
+
+  // What is left has to stay inside the full title, or the visible words on the
+  // button stop being part of its accessible name — WCAG 2.5.3.
+  it('leaves what it returns inside the full title', () => {
+    for (const title of [
+      'TEDxKigali Women 2025 — In the Room',
+      'TEDxKigali 2026 — Rising',
+      "Women's Day 2025",
+    ]) {
+      for (const programme of PROGRAMMES) {
+        expect(title).toContain(editionLabelUnder(title, programme));
+      }
+    }
   });
 });

@@ -45,10 +45,16 @@ TED's and the field is a fixed list, because the name of a licensed TEDx event
 is part of its licence — nobody types one.
 
 Nothing about the programmes is shown until more than one of them has a
-published event. Then the events archive and the talk filters group themselves
-under programme headings and the About page grows an "Our programmes" block.
-A site running only the main edition looks exactly as it did before the field
-existed, and the About page never names a programme that has not happened.
+published event. Then the events archive groups itself under a heading per
+programme, the talks page leads with a row of programme buttons that opens the
+row of that programme's editions, and the About page grows an "Our programmes"
+block. A site running only the main edition looks exactly as it did before the
+field existed, and the About page never names a programme that has not happened.
+
+The talks page shows the programmes first and the editions second because the
+other way round does not scale: one button per edition, grouped under headings,
+made a filter bar 512px tall at eleven editions — taller than the first row of
+cards. Two levels keep it at 108px whatever the archive grows to.
 
 ## How the video player works
 

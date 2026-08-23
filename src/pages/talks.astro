@@ -5,7 +5,12 @@ import FilterButton from '~/components/FilterButton.astro';
 import TalkCard from '~/components/TalkCard.astro';
 import VideoJsonLd from '~/components/VideoJsonLd.astro';
 import { resolveEditions } from '~/lib/editions';
-import { DEFAULT_PROGRAMME, PROGRAMME_NAMES, programmesInOrder } from '~/lib/programmes';
+import {
+  DEFAULT_PROGRAMME,
+  PROGRAMME_NAMES,
+  editionLabelUnder,
+  programmesInOrder,
+} from '~/lib/programmes';
 import { referencedId } from '~/lib/stored-reference';
 
 const talks = (await getCollection('talks', ({ data }) => !data.draft)).sort(
@@ -44,19 +49,36 @@ const editionTitleOf = (stored: string | undefined) => {
 // throw on an id it did not expect.
 const programmeOfEdition = new Map(events.map((event) => [event.id, event.data.programme]));
 const programmeOf = (editionId: string) => programmeOfEdition.get(editionId) ?? DEFAULT_PROGRAMME;
+const programmeOfTalk = (stored: string | undefined) => {
+  const id = referencedId(stored);
+  return id && programmeOfEdition.has(id) ? programmeOfEdition.get(id)! : undefined;
+};
 
-// The edition buttons are sorted into programmes, and a programme name is
-// printed above its buttons only once there is more than one — a single
-// "TEDxKigali" line over every button on the page organises nothing. Inside a
-// programme the editions keep the order resolveEditions gave them, newest first.
-const editionGroups = programmesInOrder(editions.map((edition) => programmeOf(edition.id))).map(
+// The programmes come first and the editions of one appear underneath it, so
+// the row of pills is two lines high whatever happens later: an organisation
+// with thirty editions gets the same five buttons as one with six. Listing
+// every edition at the top level was the first design, and at eleven editions
+// its filter bar was taller than the first row of cards.
+//
+// Only the programmes with an edition that has talks: `editions` is
+// resolveEditions' `used`, so an edition nobody has filmed yet — the next one,
+// usually — has no button here and no programme of its own to open.
+const programmeGroups = programmesInOrder(editions.map((edition) => programmeOf(edition.id))).map(
   (programme) => ({
     programme,
     name: PROGRAMME_NAMES[programme],
+    // The word the mark does not already say — "Women", not "TEDxKigali
+    // Women" — because "TEDxKigali" is the name at the top of every page. The
+    // full name is the button's accessible name.
+    short: editionLabelUnder(PROGRAMME_NAMES[programme], DEFAULT_PROGRAMME),
     editions: editions.filter((edition) => programmeOf(edition.id) === programme),
   }),
 );
-const groupedFilters = editionGroups.length > 1;
+
+// With one programme there is nothing to sort into, and a single button reading
+// "TEDxKigali" would filter to everything. The editions go back to being the
+// top row, which is what this page was before programmes existed.
+const grouped = programmeGroups.length > 1;
 
 const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
 ---
@@ -74,37 +96,58 @@ const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
     </p>
 
     {editions.length > 0 && (
-      <div id="talk-filters" class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter talks by edition or tag">
+      <div
+        id="talk-filters"
+        class="mt-10 flex flex-wrap gap-2"
+        role="group"
+        aria-label="Filter talks by programme, edition or topic"
+      >
         <FilterButton kind="all" value="all" label="All" pressed />
 
-        {editionGroups.map((group) =>
-          groupedFilters ? (
-            <div
-              class="mt-3 flex w-full flex-wrap gap-2"
-              role="group"
-              aria-labelledby={`talk-filters-${group.programme}`}
-            >
-              <p
-                id={`talk-filters-${group.programme}`}
-                class="w-full text-xs font-bold uppercase tracking-widest text-muted"
+        {grouped ? (
+          <>
+            {programmeGroups.map((group) => (
+              <FilterButton
+                kind="programme"
+                value={group.programme}
+                label={group.short}
+                accessibleName={group.short === group.name ? undefined : group.name}
+              />
+            ))}
+
+            {/* One row per programme, all of them built and all but one hidden.
+                Built here rather than assembled by the script: the markup is
+                then the same thing the page was tested with, and the row that
+                opens has nothing to construct first. */}
+            {programmeGroups.map((group) => (
+              <div
+                class="mt-1 flex w-full flex-wrap gap-2 rounded-lg border border-dashed border-line bg-bg p-3"
+                data-editions-for={group.programme}
+                role="group"
+                aria-label={`Editions of ${group.name}`}
+                hidden
               >
-                {group.name}
-              </p>
-              {group.editions.map((edition) => (
-                <FilterButton kind="edition" value={edition.id} label={edition.title} />
-              ))}
-            </div>
-          ) : (
-            group.editions.map((edition) => (
-              <FilterButton kind="edition" value={edition.id} label={edition.title} />
-            ))
-          ),
+                {group.editions.map((edition) => (
+                  <FilterButton
+                    kind="edition"
+                    value={edition.id}
+                    label={editionLabelUnder(edition.title, group.programme)}
+                    accessibleName={edition.title}
+                  />
+                ))}
+              </div>
+            ))}
+          </>
+        ) : (
+          editions.map((edition) => (
+            <FilterButton kind="edition" value={edition.id} label={edition.title} />
+          ))
         )}
 
-        <!-- Labelled whether or not the editions above are grouped. Once they
-             are, an unlabelled row of pills under the last programme heading
-             reads as more of that programme; and even alone, nothing on the
-             page said what the small pills were. -->
+        {/* Labelled whether or not the pills above are split by programme.
+            Once they are, an unlabelled row under the programme buttons reads
+            as more of them; and even alone, nothing on the page said what the
+            small pills were. */}
         {tags.length > 0 && (
           <div class="mt-3 flex w-full flex-wrap gap-2" role="group" aria-labelledby="talk-filters-topics">
             <p id="talk-filters-topics" class="w-full text-xs font-bold uppercase tracking-widest text-muted">
@@ -124,7 +167,11 @@ const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
       <>
         <div id="talks-grid" class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {talks.map((talk) => (
-            <TalkCard talk={talk} editionTitle={editionTitleOf(talk.data.edition)} />
+            <TalkCard
+              talk={talk}
+              editionTitle={editionTitleOf(talk.data.edition)}
+              programme={programmeOfTalk(talk.data.edition)}
+            />
           ))}
         </div>
         <p id="talks-empty" hidden class="mt-10 text-muted">No talks match this filter yet.</p>

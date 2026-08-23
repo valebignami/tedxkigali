@@ -320,3 +320,32 @@ in un programma diverso, nulla di tutto questo si vede. Sono contenuti
 inventati come gli altri e vanno via con il resto al lancio — Task 18 del piano
 li elenca e spiega che togliendoli i raggruppamenti spariscono da soli, il che
 e' il comportamento voluto.
+
+### La barra dei filtri: due livelli, non uno (23 agosto 2026)
+
+Il primo layout raggruppava i pulsanti delle edizioni sotto un titolo per
+programma. Il committente l'ha bocciato guardandolo, e aveva ragione: ogni
+pulsante ripeteva la parola scritta sopra di lui — "TEDxKigali Women" due volte
+a dieci pixel di distanza — e la barra cresceva con l'archivio.
+
+La misura che ha deciso: con undici edizioni quella barra era alta **512px**,
+piu' della prima fila di schede. Il layout adottato ne misura **108px** su
+desktop e **222px** a 390px di larghezza, e resta di due righe qualunque cosa
+succeda all'archivio, perche' il primo livello sono i cinque programmi e non le
+edizioni.
+
+Le etichette del secondo livello perdono il nome del programma
+(`editionLabelUnder` in `src/lib/programmes.ts`): il pulsante premuto sopra lo
+dice gia'. Il titolo intero resta nel nome accessibile, altrimenti l'etichetta
+visibile smetterebbe di essere contenuta in quello che lo screen reader
+annuncia (WCAG 2.5.3). Il taglio avviene solo se il titolo comincia davvero con
+il nome del programma: un titolo scritto a modo suo dal redattore torna intero,
+e cosi' anche un titolo che sarebbe rimasto vuoto.
+
+Sono stati valutati e scartati: un menu a tendina per le edizioni (piu'
+compatto, ma un menu chiuso non dice quante edizioni ci sono, ed e' l'unico
+oggetto di un'altra specie su una pagina di pulsanti) e la divisione della
+griglia dei talk in sezioni come l'archivio (coerente, ma perde il filtro per
+singola edizione e con ventidue talk fa scorrere invece di scegliere). Il
+mock-up con i quattro layout a confronto e' stato costruito e mostrato prima di
+scrivere una riga di sito.

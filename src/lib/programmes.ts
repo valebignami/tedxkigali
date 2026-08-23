@@ -68,3 +68,26 @@ export function programmesInOrder(present: Iterable<Programme>): Programme[] {
   const wanted = new Set(present);
   return PROGRAMMES.filter((programme) => wanted.has(programme));
 }
+
+/**
+ * The part of an edition's title that its programme has not already said.
+ *
+ * The talks page shows the programmes in one row and the editions of the chosen
+ * one in the row below, so "TEDxKigali Women 2025 — In the Room" under a pressed
+ * button reading "Women" prints the same words twice. This drops the prefix and
+ * leaves "2025 — In the Room".
+ *
+ * Only when the title really begins with the programme name. An editor may
+ * title an edition anything, and guessing at somebody's title is how you lose
+ * it: anything else comes back whole. So does a title that is nothing but the
+ * programme name, which would otherwise leave a button with no words on it.
+ *
+ * The full title still has to reach the button's accessible name, or the
+ * shortened one stops being contained in it — see WCAG 2.5.3, Label in Name.
+ */
+export function editionLabelUnder(title: string, programme: Programme): string {
+  const prefix = `${PROGRAMME_NAMES[programme]} `;
+  if (!title.startsWith(prefix)) return title;
+  const rest = title.slice(prefix.length).trim();
+  return rest === '' ? title : rest;
+}

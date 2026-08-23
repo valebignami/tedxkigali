@@ -8,9 +8,17 @@ import { referencedId } from '~/lib/stored-reference';
 interface Props {
   talk: CollectionEntry<'talks'>;
   editionTitle?: string;
+  /**
+   * The programme of the edition this talk was filmed at. A talk has none of
+   * its own, so it is passed in rather than read from the talk: the two can
+   * then never disagree. Left out when the talk has no edition, which is why
+   * the attribute below can be empty and the programme filter simply never
+   * matches such a card.
+   */
+  programme?: string;
 }
 
-const { talk, editionTitle } = Astro.props;
+const { talk, editionTitle, programme } = Astro.props;
 const { title, speaker, youtubeUrl, thumbnail, thumbnailAlt, summary, date, tags } = talk.data;
 
 // The schema already guarantees this parses; the guard keeps TypeScript honest.
@@ -36,6 +44,7 @@ const editionId = referencedId(talk.data.edition) ?? '';
   class="group flex scroll-mt-24 flex-col overflow-hidden rounded-lg border border-line bg-surface"
   data-talk
   data-edition={editionId}
+  data-programme={programme ?? ''}
   data-tags={tags.join('|')}
 >
   <button

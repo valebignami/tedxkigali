@@ -69,7 +69,7 @@ content:
         label: TEDx programme
         type: select
         default: flagship
-        description: 'Which TEDx programme this edition belongs to — not the running order of the day, which is "Programme of the day" further down. Leave it on "TEDxKigali" for a main edition. It groups the archive on the Events page and the buttons on the Talks page, and it puts the programme on the About page. None of it shows while there is only one programme on the website: with one, every page looks exactly as it did before, which is correct and not a fault. A programme reaches the About page on the day its first event goes live.'
+        description: 'Which TEDx programme this edition belongs to — not the running order of the day, which is "Programme of the day" further down. Leave it on "TEDxKigali" for a main edition. It groups the archive on the Events page, it puts the programmes across the top of the Talks page, and it puts this one on the About page. None of it shows while there is only one programme on the website: with one, every page looks exactly as it did before, which is correct and not a fault. A programme reaches the About page on the day its first event goes live.'
         options:
           values:
             - { value: flagship, label: TEDxKigali }
