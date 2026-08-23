@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { parseYouTubeId, youtubeEmbedUrl, youtubeThumbnails, youtubeWatchUrl } from '~/lib/youtube';
+import { toJsonLd } from '~/lib/seo';
+
+interface Props {
+  talks: CollectionEntry<'talks'>[];
+}
+
+const { talks } = Astro.props;
+
+const items = talks.flatMap((talk) => {
+  const id = parseYouTubeId(talk.data.youtubeUrl);
+  if (!id) return [];
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'VideoObject',
+      name: talk.data.title,
+      description: talk.data.summary ?? `${talk.data.title} — a TEDxKigali talk by ${talk.data.speaker}.`,
+      thumbnailUrl: youtubeThumbnails(id).primary,
+      uploadDate: talk.data.date.toISOString(),
+      contentUrl: youtubeWatchUrl(id),
+      embedUrl: youtubeEmbedUrl(id),
+      publisher: { '@type': 'Organization', name: 'TEDxKigali' },
+    },
+  ];
+});
+---
+
+{items.map((item) => <script type="application/ld+json" is:inline set:html={toJsonLd(item)}></script>)}

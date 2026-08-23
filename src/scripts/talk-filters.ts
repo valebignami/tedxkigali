@@ -2,12 +2,16 @@ const filters = document.querySelector<HTMLElement>('#talk-filters');
 const grid = document.querySelector<HTMLElement>('#talks-grid');
 const empty = document.querySelector<HTMLElement>('#talks-empty');
 
-function apply(value: string): void {
+function apply(kind: string, value: string): void {
   if (!grid) return;
 
   let visible = 0;
   grid.querySelectorAll<HTMLElement>('[data-talk]').forEach((card) => {
-    const matches = value === 'all' || card.dataset.edition === value;
+    const matches =
+      value === 'all' ||
+      (kind === 'edition' && card.dataset.edition === value) ||
+      (kind === 'tag' && (card.dataset.tags ?? '').split('|').includes(value));
+
     card.hidden = !matches;
     if (matches) visible += 1;
   });
@@ -23,5 +27,5 @@ filters?.addEventListener('click', (event) => {
     other.setAttribute('aria-pressed', String(other === button));
   });
 
-  apply(button.dataset.filterValue ?? 'all');
+  apply(button.dataset.filterKind ?? 'edition', button.dataset.filterValue ?? 'all');
 });
