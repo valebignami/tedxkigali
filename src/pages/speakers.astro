@@ -1,0 +1,37 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import SpeakerCard from '~/components/SpeakerCard.astro';
+
+const speakers = (await getCollection('speakers', ({ data }) => !data.draft)).sort((a, b) => {
+  const byOrder = (a.data.order ?? 9999) - (b.data.order ?? 9999);
+  return byOrder !== 0 ? byOrder : a.data.name.localeCompare(b.data.name);
+});
+
+const rendered = await Promise.all(
+  speakers.map(async (speaker) => {
+    const talk = speaker.data.talk ? await getEntry(speaker.data.talk) : undefined;
+    const edition = talk?.data.edition ? await getEntry(talk.data.edition) : undefined;
+    const { Content } = await render(speaker);
+    return { speaker, Content, talkHref: edition ? `/events/${edition.id}` : '/talks' };
+  }),
+);
+---
+
+<BaseLayout title="Speakers" description="The people who have taken the TEDxKigali stage.">
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h1 class="text-4xl font-black uppercase md:text-6xl">Speakers</h1>
+
+    {rendered.length === 0 ? (
+      <p class="mt-8 text-muted">Speaker profiles are on their way.</p>
+    ) : (
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {rendered.map(({ speaker, Content, talkHref }) => (
+          <SpeakerCard speaker={speaker} talkHref={talkHref}>
+            <Content />
+          </SpeakerCard>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>

@@ -64,4 +64,25 @@ const events = defineCollection({
     }),
 });
 
-export const collections = { talks, events };
+const speakers = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/speakers' }),
+  schema: z
+    .object({
+      name: z.string().min(1),
+      role: z.string().optional(),
+      photo: uploadPath.optional(),
+      photoAlt: z.string().optional(),
+      talk: reference('talks').optional(),
+      links: z
+        .array(z.object({ label: z.string().min(1), url: z.url() }))
+        .default([]),
+      order: z.number().int().optional(),
+      draft: z.boolean().default(false),
+    })
+    .refine((data) => !data.photo || (data.photoAlt ?? '').trim() !== '', {
+      message: 'Describe the photo in "Photo description" so screen readers can read it.',
+      path: ['photoAlt'],
+    }),
+});
+
+export const collections = { talks, events, speakers };

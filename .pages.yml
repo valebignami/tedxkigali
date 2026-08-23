@@ -72,6 +72,36 @@ content:
       - { name: tags, label: Tags, type: string, list: true, description: 'Optional keywords used to filter the talks page, for example: community, climate, public speaking.' }
       - { name: draft, label: Hide from the website, type: boolean, default: false }
 
+  - name: speakers
+    label: Speakers
+    type: collection
+    path: src/content/speakers
+    filename: '{fields.name}.md'
+    view:
+      fields: [name, role]
+    fields:
+      - { name: name, label: Full name, type: string, required: true }
+      - { name: role, label: Role or organisation, type: string }
+      - { name: photo, label: Photo, type: image }
+      - { name: photoAlt, label: Photo description, type: string, description: 'Required if you upload a photo.' }
+      - name: talk
+        label: Their talk
+        type: reference
+        options:
+          collection: talks
+          value: '{name}'
+          label: '{fields.title}'
+      - name: links
+        label: Links
+        type: object
+        list: true
+        fields:
+          - { name: label, label: Name, type: string, required: true }
+          - { name: url, label: Link, type: string, required: true }
+      - { name: order, label: Display order, type: number, description: 'Lower numbers appear first.' }
+      - { name: draft, label: Hide from the website, type: boolean, default: false }
+      - { name: body, label: Short biography, type: rich-text }
+
   - name: settings
     label: Site texts
     type: file

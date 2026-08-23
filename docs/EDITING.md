@@ -80,8 +80,8 @@ postpone an event) — turn it off again to bring it back.
 
 ## 4. Adding a speaker or a partner
 
-Same steps, under **Speakers** and **Partners**. Every uploaded photo or logo needs
-a short **description** — it is read aloud to visitors who use a screen reader.
+Same steps, under **Speakers** and **Partners**. Every uploaded photo needs a short
+**Photo description** — it is read aloud to visitors who use a screen reader.
 
 ## 5. Changing the home page or About text
 
