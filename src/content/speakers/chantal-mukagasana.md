@@ -1,7 +1,7 @@
 ---
 name: "Chantal Mukagasana"
 role: "Trader, Kimironko market"
-talk: "2025-03-08-the-quiet-economics-of-a-market-stall"
+talk: "2025-03-08-the-quiet-economics-of-a-market-stall.md"
 order: 40
 ---
 

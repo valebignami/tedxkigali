@@ -1,3 +1,4 @@
+import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { referencedId } from '~/lib/stored-reference';
 
@@ -60,5 +61,35 @@ describe('referencedId', () => {
 
   it('ignores the spaces around a value typed by hand', () => {
     expect(referencedId('  tedxkigali-2026.md  ')).toBe('tedxkigali-2026');
+  });
+});
+
+// The content on disk, held to the shape the CMS writes.
+//
+// referencedId() takes either form and the site builds the same page from both,
+// so nothing here is about the website. It is about the form: Pages CMS matches
+// a reference against its own list of options, whose values are file names with
+// the extension on them. A file written by hand with the bare id matches
+// nothing, so the field shows that id in place of the title the volunteer would
+// have picked — "tedxkigali-women-2025" where the help text says to pick
+// "TEDxKigali Women 2025 — In the Room" from a list. Every talk and every
+// speaker on the site read like that until 23 August 2026.
+describe('the references stored in the content', () => {
+  const stored = (dir: string, key: string): Array<[string, string]> => {
+    const pattern = new RegExp('^' + key + ': "([^"]+)"$', 'm');
+    const out: Array<[string, string]> = [];
+    for (const file of readdirSync('src/content/' + dir)) {
+      const found = readFileSync('src/content/' + dir + '/' + file, 'utf8').match(pattern);
+      if (found) out.push([dir + '/' + file, found[1]]);
+    }
+    return out;
+  };
+
+  it('name a file the way the CMS names one, extension and all', () => {
+    const entries = [...stored('talks', 'edition'), ...stored('speakers', 'talk')];
+    expect(entries.length).toBeGreaterThan(0);
+    for (const [file, value] of entries) {
+      expect(file + ': ' + value).toBe(file + ': ' + referencedId(value) + '.md');
+    }
   });
 });

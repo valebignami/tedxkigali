@@ -1,7 +1,7 @@
 ---
 name: "Jean-Paul Habimana"
 role: "Community mediator, Kigali"
-talk: "2025-10-18-rebuilding-trust"
+talk: "2025-10-18-rebuilding-trust.md"
 order: 20
 ---
 

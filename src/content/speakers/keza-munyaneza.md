@@ -1,7 +1,7 @@
 ---
 name: "Keza Munyaneza"
 role: "Student, Kigali"
-talk: "2024-05-25-the-homework-i-never-handed-in"
+talk: "2024-05-25-the-homework-i-never-handed-in.md"
 order: 80
 ---
 

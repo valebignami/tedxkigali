@@ -1,7 +1,7 @@
 ---
 name: "Beatrice Mukantwari"
 role: "Writer and storyteller"
-talk: "2024-03-09-the-part-i-left-out"
+talk: "2024-03-09-the-part-i-left-out.md"
 order: 60
 ---
 

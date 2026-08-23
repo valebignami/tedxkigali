@@ -1,7 +1,7 @@
 ---
 name: "Aline Uwase"
 role: "Environmental researcher, University of Rwanda"
-talk: "2025-10-18-the-hills-that-listen"
+talk: "2025-10-18-the-hills-that-listen.md"
 links:
   - { label: "LinkedIn", url: "https://www.linkedin.com/in/example" }
 order: 10

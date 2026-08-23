@@ -1,7 +1,7 @@
 ---
 name: "Claudine Mukamana"
 role: "Urban planner"
-talk: "2024-09-21-the-market-at-dawn"
+talk: "2024-09-21-the-market-at-dawn.md"
 order: 30
 ---
 

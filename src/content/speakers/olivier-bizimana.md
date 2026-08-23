@@ -1,7 +1,7 @@
 ---
 name: "Olivier Bizimana"
 role: "District environment officer"
-talk: "2025-11-08-the-ten-years-we-have"
+talk: "2025-11-08-the-ten-years-we-have.md"
 order: 100
 ---
 

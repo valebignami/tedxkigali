@@ -1,7 +1,7 @@
 ---
 name: "Sifa Mutoni"
 role: "Student, Kigali"
-talk: "2025-05-24-what-i-would-say-with-three-minutes"
+talk: "2025-05-24-what-i-would-say-with-three-minutes.md"
 order: 70
 ---
 
