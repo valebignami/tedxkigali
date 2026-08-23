@@ -35,6 +35,14 @@ function refresh(): void {
     if (state !== 'past' && upcoming && card.parentElement !== upcoming) upcoming.append(card);
   });
 
+  // Any page can host event cards outside the events index — the home page's
+  // "Next event" block does. Such a section hides itself once every card in it
+  // has passed, so the home never announces a finished event as the next one.
+  document.querySelectorAll<HTMLElement>('[data-event-section]').forEach((section) => {
+    const live = section.querySelectorAll('article[data-event]:not([data-event-state="past"])');
+    section.hidden = live.length === 0;
+  });
+
   toggleSection('#events-upcoming-section', upcoming);
   toggleSection('#events-past-section', past);
 
