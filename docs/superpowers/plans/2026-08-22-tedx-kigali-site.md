@@ -3582,12 +3582,30 @@ la promessa corrispondente.
    succede lo stesso in produzione, e il volontario riceve un messaggio che gli
    dice di ricaricare un'immagine che voleva togliere. Se accade, disattivare la
    cache di build o aggiungere `node_modules/.astro` a quelle da ignorare.
+7. **Rispondere alle tre domande che la guida dice al volontario di fare.**
+   `docs/EDITING.md` §7 non promette piu' che il sito «si ricostruisce da solo e
+   pubblica» ne' che «i visitatori non vedono mai una pagina rotta»: erano
+   proprieta' di un hosting che nessuno aveva ancora collegato, scritte come
+   fatti. La guida ora dice al volontario di chiederle al manutentore prima di
+   iniziare, e le risposte si producono qui:
+   - **(a) la connessione e' attiva** — e' lo Step 6;
+   - **(b) quanto dura una pubblicazione** — e' il punto 5 qui sopra;
+   - **(c) se il sito continua a mostrare l'ultima versione riuscita quando un
+     build fallisce** — e' il punto 4c qui sopra. Va **verificato**, non
+     supposto: e' la frase che la guida affermava senza che nessuno l'avesse
+     guardata.
+
+   Quando tutte e tre hanno una risposta provata, riscrivere §7 con i fatti al
+   posto delle domande. Lo stesso vale per il messaggio di
+   `siteSettingsErrorMessage` in `src/lib/settings.ts`, che per la stessa
+   ragione non promette nulla sul sito pubblico e si limita a dire che il
+   salvataggio e' andato a buon fine.
 
 - [ ] **Step 7: Collegare Pages CMS ed eseguire la verifica rimandata dal Task 13**
 
 Eseguire ora tutti i punti dello Step 3 del Task 13 sul repository reale, incluso il test di creazione e cancellazione di un talk di prova.
 
-In piu', queste cinque domande non sono mai state verificate contro il CMS vero e
+In piu', queste sei domande non sono mai state verificate contro il CMS vero e
 si chiudono tutte in una decina di minuti, creando **un evento, un talk che lo
 indica e uno speaker con foto**. Vanno chiuse **prima** che i volontari entrino.
 
@@ -3619,7 +3637,17 @@ indica e uno speaker con foto**. Vanno chiuse **prima** che i volontari entrino.
    Kigali, quindi il risultato atteso e' un build fallito con il messaggio di
    `EVENT_TIME_ZONE_MESSAGE`. Se invece passa, controllare che cosa il CMS ha
    davvero scritto nel file.
-5. **Il modulo e' quello che la guida descrive.** `docs/EDITING.md` nomina
+5. **Se `type: string` accetta un `pattern`.** `.pages.yml:160` dichiara
+   **Contact email** come `type: string`, mentre `src/lib/settings.ts` la
+   valida con `z.email()`: il modulo accetta qualunque cosa e il volontario
+   paga un build fallito per un refuso che il modulo avrebbe potuto rifiutare
+   sul posto. La documentazione di Pages CMS elenca `pattern` fra le opzioni di
+   `string`, ma non e' mai stato provato qui. Provarlo: aggiungere un `pattern`
+   al campo, salvare un indirizzo senza `@` e guardare se il modulo si ferma
+   prima di scrivere il file. Se funziona, tenerlo — la validazione dello
+   schema resta comunque, come rete. Se non funziona, togliere il `pattern` e
+   annotare qui che il campo non puo' fare di meglio.
+6. **Il modulo e' quello che la guida descrive.** `docs/EDITING.md` nomina
    "Sign in with GitHub", "il progetto tedxkigali", "start a new entry" e
    "Save", elenca cinque sezioni e descrive i campi nell'ordine di `.pages.yml`.
    Nessuno di questi nomi e' stato letto sullo schermo vero. Aprire il CMS con la

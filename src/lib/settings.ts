@@ -89,6 +89,16 @@ function fieldLabel(path: ReadonlyArray<PropertyKey>): string | undefined {
  * act on. Every field of this form is required and every one of them is edited
  * by volunteers, so the list is complete on purpose: fixing them one build at a
  * time would cost one failed build each.
+ *
+ * It used to open "could not be saved", which is the one thing that did not
+ * happen: the save succeeded, the file is in the repository, and only the
+ * build stopped. A volunteer who reads that re-types work they have not lost.
+ *
+ * It also used to close with "the website keeps showing what it showed
+ * before". That is a property of the hosting, which nobody has connected yet —
+ * see Task 18, Steps 6 and 6b of the implementation plan — so it is not this
+ * function's to promise. What is certainly true, and is the reassuring half, is
+ * that the words the volunteer typed are still there.
  */
 export function siteSettingsErrorMessage(error: z.ZodError): string {
   const lines = error.issues.map((issue) => {
@@ -96,12 +106,12 @@ export function siteSettingsErrorMessage(error: z.ZodError): string {
     return label ? `  ${label} — ${issue.message}` : `  ${issue.message}`;
   });
   return [
-    'The "Site texts" of the website could not be saved.',
+    'Your change to "Site texts" was saved, but the website could not be built from it.',
     '',
     ...lines,
     '',
     'Open "Site texts" in the CMS, correct every line above, and save again. ' +
-      'Until then the website keeps showing what it showed before.',
+      'Nothing you typed is lost: it is in the file exactly as you left it.',
   ].join('\n');
 }
 

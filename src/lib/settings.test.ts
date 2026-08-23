@@ -70,4 +70,20 @@ describe('siteSettingsErrorMessage', () => {
     const message = messageFor({ contactMail: 'hello@tedxkigali.rw' });
     expect(message).toContain('"contactMail"');
   });
+
+  // The save is the one thing that did not fail — the file is in the
+  // repository — and a volunteer told otherwise re-types work they still have.
+  it('does not tell the volunteer their save failed', () => {
+    const message = messageFor({ tagline: '' });
+    expect(message).not.toMatch(/could not be saved/i);
+    expect(message).toMatch(/was saved/i);
+    expect(message).toMatch(/nothing you typed is lost/i);
+  });
+
+  // Whether the last published version stays up is a property of the hosting,
+  // and Task 18 Step 6 has not been done. Nothing here may promise it.
+  it('does not promise that the live site keeps showing the old version', () => {
+    const message = messageFor({ tagline: '' });
+    expect(message).not.toMatch(/keeps showing|goes on showing|visitors/i);
+  });
 });

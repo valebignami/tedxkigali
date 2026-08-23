@@ -168,13 +168,23 @@ TED itself updates the required text.
 
 ## 7. What happens after you press Save
 
-1. Your change is saved to GitHub.
-2. The website rebuilds itself and publishes the new version.
-3. Refresh the page to see it.
+Your change is saved to GitHub the moment you press Save. That part always
+happens, and nothing you have typed is lost after it — it stays in the file
+exactly as you left it, even if everything below goes wrong.
 
-If the rebuild stops because something is wrong, nothing is lost and nothing
-breaks: your change is safely saved, and the website goes on showing the last
-version that worked. Visitors never see a broken page.
+What happens next depends on a connection between GitHub and the hosting, which
+the site maintainer sets up once. When it is in place, the website is rebuilt
+from your change and the new version is published on its own, and you refresh
+the page to see it.
+
+**Before you start editing, ask the site maintainer three things:** whether that
+connection is set up; roughly how long a publish takes, so you know how long to
+wait before worrying; and whether the website goes on showing the last version
+that worked when a rebuild stops. Until they answer, assume your change is
+stored but not yet published, and check the live site yourself after each save.
+
+If a rebuild stops because something is wrong, your change is still saved. Go
+back into the entry, fix the field, and save again — see section 8.
 
 ## 8. If something goes wrong
 
@@ -213,6 +223,12 @@ resizes and compresses them automatically, but starting from a smaller file keep
 the site fast for visitors on mobile data.
 
 **One warning.** Renaming a file to end in `.jpg` does not make it a picture. If
-a file is not really an image, the rebuild stops with a message that is hard to
-read and does not say which entry it belongs to — so if that happens right after
-you uploaded something, tell the maintainer what you uploaded and where.
+you upload something that is not really an image, the rebuild stops and names
+the file for you:
+
+> The file "poster.jpg" is not a picture, whatever its name says. A file renamed
+> to end in .jpg does not become one, and an upload that was cut short does not
+> either. Upload the picture again, from the original.
+
+Do that — upload it again from the original file — and save. An upload that was
+interrupted halfway looks exactly the same from here, and the same fix works.
