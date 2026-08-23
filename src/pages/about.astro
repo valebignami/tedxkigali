@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import { siteSettings } from '~/lib/settings';
+import { withFullStop } from '~/lib/text';
 
 // The CMS field is plain text, which is all a volunteer needs: a blank line
 // starts a new paragraph, and nothing an editor types can produce markup.
@@ -21,7 +22,7 @@ const aboutParagraphs = siteSettings.aboutBody
       <p>
         In the spirit of ideas worth spreading, TED has created a programme of local,
         self-organised events called TEDx. At a TEDx event, TED Talks video and live
-        speakers combine to spark deep discussion and connection. {siteSettings.tedxXExplanation}.
+        speakers combine to spark deep discussion and connection. {withFullStop(siteSettings.tedxXExplanation)}
       </p>
 
       <h2>TEDxKigali</h2>
