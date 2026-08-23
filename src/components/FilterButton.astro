@@ -24,12 +24,19 @@ interface Props {
 
 const { kind, value, label, accessibleName, pressed = false } = Astro.props;
 
+// A programme button does two things at once: it filters, and it opens the row
+// of that programme's editions. Both are announced — aria-pressed for the
+// filter, aria-expanded for the row — because a visitor who cannot see the row
+// appear has nothing else to tell them a second set of buttons just arrived.
+// The script writes 'true' here when the row opens; this is the shut state.
+const expanded = kind === 'programme' ? 'false' : undefined;
+
 // Tags are the smaller, secondary row and take the sun colour when pressed.
 // Everything else is one set of pills and shares a shape on purpose.
 const shape =
   kind === 'tag'
     ? 'rounded-full border border-line px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted aria-pressed:border-kigali-sun aria-pressed:text-ink'
-    : 'rounded-full border border-line px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted aria-pressed:border-ted-red aria-pressed:text-ink';
+    : 'rounded-full border border-line px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted aria-expanded:border-ted-red/50 aria-expanded:text-ink aria-pressed:border-ted-red aria-pressed:text-ink';
 
 // Written out rather than left as a boolean: aria-pressed is an enumerated
 // attribute, not a boolean one, so the string is what belongs in the markup and
@@ -42,6 +49,7 @@ const state: 'true' | 'false' = pressed ? 'true' : 'false';
   data-filter-kind={kind}
   data-filter-value={value}
   aria-pressed={state}
+  aria-expanded={expanded}
   aria-label={accessibleName}
   class={shape}
 >

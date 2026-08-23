@@ -216,11 +216,16 @@ content:
     filename: '{fields.name}.md'
     view:
       fields: [name, tier, order, draft]
-      sort: [name, tier, order]
       # Sorting by name, which is what this list already did with no `default`
       # of its own, and what makes a partner findable. Not by tier: the stored
       # tier is a code, so sorting on it gives community, gold, headline,
       # partner — neither alphabetical by heading nor the order of the page.
+      #
+      # That was written about the default only, and `tier` stayed in the list
+      # of sort keys underneath it — so a volunteer could still choose exactly
+      # the order the comment says is wrong. Taken out on 23 August 2026, when
+      # a test that looks for a select in any `sort` found it.
+      sort: [name, order]
       default:
         sort: name
         order: asc

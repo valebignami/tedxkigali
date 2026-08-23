@@ -230,3 +230,72 @@ describe('every list view', () => {
     }
   });
 });
+
+// Rules Pages CMS itself imposes on this file, copied out of its config schema
+// (`lib/config-schema.ts`: `name` is matched against /^[a-zA-Z0-9-_]+$/, `type`
+// against its field registry, and `view.fields`/`view.sort` must be arrays of
+// strings). A file that breaks one of them is not refused with a message in the
+// form: the whole project fails to load, and a volunteer sees a screen with no
+// fields on it and nothing to do about it. None of this is checkable from the
+// site's own build, which never reads .pages.yml — so it is checked here.
+describe('what Pages CMS itself requires of this file', () => {
+  const KNOWN_TYPES = new Set([
+    'boolean', 'code', 'date', 'file', 'image', 'number', 'reference', 'rich-text',
+    'select', 'string', 'text', 'uuid', 'object', 'block',
+  ]);
+
+  it('gives every field a name it will accept', () => {
+    for (const [path, item] of everyField()) {
+      expect(`${path}: ${/^[a-zA-Z0-9-_]+$/.test(item.name)}`).toBe(`${path}: true`);
+    }
+  });
+
+  it('gives every field a type it knows', () => {
+    for (const [path, item] of everyField()) {
+      if (item.type === undefined) continue;
+      expect(`${path}: ${KNOWN_TYPES.has(item.type)}`).toBe(`${path}: true`);
+    }
+  });
+
+  it('names, in every list view, only fields that exist in that collection', () => {
+    for (const item of config.content) {
+      if (!item.view) continue;
+      const named = [
+        ...((item.view.fields as string[]) ?? []),
+        ...((item.view.sort as string[]) ?? []),
+      ];
+      const existing = new Set(item.fields.map((field) => field.name));
+      for (const name of named) {
+        expect(`${item.name}.${name}: ${existing.has(name)}`).toBe(`${item.name}.${name}: true`);
+      }
+    }
+  });
+
+  // A select stores the value and shows the label. Sorting a list on one means
+  // sorting on the stored codes, which are not in the order anybody reads on
+  // the screen — see the note against the partners list, where the same
+  // temptation was refused, and the events list, where it was accepted once and
+  // taken back out.
+  it('never sorts a list on a select', () => {
+    for (const item of config.content) {
+      const selects = new Set(
+        item.fields.filter((field) => field.type === 'select').map((field) => field.name),
+      );
+      for (const name of ((item.view?.sort as string[]) ?? [])) {
+        expect(`${item.name}.${name} is a select: ${selects.has(name)}`).toBe(
+          `${item.name}.${name} is a select: false`,
+        );
+      }
+    }
+  });
+
+  // Every choice a volunteer can pick has to be one the build accepts, and a
+  // select with no default leaves an untouched field empty on a new entry.
+  it('gives every select either a default or a required mark', () => {
+    for (const [path, item] of everyField()) {
+      if (item.type !== 'select') continue;
+      const settled = item.default !== undefined || item.required === true;
+      expect(`${path}: ${settled}`).toBe(`${path}: true`);
+    }
+  });
+});

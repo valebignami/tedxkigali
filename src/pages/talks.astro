@@ -174,7 +174,13 @@ const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
             />
           ))}
         </div>
-        <p id="talks-empty" hidden class="mt-10 text-muted">No talks match this filter yet.</p>
+        {/* "this filter", singular, was true when the pills were a single
+            choice. Two of them can be on at once now — a programme and a
+            topic — and the commonest way to see this sentence is a pair that
+            happens to have nothing in common. */}
+        <p id="talks-empty" hidden class="mt-10 text-muted">
+          No talks match what you have picked. Try another topic, or press All.
+        </p>
       </>
     )}
   </section>
