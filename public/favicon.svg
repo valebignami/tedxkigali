@@ -2,10 +2,12 @@
   <title>TEDxKigali</title>
   <!-- Self-authored, no external assets: the site background (#0A0A0A) with the
        TED red x mark (#EB0028). Red on black is used as a shape here, never as
-       small text, so the body-copy contrast rule does not apply. -->
+       small text, so the body-copy contrast rule does not apply. The bars are
+       sized and dropped toward the baseline to match a lowercase x (more room
+       above than below), not the full square, or it reads as an uppercase X. -->
   <rect width="64" height="64" rx="8" fill="#0A0A0A" />
   <g fill="#EB0028">
-    <rect x="9" y="27" width="46" height="10" rx="2" transform="rotate(45 32 32)" />
-    <rect x="9" y="27" width="46" height="10" rx="2" transform="rotate(-45 32 32)" />
+    <rect x="18.5" y="31" width="27" height="10" rx="2" transform="rotate(45 32 36)" />
+    <rect x="18.5" y="31" width="27" height="10" rx="2" transform="rotate(-45 32 36)" />
   </g>
 </svg>
