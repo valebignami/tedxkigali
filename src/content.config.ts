@@ -140,7 +140,11 @@ function eventsLoader(): Loader {
     ...files,
     load: async (context) => {
       await files.load(context);
-      for (const fileName of readdirSync(EVENTS_DIR).filter((name) => name.endsWith('.md'))) {
+      // Recursive, because the loader's pattern is: a folder per year is a
+      // shape the CMS could produce, and an event inside one would otherwise be
+      // published without ever being checked.
+      const fileNames = readdirSync(EVENTS_DIR, { recursive: true }) as string[];
+      for (const fileName of fileNames.filter((name) => name.endsWith('.md'))) {
         const source = readFileSync(join(EVENTS_DIR, fileName), 'utf8');
         const wrong = offKigaliTimeFields(source);
         if (wrong.length === 0) continue;
