@@ -14,6 +14,18 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # The whole notification mechanism, and the only thing it needs. A run that
+  # stops opens an issue saying so and @-mentions whoever saved; a run that
+  # publishes closes it again. See .github/scripts/publish-notice.mjs — no
+  # secret, no mail server, nothing outside this repository.
+  issues: write
+
+defaults:
+  run:
+    # For the `| tee` below. The default shell of a `run:` step is `bash -e {0}`,
+    # which has no pipefail, so a failing npm piped into tee would exit 0 and
+    # publish anyway. Naming bash gets `bash --noprofile --norc -eo pipefail {0}`.
+    shell: bash
 
 # Two pushes in a minute must not race each other into the same environment.
 # cancel-in-progress is false rather than true: a half-finished deployment is
@@ -40,8 +52,15 @@ jobs:
       # the job, so nothing reaches the environment. The build itself is also a
       # test here — the content rules stop it with an editor-facing message when
       # an event has been saved in an impossible state.
-      - run: npm test
-      - run: npm run check
+      #
+      # Each of the three keeps its own copy of what it printed, as well as
+      # printing it into the run. That copy is what the notice step at the end of
+      # this job reads: the last of the three files that exists is the step that
+      # stopped, and the sentence written for the volunteer is somewhere in it.
+      # RUNNER_TEMP rather than the workspace, so that nothing the build itself
+      # reads can ever see them.
+      - run: npm test 2>&1 | tee "$RUNNER_TEMP/gate-test.log"
+      - run: npm run check 2>&1 | tee "$RUNNER_TEMP/gate-check.log"
 
       # No `static_site_generator: astro` input, deliberately. That input makes
       # the action write an Astro config override that sets `site` and `base`
@@ -51,13 +70,28 @@ jobs:
       # and reports the url.
       - uses: actions/configure-pages@v5
 
-      - run: npm run build
+      - run: npm run build 2>&1 | tee "$RUNNER_TEMP/gate-build.log"
 
       # Pages deployments made from an artifact are served as uploaded; Jekyll
       # never runs over them, so Astro's _astro/ directory needs no .nojekyll.
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+      # Nothing above this line tells anybody. GitHub's own failed-run email
+      # depends on each account's notification settings, which no volunteer will
+      # go and configure, so a save that stopped here used to go unnoticed until
+      # somebody happened to look at the site.
+      #
+      # failure() covers every step of the job, not only the three above: a
+      # checkout or an `npm ci` that fell over also means the save did not go
+      # live, and the person who saved is owed that either way.
+      - name: Tell whoever saved that it did not go live
+        if: failure()
+        run: node .github/scripts/publish-notice.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PUBLISH_RESULT: failure
 
   deploy:
     needs: build
@@ -66,5 +100,20 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Only for the notice step below — deploy-pages itself wants nothing from
+      # the repository, it publishes the artifact the build job uploaded.
+      - uses: actions/checkout@v4
+
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      # The one place that knows the site really is live now, which is why the
+      # issue is closed from here rather than at the end of the build job. It
+      # runs on failure too: a deployment that falls over on its own also leaves
+      # the website showing yesterday's version with nobody told.
+      - name: Say whether it went live
+        if: success() || failure()
+        run: node .github/scripts/publish-notice.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PUBLISH_RESULT: ${{ job.status }}
