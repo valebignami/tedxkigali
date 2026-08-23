@@ -4,6 +4,7 @@ import { glob } from 'astro/loaders';
 import { parseYouTubeId, YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { TICKET_STATUSES } from '~/lib/events';
 import { BOOKING_URL_MESSAGE, requiresBookingUrl } from '~/lib/content-rules';
+import { SPONSOR_TIERS } from '~/lib/sponsors';
 
 const uploadPath = z
   .string()
@@ -92,7 +93,7 @@ const sponsors = defineCollection({
     logo: uploadPath,
     logoAlt: z.string().min(1, 'Describe the logo, for example "Acme Ltd logo".'),
     url: z.url().optional(),
-    tier: z.enum(['headline', 'gold', 'partner', 'community']),
+    tier: z.enum(SPONSOR_TIERS),
     order: z.number().int().optional(),
     draft: z.boolean().default(false),
   }),
