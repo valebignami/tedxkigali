@@ -91,7 +91,10 @@ const events = defineCollection({
       startDate: z.coerce.date(),
       endDate: z.coerce.date().optional(),
       venue: z.string(VENUE_MESSAGE).trim().min(1, { message: VENUE_MESSAGE }),
-      address: z.string().optional(),
+      // Trimmed like venue above: venueLabel and the map link's accessible name
+      // both test this with plain truthiness, so an untrimmed "   " would render
+      // a link reading "Kigali Convention Centre —" with nothing after the dash.
+      address: z.string().trim().optional(),
       mapUrl: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
       image: uploadPath.optional(),
       imageAlt: z.string().optional(),
