@@ -39,7 +39,9 @@ is the only safe way to try things out.
      with a time in them, Shorts and live recordings are all fine.
    - **Talk date** (required) — the day of the event where the talk was filmed,
      **not** the day the video was uploaded. It decides the order of the talks
-     page and the year printed on the card.
+     page and the year printed on the card. The field starts empty on purpose;
+     if you try to save without picking a day, the form marks it in red and
+     says *Invalid date*, which is its way of saying it is still empty.
    - **Event edition** — pick the edition this talk belongs to from the list.
      You can leave it empty, but then the talk does not appear under any edition
      when visitors filter the talks page. If the edition you need is not there
