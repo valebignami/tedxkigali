@@ -5,9 +5,15 @@ a form-based editor called **Pages CMS**.
 
 ## 1. Signing in
 
-1. Go to <https://app.pagescms.org>.
+1. Go to **<https://valebignami.github.io/tedxkigali/admin>** — the website's own
+   address with `/admin` on the end. It takes you straight to the editing screen,
+   so this is the only address you need to remember.
 2. Click **Sign in with GitHub** and use the GitHub account you were given access with.
-3. Open the **tedxkigali** project.
+
+That is all. You land on the **Events** list, already inside the right project.
+
+If that address ever fails, the editing screen itself is at
+<https://app.pagescms.org> — sign in there and open the **tedxkigali** project.
 
 Down the left you will see five sections under **Content** — **Events**,
 **Talks**, **Speakers**, **Partners** and **Site texts** — and a **Media**

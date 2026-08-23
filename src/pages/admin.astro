@@ -1,0 +1,58 @@
+---
+import { CMS_URL } from '~/lib/cms';
+
+// A signpost, not a door. Pages CMS handles the GitHub sign-in on its own
+// servers, which is the whole reason this site needs no backend — so this page
+// cannot host the editing screen, only point at it. It exists so a volunteer
+// has one address to remember, the site's own, instead of a third party's.
+//
+// Not an iframe: app.pagescms.org refuses to be framed, and rightly. A login
+// screen embedded in someone else's page is how credentials get stolen, so
+// browsers and the site itself both block it.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editing — TEDxKigali</title>
+    <!-- Zero seconds, deliberately. A meta refresh with a delay traps anyone
+         reading slowly (WCAG 2.2.1); with no delay it behaves as a redirect,
+         which is the F41 exception. The link below is what a visitor gets if
+         the refresh is blocked, so this page is never a dead end. -->
+    <meta http-equiv="refresh" content={`0; url=${CMS_URL}`} />
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      :root { color-scheme: dark; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        background: #0a0a0a;
+        color: #fafafa;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        line-height: 1.6;
+        text-align: center;
+      }
+      .mark { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; }
+      .mark span { color: #eb0028; }
+      p { max-width: 34rem; margin: 1.5rem auto 0; }
+      a { color: #fafafa; }
+      .quiet { color: #a3a3a3; font-size: 0.875rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="mark"><span>TED</span>xKigali</p>
+      <p>Taking you to the editing screen…</p>
+      <p><a href={CMS_URL}>Open it now</a> if nothing happens.</p>
+      <p class="quiet">
+        You sign in there with the GitHub account you were given access with. If you do not have one
+        yet, ask whoever set the website up.
+      </p>
+    </main>
+  </body>
+</html>

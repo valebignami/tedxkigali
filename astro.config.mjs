@@ -64,6 +64,12 @@ export default defineConfig({
   // path equivalent to "/" for http and https, and every crawler normalises
   // them — so that is a difference to leave alone, not a regression to chase.
   trailingSlash: 'never',
-  integrations: [sitemap(), uploadsAreReadable()],
+  integrations: [
+    // /admin is a redirect to the editing screen, not a page of the site. It
+    // carries noindex too; keeping it out of the sitemap stops the two from
+    // contradicting each other, which is a Search Console warning.
+    sitemap({ filter: (page) => !page.endsWith('/admin') }),
+    uploadsAreReadable(),
+  ],
   vite: { plugins: [tailwindcss()] },
 });
