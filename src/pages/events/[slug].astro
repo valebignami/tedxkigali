@@ -31,9 +31,10 @@ const ogImage = image && Astro.site ? new URL(image.src, Astro.site).toString() 
 const dateLabel = formatEventDate(data.startDate);
 const venueLabel = `${data.venue}${data.address ? ` — ${data.address}` : ''}`;
 const mapUrl = eventMapUrl(data);
-// Comma-separated, unlike venueLabel's em dash: this is read by a screen
-// reader alongside the visible text, not instead of it.
-const mapAriaLabel = `${data.venue}${data.address ? `, ${data.address}` : ''} — open in Google Maps`;
+// aria-label replaces the link's text when the accessible name is computed, so
+// it has to start from venueLabel verbatim: WCAG 2.5.3 requires the accessible
+// name to contain the visible one, or speech input cannot activate the link.
+const mapAriaLabel = `${venueLabel} — open in Google Maps`;
 
 const { Content } = await render(event);
 
@@ -122,10 +123,15 @@ const organiserUrl = Astro.site?.toString() ?? canonicalUrl(Astro.url.pathname, 
         <ol class="mt-6 space-y-4">
           {data.schedule.map((entry) => (
             <li class="rounded-lg border border-line bg-surface p-4 sm:flex sm:gap-6">
-              {entry.time && (
-                <p class="text-sm font-semibold uppercase tracking-wide text-muted sm:w-32 sm:flex-none sm:text-right">{entry.time}</p>
-              )}
-              <div class="mt-1 sm:mt-0">
+              {/* Rendered even when there is no time, because from sm: up this
+                  is the flex item that holds the time column open: a break row
+                  without it would start 152px left of every other row. Left
+                  empty it has nothing to announce and no line box, so it costs
+                  a phone reader neither space nor a stop in the reading order. */}
+              <p class="text-sm font-semibold uppercase tracking-wide text-muted sm:w-32 sm:flex-none sm:text-right">{entry.time}</p>
+              {/* On a phone the gap separates the time from the title, so a row
+                  with no time does not need it. */}
+              <div class:list={['sm:mt-0', entry.time && 'mt-1']}>
                 <p>
                   <span class="font-bold">{entry.title}</span>
                   {entry.speaker && <span class="text-muted"> — {entry.speaker}</span>}
