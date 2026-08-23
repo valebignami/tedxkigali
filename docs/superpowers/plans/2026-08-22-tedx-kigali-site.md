@@ -3489,7 +3489,7 @@ rm src/content/events/tedxkigali-2024.md
 
 Creare gli eventi e i talk reali seguendo la stessa struttura di frontmatter. Verificare dopo ogni aggiunta con `npm run build`.
 
-- [ ] **Step 4: Scrivere `README.md`**
+- [x] **Step 4: Scrivere `README.md`** — fatto il 23 agosto 2026, il file e' in `README.md`.
 
 ```markdown
 # TEDxKigali website
