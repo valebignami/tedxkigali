@@ -54,11 +54,22 @@ booking button and says so, without anyone rebuilding the site.
 
 ## Deployment
 
-Hosted on Vercel, built from the `main` branch. `.github/workflows/ci.yml`
-runs tests, checks and a build on every push and pull request. It is
-deliberately never scheduled: GitHub disables scheduled workflows after 60 days
-without repository activity, which for a volunteer-run site is a normal
-autumn.
+Published to GitHub Pages at <https://valebignami.github.io/tedxkigali/> by
+`.github/workflows/pages.yml`, on every push to `main`. That workflow runs the
+tests, `astro check` and the build before it uploads anything, so a red commit
+cannot reach the public site. `.github/workflows/ci.yml` runs the same checks
+on pull requests as well and publishes nothing. Neither is scheduled: GitHub
+disables scheduled workflows after 60 days without repository activity, which
+for a volunteer-run site is a normal autumn.
+
+One switch in the repository settings is needed once, by hand, and cannot be
+done from here: **Settings → Pages → Build and deployment → Source → GitHub
+Actions**. Until that is set, the deploy job fails with a permissions error.
+
+The address is temporary. GitHub Pages serves a project site from a sub-path,
+so the whole site lives under `/tedxkigali/`, and every internal link is built
+through `internalHref` in `src/lib/base-path.ts` to carry it. Moving to a real
+domain is one line: `PUBLISHED_AT` at the top of `astro.config.mjs`.
 
 ## Documents
 
