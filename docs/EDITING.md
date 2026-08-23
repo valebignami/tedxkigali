@@ -29,11 +29,11 @@ You will see three sections: **Events**, **Talks** and **Site texts**.
      highlight first.
    - **Tags** — optional keywords used to filter the talks page, for example:
      *community*, *climate*, *public speaking*. You can leave this empty.
-4. Leave **Cover image** empty unless you want a custom cover: by default the site
-   uses YouTube's own preview image. If you do upload one, you must also fill in
-   **Cover image description** — a short description read aloud to visitors who
-   use a screen reader.
-5. Click **Save**.
+   - **Cover image** — leave empty unless you want a custom cover: by default the
+     site uses YouTube's own preview image. If you do upload one, you must also
+     fill in **Cover image description** — a short description read aloud to
+     visitors who use a screen reader.
+4. Click **Save**.
 
 The talk appears on the website about one minute later.
 
@@ -49,6 +49,7 @@ The talk appears on the website about one minute later.
    - **Venue**.
    - **Short summary** — max 300 characters. Shown in listings and when the
      page is shared.
+   - **Ticket status** — see step 4 below for what each option means.
 3. Optional fields you may also want to set:
    - **End date and time** — if you leave this empty, the website assumes the
      event lasts four hours.
@@ -58,14 +59,16 @@ The talk appears on the website about one minute later.
      description** (screen reader text).
    - **Full description** — the main body text of the event page. Use this for
      anything that does not fit in the short summary.
-4. Choose the **Ticket status**:
+4. Choose the **Ticket status** (this field is required):
    - *Tickets coming soon* — the event is announced, no booking button yet.
    - *Tickets on sale* / *Free entry — registration required* — a booking
      button appears. **A booking link is required.**
    - *Sold out* / *Registrations closed* — no booking button.
-5. Paste the **Booking link** from your ticketing platform (Eventbrite, a Google
-   Form, or anything else). It opens in a new tab. You can also change the
-   **Booking button text** — it says "Book your seat" unless you change it.
+5. If you chose **Tickets on sale** or **Free entry — registration required**,
+   paste the **Booking link** from your ticketing platform (Eventbrite, a Google
+   Form, or anything else) — it opens in a new tab. You can also change the
+   **Booking button text**, which says "Book your seat" unless you change it.
+   Skip this step for the other ticket statuses.
 6. Click **Save**.
 
 The event moves from *Upcoming* to *Past editions* by itself once it is over. You
