@@ -5,7 +5,7 @@ endDate: 2026-11-14T18:00:00+02:00
 venue: "Kigali Convention Centre"
 address: "KG 2 Roundabout, Kigali, Rwanda"
 theme: "Rising"
-summary: "Sample content — this event is invented and must be replaced before the site goes live. A full day of talks on how Rwanda is building what comes next, from climate innovation to storytelling."
+summary: "A full day of talks on how Rwanda is building what comes next, from climate innovation to storytelling."
 schedule:
   - title: "Doors open & registration"
     time: "08:00"
@@ -36,10 +36,6 @@ bookingUrl: "https://example-ticketing.com/tedxkigali-2026"
 bookingLabel: "Book your seat"
 ticketStatus: "open"
 ---
-
-> **Sample content.** This page is a demonstration of how the website works.
-> The event, the people, the programme and the details below are invented, and
-> must all be replaced with the real ones before the site goes live.
 
 TEDxKigali 2026 gathers speakers from across Rwanda and the region for a day of
 talks, performances and conversations under the theme **Rising**. It is our

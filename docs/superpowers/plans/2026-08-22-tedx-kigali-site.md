@@ -3475,9 +3475,9 @@ rm src/content/events/tedxkigali-2024.md
 
 > **Nessun contenuto di esempio deve sopravvivere al lancio.** I sette file elencati sopra sono l'intero contenuto di esempio del sito: tre talk che puntano tutti allo stesso video segnaposto, tre eventi inventati e una scheda speaker inventata. `src/content/sponsors/` e' vuoto e `src/content/settings/site.json` non e' contenuto di esempio, ma va comunque rivisto allo Step 2. L'edizione 2026 ha in piu' un `bookingUrl` verso `example-ticketing.com`, una `schedule` di esempio e una descrizione estesa con nomi di relatori inventati (Diane Uwimana, Eric Niyonzima, Aline Mukamana, Jean Bosco Habimana, Grace Ingabire, Patrick Nsengimana, Solange Umutoni, Claudine Mutesi, Robert Kayitare, Belise Ishimwe): anche questi sono fittizi e vanno via con il resto del file quando viene rimosso, non copiati nel contenuto reale. Su un sito TEDx reale sarebbero contenuti falsi.
 >
-> Ogni file di esempio si dichiara tale: gli eventi e la scheda speaker aprono il corpo con un blockquote "Sample content" **e** aprono la loro `summary` con la stessa dichiarazione, i tre talk solo la `summary` — che e' l'unico testo loro che il sito renderizza. La `summary` serve perche' senza di essa la home e l'elenco eventi mostrerebbero tre edizioni inventate senza alcun avviso. Sono avvisi visibili al visitatore e vanno via insieme ai file: se dopo la sostituzione una ricerca di `Sample content` trova ancora qualcosa, quel contenuto e' rimasto indietro.
+> **I contenuti di esempio non si dichiarano piu' tali.** Portavano un avviso "Sample content" visibile in cima a ogni pagina e in testa a ogni riassunto; il cliente ha chiesto di toglierlo il 23 agosto 2026 e l'avviso e' stato rimosso. Non c'e' quindi piu' alcun segnale, ne' sulla pagina ne' nel testo, che distingua un'edizione inventata da una vera: l'unico modo di accorgersene e' la lista qui sotto. Chi pubblica il sito deve fidarsi di questa checklist, non della pagina.
 >
-> **Gli avvisi "Sample content" sono per gli esseri umani, non per le macchine.** I dati
+> **Nemmeno i dati strutturati sanno di essere finti.** I dati
 > strutturati dell'evento (`EventJsonLd`) continuano a dichiarare a Google un evento
 > reale e prenotabile: `name`, `startDate`, `location`, `offers.url` che punta a
 > `example-ticketing.com` e `availability: InStock`. I risultati arricchiti nella
@@ -3485,7 +3485,7 @@ rm src/content/events/tedxkigali-2024.md
 > visibile li raggiunge. E' un altro motivo per cui il contenuto di esempio deve
 > sparire **prima** che il dominio sia collegato, non dopo.
 >
-> Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ`, `example-ticketing.com`, `Diane Uwimana` e `Sample content` che non ne resti traccia.
+> Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ`, `example-ticketing.com`, `Diane Uwimana`, `Rising`, `Roots` e `Threads` che non ne resti traccia.
 
 Creare gli eventi e i talk reali seguendo la stessa struttura di frontmatter. Verificare dopo ogni aggiunta con `npm run build`.
 

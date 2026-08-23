@@ -3,7 +3,12 @@ import { siteSettings } from '~/lib/settings';
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-24 border-t border-line bg-surface">
+<!-- No top margin: BaseLayout makes <main> flex-1 inside a min-h-screen
+     column, so on a page with little content the footer is already pushed to
+     the bottom of the window and a margin only widens the empty band above
+     it. On a page taller than the window the section's own bottom padding
+     provides the separation. -->
+<footer class="border-t border-line bg-surface">
   <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">
     <div>
       <p class="text-xl font-black">
