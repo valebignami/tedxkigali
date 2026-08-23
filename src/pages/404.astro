@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import { internalHref } from '~/lib/base-path';
 ---
 
 <BaseLayout title="Page not found" noIndex={true}>
@@ -9,10 +10,10 @@ import BaseLayout from '~/layouts/BaseLayout.astro';
     <p class="mt-4 text-lg text-muted">It may have moved, or the link may be wrong.</p>
 
     <div class="mt-10 flex flex-wrap justify-center gap-4">
-      <a href="/talks" class="rounded bg-ted-red px-6 py-3 font-bold uppercase tracking-wide text-ink">
+      <a href={internalHref('/talks')} class="rounded bg-ted-red px-6 py-3 font-bold uppercase tracking-wide text-ink">
         Watch the talks
       </a>
-      <a href="/events" class="rounded border border-line px-6 py-3 font-bold uppercase tracking-wide">
+      <a href={internalHref('/events')} class="rounded border border-line px-6 py-3 font-bold uppercase tracking-wide">
         See the events
       </a>
     </div>

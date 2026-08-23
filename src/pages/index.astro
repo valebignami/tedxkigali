@@ -6,6 +6,7 @@ import EventCard from '~/components/EventCard.astro';
 import SponsorGrid from '~/components/SponsorGrid.astro';
 import { eventState } from '~/lib/events';
 import { siteSettings } from '~/lib/settings';
+import { internalHref } from '~/lib/base-path';
 
 const now = new Date();
 
@@ -31,13 +32,13 @@ const highlighted = (featured.length > 0 ? featured : allTalks).slice(0, 6);
 
     <div class="mt-10 flex flex-wrap gap-4">
       <a
-        href="/talks"
+        href={internalHref('/talks')}
         class="rounded bg-ted-red px-6 py-3 font-bold uppercase tracking-wide text-ink hover:bg-ted-red/90"
       >
         Watch the talks
       </a>
       <a
-        href="/events"
+        href={internalHref('/events')}
         class="rounded border border-line px-6 py-3 font-bold uppercase tracking-wide hover:bg-surface"
       >
         See the events
@@ -58,7 +59,7 @@ const highlighted = (featured.length > 0 ? featured : allTalks).slice(0, 6);
     <section class="mx-auto max-w-6xl px-4 pb-16">
       <div class="flex items-baseline justify-between gap-4">
         <h2 class="text-2xl font-bold uppercase tracking-wide">Talks to start with</h2>
-        <a class="text-sm underline hover:no-underline" href="/talks">All talks</a>
+        <a class="text-sm underline hover:no-underline" href={internalHref('/talks')}>All talks</a>
       </div>
       <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {highlighted.map((talk) => <TalkCard talk={talk} />)}
@@ -69,7 +70,7 @@ const highlighted = (featured.length > 0 ? featured : allTalks).slice(0, 6);
   <section class="mx-auto max-w-6xl px-4 pb-16">
     <div class="flex items-baseline justify-between gap-4">
       <h2 class="text-2xl font-bold uppercase tracking-wide">Partners</h2>
-      <a class="text-sm underline hover:no-underline" href="/partners">All partners</a>
+      <a class="text-sm underline hover:no-underline" href={internalHref('/partners')}>All partners</a>
     </div>
     <SponsorGrid tierOrder={['headline', 'gold']} headingLevel={3} />
   </section>
@@ -78,7 +79,7 @@ const highlighted = (featured.length > 0 ? featured : allTalks).slice(0, 6);
     <div class="rounded-lg border border-line bg-surface p-8">
       <h2 class="text-2xl font-bold uppercase tracking-wide">About TEDxKigali</h2>
       <p class="mt-4 max-w-3xl text-lg text-muted">{siteSettings.aboutShort}</p>
-      <a class="mt-6 inline-block text-sm underline hover:no-underline" href="/about">Read more</a>
+      <a class="mt-6 inline-block text-sm underline hover:no-underline" href={internalHref('/about')}>Read more</a>
     </div>
   </section>
 

@@ -9,6 +9,7 @@ import { eventEnd, eventState, isBookable, ticketStatusLine } from '~/lib/events
 import { eventMapUrl } from '~/lib/maps';
 import { resolveUploadedImage } from '~/lib/images';
 import { canonicalUrl } from '~/lib/seo';
+import { internalHref } from '~/lib/base-path';
 import { formatEventDate } from '~/lib/dates';
 import { referencedId } from '~/lib/stored-reference';
 
@@ -52,7 +53,7 @@ const talks = (
 
 // The organiser is TEDxKigali itself, not this page: schema.org expects an
 // Organization.url that identifies the organisation.
-const organiserUrl = Astro.site?.toString() ?? canonicalUrl(Astro.url.pathname, Astro.site);
+const organiserUrl = canonicalUrl(internalHref('/'), Astro.site);
 ---
 
 <BaseLayout title={data.title} description={data.summary} image={ogImage}>

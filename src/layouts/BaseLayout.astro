@@ -6,6 +6,7 @@ import Footer from '~/components/Footer.astro';
 import VideoDialog from '~/components/VideoDialog.astro';
 import { siteSettings } from '~/lib/settings';
 import { buildPageTitle, canonicalUrl, toJsonLd } from '~/lib/seo';
+import { internalHref } from '~/lib/base-path';
 
 interface Props {
   title?: string;
@@ -20,12 +21,18 @@ const pageTitle = buildPageTitle(title);
 const pageDescription = description ?? siteSettings.seoDescription;
 const canonical = canonicalUrl(Astro.url.pathname, Astro.site);
 
+// The organisation's own url is the site's home page, which under a sub-path
+// deployment is not the origin: Astro.site is only the origin, so the base has
+// to be put back. Run through canonicalUrl so it is spelt exactly as the home
+// page's own canonical link spells it.
+const siteHome = canonicalUrl(internalHref('/'), Astro.site);
+
 const organisationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: siteSettings.siteName,
   description: siteSettings.seoDescription,
-  url: Astro.site?.toString() ?? canonical,
+  url: siteHome,
   email: siteSettings.contactEmail,
   sameAs: siteSettings.socials.map((social) => social.url),
 };
@@ -49,8 +56,8 @@ const organisationJsonLd = {
     {image && <meta property="og:image" content={image} />}
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" type="image/svg+xml" href={internalHref('/favicon.svg')} />
+    <link rel="sitemap" href={internalHref('/sitemap-index.xml')} />
     <script type="application/ld+json" is:inline set:html={toJsonLd(organisationJsonLd)}></script>
     <slot name="head" />
   </head>

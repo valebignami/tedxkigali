@@ -26,6 +26,26 @@ describe('canonicalUrl', () => {
   it('falls back to the pathname when no site is configured', () => {
     expect(canonicalUrl('/talks', undefined)).toBe('/talks');
   });
+
+  // Under a sub-path deployment `site` is only the origin and the base travels
+  // in the pathname, which is already absolute — so nothing here needs to know
+  // about the base, and the canonical still comes out whole.
+  describe('under a sub-path deployment', () => {
+    const origin = new URL('https://valebignami.github.io');
+
+    it('keeps the base that the pathname carries', () => {
+      expect(canonicalUrl('/tedxkigali/talks', origin)).toBe(
+        'https://valebignami.github.io/tedxkigali/talks',
+      );
+    });
+
+    // The home page's pathname is the base itself, and the trailing slash goes
+    // the same way it does on any other page. The sitemap strips it too, so the
+    // two agree — see the note in astro.config.mjs.
+    it('spells the home page the way the sitemap does', () => {
+      expect(canonicalUrl('/tedxkigali/', origin)).toBe('https://valebignami.github.io/tedxkigali');
+    });
+  });
 });
 
 describe('toJsonLd', () => {

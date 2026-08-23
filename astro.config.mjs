@@ -20,9 +20,23 @@ const uploadsAreReadable = () => ({
   },
 });
 
+// Where the site is published, as one url. This is the only line to change to
+// move it: `site` and `base` below are both read off it, and so are the
+// canonical links, the sitemap and robots.txt, which take them from here.
+//
+// The site currently lives on GitHub Pages as a project site, so it is served
+// from a sub-path rather than from the root of a domain. When the real domain
+// is ready, replace the line below with
+//
+//     const PUBLISHED_AT = new URL('https://tedxkigali.rw/');
+//
+// and nothing else: the pathname of that url is '/', which makes `base` the '/'
+// that means "no sub-path", and every internal link follows.
+const PUBLISHED_AT = new URL('https://valebignami.github.io/tedxkigali/');
+
 export default defineConfig({
-  // Replace with the final domain before the first production deploy (Task 18).
-  site: 'https://tedxkigali.rw',
+  site: PUBLISHED_AT.origin,
+  base: PUBLISHED_AT.pathname,
   output: 'static',
   // The canonical link in BaseLayout emits /talks, so the sitemap must not
   // emit /talks/: two spellings of one page is a duplicate-content signal.
@@ -30,13 +44,25 @@ export default defineConfig({
   // setting below. The pages are still written as directories with an
   // index.html, so nothing about hosting changes.
   //
-  // One consequence looks like a defect and is not. This setting also strips
-  // the slash from the root, so the sitemap lists the home page as
-  // https://tedxkigali.rw while its canonical says https://tedxkigali.rw/.
-  // Those are the same URL: RFC 3986 makes an empty path equivalent to "/" for
-  // http and https, and every crawler normalises them. It is also not fixable
-  // from here — the sitemap integration applies this setting after its own
-  // serialize hook runs, so a hook receives the slash and cannot keep it.
+  // It has a second effect that this project depends on, and it is not in the
+  // name: Astro derives import.meta.env.BASE_URL from this setting, so with
+  // 'never' the base above arrives at src/lib/base-path.ts as "/tedxkigali"
+  // with no trailing slash, and with 'always' it would arrive as
+  // "/tedxkigali/". withBase there is written to take either, so changing this
+  // line cannot start producing "//talks".
+  //
+  // A note about the home page, checked against the built output rather than
+  // assumed. The sitemap integration strips the trailing slash from its root
+  // entry, and while the site is served from a sub-path the canonical link
+  // loses it too — the pathname it is built from is "/tedxkigali/", which is
+  // not "/", so canonicalUrl trims it. Both therefore say
+  // https://valebignami.github.io/tedxkigali and there is nothing to
+  // reconcile. That agreement is an accident of the sub-path: the day
+  // PUBLISHED_AT becomes a bare domain, the home page's pathname is "/" again,
+  // canonicalUrl keeps that slash by design and the sitemap will go on
+  // stripping it. The two spellings are the same URL — RFC 3986 makes an empty
+  // path equivalent to "/" for http and https, and every crawler normalises
+  // them — so that is a difference to leave alone, not a regression to chase.
   trailingSlash: 'never',
   integrations: [sitemap(), uploadsAreReadable()],
   vite: { plugins: [tailwindcss()] },

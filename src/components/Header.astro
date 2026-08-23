@@ -1,15 +1,25 @@
 ---
 import { siteSettings } from '~/lib/settings';
+import { internalHref } from '~/lib/base-path';
 
 const links = [
-  { href: '/talks', label: 'Talks' },
-  { href: '/events', label: 'Events' },
-  { href: '/speakers', label: 'Speakers' },
-  { href: '/about', label: 'About' },
-  { href: '/partners', label: 'Partners' },
+  { href: internalHref('/talks'), label: 'Talks' },
+  { href: internalHref('/events'), label: 'Events' },
+  { href: internalHref('/speakers'), label: 'Speakers' },
+  { href: internalHref('/about'), label: 'About' },
+  { href: internalHref('/partners'), label: 'Partners' },
 ];
 
+// Astro.url.pathname carries the deployment base, and so does every href above,
+// so the two are comparable as they stand.
+//
+// The test is a whole-segment one rather than a startsWith: an event page is
+// /events/<id>, and marking "Events" current there is the point, but a bare
+// startsWith would also mark a future /events-archive, and then two items in
+// the nav would claim to be the current page at once. Comparing against
+// `${href}/` is what keeps it to exactly one.
 const { pathname } = Astro.url;
+const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 ---
 
 <header class="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur">
@@ -17,7 +27,7 @@ const { pathname } = Astro.url;
        it, and in a row that cannot wrap "full width" collapses to whatever is
        left beside the logo — a 77px gutter on a 320px phone. -->
   <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
-    <a href="/" class="text-2xl font-black tracking-tight">
+    <a href={internalHref('/')} class="text-2xl font-black tracking-tight">
       <span class="text-ted-red">TED</span><span class="text-ink">x</span><span class="text-ink">Kigali</span>
       <span class="sr-only">— {siteSettings.tagline}</span>
     </a>
@@ -39,7 +49,7 @@ const { pathname } = Astro.url;
             <a
               href={link.href}
               class="block py-2 text-sm font-semibold uppercase tracking-wide text-muted hover:text-ink aria-[current=page]:text-ink"
-              aria-current={pathname.startsWith(link.href) ? 'page' : undefined}
+              aria-current={isCurrent(link.href) ? 'page' : undefined}
             >
               {link.label}
             </a>
