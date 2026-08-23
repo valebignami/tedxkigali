@@ -26,12 +26,20 @@ export interface ResolvedEditions {
 
 /**
  * The build-failure email a volunteer receives. It names the talk, names the
- * edition, and says which form to open — never "reference not found".
+ * edition, and offers all three remedies.
+ *
+ * The order matters. A hidden event is the common case — the guide recommends
+ * "Hide from the website" for postponing one — and for that case the fix is to
+ * un-hide the event or hide the talk with it. Only when the event was really
+ * deleted or renamed is re-pointing the talk right; offered first, it would
+ * read as the instruction, and a volunteer following it would silently
+ * attribute the talk to an edition it was never filmed at.
  */
 export function missingEditionMessage(talkId: string, editionId: string): string {
   return (
     `Talk "${talkId}" points at the event "${editionId}", which does not exist or is hidden. ` +
-    'Open the talk in the CMS and pick an edition from the list.'
+    'Either make that event visible again, or hide this talk too, ' +
+    'or open the talk in the CMS and pick a different edition.'
   );
 }
 

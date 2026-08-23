@@ -53,11 +53,21 @@ describe('resolveEditions', () => {
 });
 
 describe('missingEditionMessage', () => {
-  it('names the talk, the event and the form to open', () => {
+  it('names the talk and the event it points at', () => {
     const message = missingEditionMessage('the-market-at-dawn', 'tedxkigali-2027');
     expect(message).toContain('the-market-at-dawn');
     expect(message).toContain('tedxkigali-2027');
-    expect(message).toMatch(/CMS/);
     expect(message).not.toMatch(/reference|zod|undefined/i);
+  });
+
+  // The hidden-event case is the one the editing guide sends volunteers into,
+  // and re-pointing the talk is the wrong remedy for it: it would publish the
+  // talk under an edition it was never filmed at, with a green build. The
+  // message has to offer the two remedies that keep the facts intact.
+  it('offers making the event visible again and hiding the talk, not only re-pointing it', () => {
+    const message = missingEditionMessage('the-market-at-dawn', 'tedxkigali-2027');
+    expect(message).toMatch(/visible again/i);
+    expect(message).toMatch(/hide this talk/i);
+    expect(message).toMatch(/pick a different edition/i);
   });
 });
