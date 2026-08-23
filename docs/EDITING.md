@@ -9,7 +9,8 @@ a form-based editor called **Pages CMS**.
 2. Click **Sign in with GitHub** and use the GitHub account you were given access with.
 3. Open the **tedxkigali** project.
 
-You will see three sections: **Events**, **Talks** and **Site texts**.
+You will see five sections: **Events**, **Talks**, **Speakers**, **Partners** and
+**Site texts**.
 
 ## 2. Adding a talk
 
@@ -81,7 +82,8 @@ postpone an event) — turn it off again to bring it back.
 ## 4. Adding a speaker or a partner
 
 Same steps, under **Speakers** and **Partners**. Every uploaded photo needs a short
-**Photo description** — it is read aloud to visitors who use a screen reader.
+**Photo description**, and every partner logo needs a **Logo description** — both
+are read aloud to visitors who use a screen reader.
 
 ## 5. Changing the home page or About text
 

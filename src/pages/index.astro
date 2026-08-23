@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import TalkCard from '~/components/TalkCard.astro';
 import EventCard from '~/components/EventCard.astro';
+import SponsorGrid from '~/components/SponsorGrid.astro';
 import { eventState } from '~/lib/events';
 import { siteSettings } from '~/lib/settings';
 
@@ -64,6 +65,14 @@ const highlighted = (featured.length > 0 ? featured : allTalks).slice(0, 6);
       </div>
     </section>
   )}
+
+  <section class="mx-auto max-w-6xl px-4 pb-16">
+    <div class="flex items-baseline justify-between gap-4">
+      <h2 class="text-2xl font-bold uppercase tracking-wide">Partners</h2>
+      <a class="text-sm underline hover:no-underline" href="/partners">All partners</a>
+    </div>
+    <SponsorGrid tierOrder={['headline', 'gold']} />
+  </section>
 
   <section class="mx-auto max-w-6xl px-4 pb-24">
     <div class="rounded-lg border border-line bg-surface p-8">

@@ -102,6 +102,31 @@ content:
       - { name: draft, label: Hide from the website, type: boolean, default: false }
       - { name: body, label: Short biography, type: rich-text }
 
+  - name: sponsors
+    label: Partners
+    type: collection
+    path: src/content/sponsors
+    filename: '{fields.name}.md'
+    view:
+      fields: [name, tier]
+    fields:
+      - { name: name, label: Organisation name, type: string, required: true }
+      - { name: logo, label: Logo, type: image, required: true, description: 'PNG or SVG with a transparent background works best.' }
+      - { name: logoAlt, label: Logo description, type: string, required: true, description: 'For example: Acme Ltd logo.' }
+      - { name: url, label: Website, type: string }
+      - name: tier
+        label: Partner level
+        type: select
+        required: true
+        options:
+          values:
+            - { value: headline, label: Headline partner }
+            - { value: gold, label: Gold partner }
+            - { value: partner, label: Partner }
+            - { value: community, label: Community partner }
+      - { name: order, label: Display order, type: number, description: 'Lower numbers appear first.' }
+      - { name: draft, label: Hide from the website, type: boolean, default: false }
+
   - name: settings
     label: Site texts
     type: file

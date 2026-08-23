@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { resolveUploadedImage } from '~/lib/images';
+
+type SponsorTier = 'headline' | 'gold' | 'partner' | 'community';
+
+interface Props {
+  tierOrder?: SponsorTier[];
+}
+
+const { tierOrder = ['headline', 'gold', 'partner', 'community'] } = Astro.props;
+
+const TIER_LABELS: Record<SponsorTier, string> = {
+  headline: 'Headline partner',
+  gold: 'Gold partners',
+  partner: 'Partners',
+  community: 'Community partners',
+};
+
+const sponsors = await getCollection('sponsors', ({ data }) => !data.draft);
+
+const groups = tierOrder
+  .map((tier) => ({
+    tier,
+    label: TIER_LABELS[tier],
+    items: sponsors
+      .filter((sponsor) => sponsor.data.tier === tier)
+      .sort((a, b) => (a.data.order ?? 9999) - (b.data.order ?? 9999)),
+  }))
+  .filter((group) => group.items.length > 0);
+---
+
+{groups.length === 0 ? (
+  <p class="text-muted">Partner logos will appear here soon.</p>
+) : (
+  groups.map((group) => (
+    <section class="mt-10">
+      <h2 class="text-sm font-bold uppercase tracking-widest text-muted">{group.label}</h2>
+      <ul class="mt-4 flex flex-wrap items-center gap-8">
+        {group.items.map((sponsor) => {
+          const logo = resolveUploadedImage(sponsor.data.logo);
+          const img = (
+            <Image
+              src={logo}
+              alt={sponsor.data.logoAlt}
+              widths={[200, 400]}
+              sizes="200px"
+              class="h-12 w-auto object-contain"
+            />
+          );
+          return (
+            <li>
+              {sponsor.data.url ? (
+                <a href={sponsor.data.url} target="_blank" rel="noopener noreferrer">{img}</a>
+              ) : (
+                img
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  ))
+)}

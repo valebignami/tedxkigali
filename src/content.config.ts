@@ -85,4 +85,17 @@ const speakers = defineCollection({
     }),
 });
 
-export const collections = { talks, events, speakers };
+const sponsors = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/sponsors' }),
+  schema: z.object({
+    name: z.string().min(1),
+    logo: uploadPath,
+    logoAlt: z.string().min(1, 'Describe the logo, for example "Acme Ltd logo".'),
+    url: z.url().optional(),
+    tier: z.enum(['headline', 'gold', 'partner', 'community']),
+    order: z.number().int().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { talks, events, speakers, sponsors };
