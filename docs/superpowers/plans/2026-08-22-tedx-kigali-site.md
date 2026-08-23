@@ -2610,14 +2610,14 @@ content:
         order: desc
     fields:
       - { name: title, label: Event title, type: string, required: true, description: 'For example: TEDxKigali 2026 — Rising' }
-      - { name: startDate, label: Start date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ssxxx", time: true }, required: true, description: 'Kigali time (CAT).' }
+      - { name: startDate, label: Start date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ssxxx", time: true }, required: true, description: 'Enter the time as it will show on a clock in Kigali. If you are editing from outside Rwanda, check the saved value ends in +02:00.' }
       - { name: endDate, label: End date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ssxxx", time: true }, description: 'Optional. If empty, the event is assumed to last four hours.' }
       - { name: venue, label: Venue, type: string, required: true }
       - { name: address, label: Address, type: string }
       - { name: mapUrl, label: Map link, type: string, description: 'Optional link to Google Maps.' }
       - { name: image, label: Event image, type: image }
       - { name: imageAlt, label: Image description, type: string, description: 'Required if you upload an image. Describe it for people using a screen reader.' }
-      - { name: theme, label: Edition theme, type: string }
+      - { name: theme, label: Edition theme, type: string, description: 'One or two words, for example: Rising.' }
       - { name: summary, label: Short summary, type: text, required: true, description: 'Max 300 characters. Shown in listings and when the page is shared.' }
       - name: ticketStatus
         label: Ticket status
@@ -2639,7 +2639,7 @@ content:
     label: Talks
     type: collection
     path: src/content/talks
-    filename: '{year}-{month}-{day}-{fields.title}.md'
+    filename: '{fields.title}.md'
     view:
       fields: [title, speaker, date]
       default:
@@ -2653,6 +2653,7 @@ content:
       - name: edition
         label: Event edition
         type: reference
+        description: 'Which TEDxKigali edition was this talk filmed at? Pick it from the list. Create the event first if it is not there yet.'
         options:
           collection: events
           value: '{name}'
@@ -2661,7 +2662,7 @@ content:
       - { name: thumbnail, label: Cover image, type: image, description: 'Optional. Leave empty to use the YouTube preview image.' }
       - { name: thumbnailAlt, label: Cover image description, type: string, description: 'Required if you upload a cover image.' }
       - { name: featured, label: Show on the home page, type: boolean, default: false }
-      - { name: tags, label: Tags, type: string, list: true }
+      - { name: tags, label: Tags, type: string, list: true, description: 'Optional keywords used to filter the talks page, for example: community, climate, public speaking.' }
       - { name: draft, label: Hide from the website, type: boolean, default: false }
 
   - name: settings
@@ -3519,8 +3520,9 @@ Annotare ogni punto in cui si è bloccata e correggere `docs/EDITING.md` o le et
 4. **Lighthouse mobile** su home, `/talks` e `/events`: ≥ 95 nelle quattro categorie. Se Performance scende sotto la soglia, verificare per prima cosa il peso delle immagini caricate.
 5. **Dati strutturati**: Rich Results Test sull'URL pubblico dell'evento.
 6. **Accessibilità**: navigazione completa da tastiera, contrasti, testo alternativo su tutte le immagini.
-7. **Riferimento normativo**: far confermare da qualcuno con conoscenza legale locale che la citazione della legge rwandese 058/2021 nella pagina privacy sia corretta per numero e titolo. Una citazione sbagliata su una pagina privacy pubblica e' di per se' un problema di credibilita'.
-8. **Marchio TEDx**: footer con la dicitura di licenza e la spiegazione della `x` su ogni pagina; confronto con la guida ufficiale per gli organizzatori TEDx.
+7. **Fuso orario del CMS**: creare un evento di prova da un browser **non** impostato su Africa/Kigali e verificare che il valore salvato in `startDate` finisca in `+02:00`. Se il widget del CMS deriva l'offset dal fuso del redattore, un volontario che scrive dall'estero salverebbe l'istante sbagliato e l'orario mostrato sul sito sarebbe errato.
+8. **Riferimento normativo**: far confermare da qualcuno con conoscenza legale locale che la citazione della legge rwandese 058/2021 nella pagina privacy sia corretta per numero e titolo. Una citazione sbagliata su una pagina privacy pubblica e' di per se' un problema di credibilita'.
+9. **Marchio TEDx**: footer con la dicitura di licenza e la spiegazione della `x` su ogni pagina; confronto con la guida ufficiale per gli organizzatori TEDx.
 
 - [ ] **Step 10: Commit finale**
 
