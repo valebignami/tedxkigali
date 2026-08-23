@@ -46,11 +46,24 @@ export function notAnImageMessage(fileName: string): string {
   );
 }
 
-/** Every uploaded file that is named like a picture but cannot be one. */
+/**
+ * Every uploaded file that is named like a picture but cannot be one.
+ *
+ * Recursive, because the glob it protects is: src/lib/images.ts matches
+ * `/src/assets/uploads/**` and normaliseUploadPath keeps whatever folder the
+ * stored value carries, so a file one level down reaches Vite exactly like one
+ * at the top. Listing only the top level left it to fail there instead, with an
+ * absolute path on the build machine and eight frames of node_modules —
+ * reproduced against src/assets/uploads/2026/probe-fake.jpg.
+ */
 export function unreadableUploads(directory: string): string[] {
   let fileNames: string[];
   try {
-    fileNames = readdirSync(directory);
+    fileNames = (readdirSync(directory, { recursive: true }) as string[]).map((fileName) =>
+      // Windows lists a nested file as "2026\\probe.jpg". The name goes into a
+      // message somebody has to read, and into join() either way.
+      fileName.replace(/\\/g, '/'),
+    );
   } catch {
     // No uploads folder yet is the state this project ships in, and is fine.
     return [];

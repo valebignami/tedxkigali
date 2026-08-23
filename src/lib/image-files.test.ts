@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { looksLikeImage, notAnImageMessage } from '~/lib/image-files';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { looksLikeImage, notAnImageMessage, unreadableUploads } from '~/lib/image-files';
 
 const head = (...parts: Array<number[] | string>) => {
   const bytes: number[] = [];
@@ -37,6 +40,43 @@ describe('looksLikeImage', () => {
   // the bytes are what count and the file name is never consulted.
   it('does not care what the file is called', () => {
     expect(looksLikeImage(head([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBe(true);
+  });
+});
+
+// The uploads folder can hold folders of its own — nothing stops a maintainer
+// filing photos by year, and the glob in src/lib/images.ts follows them.
+describe('unreadableUploads', () => {
+  const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0, 0, 0, 0, 0]);
+  let uploads: string;
+
+  beforeAll(() => {
+    uploads = mkdtempSync(join(tmpdir(), 'uploads-'));
+    mkdirSync(join(uploads, '2026'));
+    writeFileSync(join(uploads, 'real.png'), PNG);
+    writeFileSync(join(uploads, '2026', 'also-real.png'), PNG);
+    writeFileSync(join(uploads, '2026', 'notes.txt'), 'not named like a picture');
+  });
+
+  afterAll(() => rmSync(uploads, { recursive: true, force: true }));
+
+  it('says nothing about a folder of real pictures', () => {
+    expect(unreadableUploads(uploads)).toEqual([]);
+  });
+
+  it('names a fake picture one folder down, with its folder', () => {
+    writeFileSync(join(uploads, '2026', 'fake.jpg'), 'this is not an image at all');
+    expect(unreadableUploads(uploads)).toEqual(['2026/fake.jpg']);
+    rmSync(join(uploads, '2026', 'fake.jpg'));
+  });
+
+  it('names a fake picture at the top as it always did', () => {
+    writeFileSync(join(uploads, 'fake.jpg'), 'this is not an image at all');
+    expect(unreadableUploads(uploads)).toEqual(['fake.jpg']);
+    rmSync(join(uploads, 'fake.jpg'));
+  });
+
+  it('is not upset by a folder that has no uploads folder at all', () => {
+    expect(unreadableUploads(join(uploads, 'nothing-here'))).toEqual([]);
   });
 });
 
