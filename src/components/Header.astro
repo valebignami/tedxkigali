@@ -13,7 +13,10 @@ const { pathname } = Astro.url;
 ---
 
 <header class="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur">
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
+  <!-- flex-wrap matters below md: the nav is w-full when the Menu button opens
+       it, and in a row that cannot wrap "full width" collapses to whatever is
+       left beside the logo — a 77px gutter on a 320px phone. -->
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
     <a href="/" class="text-2xl font-black tracking-tight">
       <span class="text-ted-red">TED</span><span class="text-ink">x</span><span class="text-ink">Kigali</span>
       <span class="sr-only">— {siteSettings.tagline}</span>

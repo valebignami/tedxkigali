@@ -2,10 +2,14 @@
      a fixed 16:9 box, so on a phone held sideways a width-only limit pushes the
      video past the bottom of the screen. 3.5rem is the header strip below
      (a text-sm line box of 1.25rem inside py-3, plus the dialog's own borders). -->
+<!-- m-auto below is load-bearing. A browser centres a modal dialog with its own
+     "dialog:modal { margin: auto }" rule, and Tailwind's Preflight sets
+     "margin: 0" on every element, which wins. Without that class the player
+     opens flush against the top-left corner of the screen, at every size. -->
 <dialog
   id="video-dialog"
   aria-labelledby="video-dialog-title"
-  class="w-[min(96vw,1100px,calc((85vh-3.5rem)*16/9))] rounded-lg border border-line bg-surface p-0 text-ink backdrop:bg-black/85"
+  class="m-auto w-[min(96vw,1100px,calc((85vh-3.5rem)*16/9))] rounded-lg border border-line bg-surface p-0 text-ink backdrop:bg-black/85"
 >
   <div class="flex items-center justify-between gap-4 px-4 py-3">
     <h2 id="video-dialog-title" class="truncate text-sm font-semibold uppercase tracking-wide"></h2>

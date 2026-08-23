@@ -20,14 +20,17 @@ const year = new Date().getFullYear();
     <div>
       <h2 class="text-sm font-semibold uppercase tracking-wide">Contact</h2>
       <p class="mt-2 text-sm">
-        <a class="underline hover:no-underline" href={`mailto:${siteSettings.contactEmail}`}>
+        <a class="inline-block py-1 underline hover:no-underline" href={`mailto:${siteSettings.contactEmail}`}>
           {siteSettings.contactEmail}
         </a>
       </p>
+      <!-- py-1 on these links, and on the two above and below, lifts them from a
+           17px line box to 25px: WCAG 2.5.8 sets 24px as the floor for a tap
+           target, and "X" is a two-character link on a phone. -->
       <ul class="mt-3 flex flex-wrap gap-4 text-sm">
         {siteSettings.socials.map((social) => (
           <li>
-            <a class="underline hover:no-underline" href={social.url} rel="noopener noreferrer" target="_blank">
+            <a class="inline-block py-1 underline hover:no-underline" href={social.url} rel="noopener noreferrer" target="_blank">
               {social.label}
             </a>
           </li>
@@ -38,7 +41,7 @@ const year = new Date().getFullYear();
     <div class="text-sm text-muted">
       <p>{siteSettings.tedxLicenceNotice}</p>
       <p class="mt-3">
-        <a class="underline hover:no-underline" href="/privacy">Privacy</a>
+        <a class="inline-block py-1 underline hover:no-underline" href="/privacy">Privacy</a>
       </p>
       <p class="mt-3">© {year} TEDxKigali</p>
     </div>

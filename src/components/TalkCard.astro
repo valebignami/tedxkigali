@@ -37,6 +37,11 @@ const year = date.getUTCFullYear();
     data-youtube-id={videoId}
     data-video-title={`${title} — ${speaker}`}
   >
+    <!-- The YouTube branch below carries two sources, for two different reasons.
+         srcset lets a phone take the 480px still rather than the 1280px one for
+         a card barely wider than a thumb; onerror covers the videos YouTube
+         never generated a maxres still for, and clears srcset first, or the
+         browser would keep choosing the missing file over the src just set. -->
     {uploaded ? (
       <Image
         src={uploaded}
@@ -48,8 +53,10 @@ const year = date.getUTCFullYear();
     ) : (
       <img
         src={thumbs.primary}
+        srcset={`${thumbs.fallback} 480w, ${thumbs.primary} 1280w`}
+        sizes="(min-width: 1024px) 400px, 100vw"
         data-fallback={thumbs.fallback}
-        onerror={`this.onerror=null;this.src='${thumbs.fallback}';`}
+        onerror={`this.onerror=null;this.srcset='';this.src='${thumbs.fallback}';`}
         alt=""
         width="1280"
         height="720"

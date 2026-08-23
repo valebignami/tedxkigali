@@ -20,6 +20,22 @@ function openVideo(id: string, title: string): void {
 
   frame.replaceChildren(iframe);
   dialog.showModal();
+  // showModal() makes the page inert but does not stop it scrolling, so without
+  // this the talk slides out from under the player on a wheel or a swipe.
+  lockScroll();
+}
+
+let scrollLock: string | null = null;
+
+function lockScroll(): void {
+  scrollLock = document.documentElement.style.overflow;
+  document.documentElement.style.overflow = 'hidden';
+}
+
+function releaseScroll(): void {
+  if (scrollLock === null) return;
+  document.documentElement.style.overflow = scrollLock;
+  scrollLock = null;
 }
 
 document.addEventListener('click', (event) => {
@@ -42,4 +58,7 @@ dialog?.addEventListener('click', (event) => {
 dialog?.querySelector('[data-close-video]')?.addEventListener('click', () => dialog.close());
 
 // Removing the iframe is what actually stops the audio.
-dialog?.addEventListener('close', () => frame?.replaceChildren());
+dialog?.addEventListener('close', () => {
+  frame?.replaceChildren();
+  releaseScroll();
+});
