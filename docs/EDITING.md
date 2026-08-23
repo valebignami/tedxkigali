@@ -9,37 +9,60 @@ a form-based editor called **Pages CMS**.
 2. Click **Sign in with GitHub** and use the GitHub account you were given access with.
 3. Open the **tedxkigali** project.
 
-You will see five sections: **Events**, **Talks**, **Speakers**, **Partners** and
-**Site texts**.
+Down the left you will see five sections under **Content** — **Events**,
+**Talks**, **Speakers**, **Partners** and **Site texts** — and a **Media**
+section below them, which holds every picture that has been uploaded.
 
 Each section below lists the fields in the order the form puts them, so you can
 work down the page.
+
+**Everything you save is published.** There is no draft copy of the site and no
+preview: a save goes live a few minutes later. Every entry has a **Hide from the
+website** switch at the bottom of its form — turn it on before you start
+practising, and turn it off when you are happy with what you have written. That
+is the only safe way to try things out.
 
 ## 2. Adding a talk
 
 1. Open **Talks** and start a new entry.
 2. Fill in the fields, from the top:
    - **Talk title** (required) — exactly as it appears on stage.
-   - **Speaker name** (required).
+   - **Speaker name** (required) — the full name of the person who gave the
+     talk. This is only text. It does not create a page for them: if you want
+     this person to appear under **Speakers** too, add them there as well
+     (section 4) and write the name the same way in both places. Nothing
+     connects the two for you.
    - **YouTube link** (required) — open the talk on YouTube, copy the link from
      your browser's address bar and paste it here. It has to be a link to one
      video. A playlist, a channel page, a `music.youtube.com` link, or anything
      copied out of YouTube Studio will be refused. Short `youtu.be` links, links
      with a time in them, Shorts and live recordings are all fine.
-   - **Talk date** (required).
-   - **Event edition** — pick the edition this talk belongs to from the list. If
-     the edition you need is not there yet, save the event first (see section 3),
-     then come back and set this field.
-   - **Short summary** — one or two sentences, at most 300 characters.
+   - **Talk date** (required) — the day of the event where the talk was filmed,
+     **not** the day the video was uploaded. It decides the order of the talks
+     page and the year printed on the card.
+   - **Event edition** — pick the edition this talk belongs to from the list.
+     You can leave it empty, but then the talk does not appear under any edition
+     when visitors filter the talks page. If the edition you need is not there
+     yet, save the event first (see section 3), then come back and set this
+     field.
+   - **Short summary** — one or two sentences. The box stops you at 300
+     characters.
    - **Cover image** — leave empty unless you want a custom cover: by default the
      site uses YouTube's own preview image. If you do upload one, you must also
      fill in **Cover image description** — a short description read aloud to
      visitors who use a screen reader.
-   - **Show on the home page** — turn on for the three or four talks you want to
-     highlight first.
+   - **Show on the home page** — the home page shows **six** talks. Turn this on
+     for the ones you want there. If you mark more than six, it shows the six
+     most recently dated of them; if you mark none at all, it shows the six most
+     recent talks anyway.
    - **Tags** — optional keywords used to filter the talks page, for example:
-     *community*, *climate*, *public speaking*. You can leave this empty.
+     *community*, *climate*, *public speaking*. One keyword per row. You can
+     leave this empty.
+   - **Hide from the website** — see the note at the end of section 1.
 3. Click **Save**.
+
+Changing a talk's title later does not rename anything and does not break
+anything: the file keeps the name it was given when it was first saved.
 
 ## 3. Adding an event
 
@@ -51,40 +74,47 @@ work down the page.
      clock in Kigali. **You do not have to convert anything.** Wherever in the
      world you are sitting, and whatever your own computer clock says, the
      website reads what you pick here as Kigali time. Pick 09:00 and the website
-     says 09:00.
-   - **End date and time** — read as Kigali time in the same way as the start.
-     If you leave it empty, the website assumes the event lasts four hours. It
-     has to be later than the start: if it is the same time, or earlier, the
-     rebuild stops and tells you (see section 8).
-   - **Venue** (required).
-   - **Address** — the website builds its own "open in Google Maps" link from
-     the venue and address, so you do not need to go and find a map link
-     yourself.
-   - **Map link** — leave this empty unless you have checked that searching for
-     the venue and address sends people to the wrong place. Only then, open the
-     right place in Google Maps and copy the link out of your browser's address
-     bar. Do not use the **Share** button: the short link it gives you is not
-     guaranteed to keep working.
+     says 09:00. The field starts out filled in with today's date and the
+     current time, so change it.
+   - **End date and time** — starts empty, and read as Kigali time in the same
+     way as the start. If you leave it empty, the website assumes the event
+     lasts four hours. It has to be later than the start: if it is the same
+     time, or earlier, the rebuild stops and tells you (see section 8).
+   - **Venue** (required) — the name of the place, for example *Kigali
+     Convention Centre*.
+   - **Address** — the street of the venue, for example *KG 2 Roundabout,
+     Kigali*. It is printed after the venue on the event page, and the website
+     builds its own "open in Google Maps" link out of the two together, so a
+     rough address is better than none.
+   - **Map link** — leave this empty unless you have checked that the link built
+     from the venue and address sends people to the wrong place. Only then, open
+     the right place in Google Maps and copy the link out of your browser's
+     address bar. Do not use the **Share** button: the short link it gives you
+     is not guaranteed to keep working.
    - **Event image** — if you upload one, you must also fill in **Image
      description** (read aloud to visitors who use a screen reader).
    - **Edition theme** — one or two words, for example: *Rising*.
-   - **Short summary** (required) — at most 300 characters. Shown in listings and
-     when the page is shared.
+   - **Short summary** (required) — shown in listings and when the page is
+     shared. The box stops you at 300 characters.
    - **Ticket status** (required) — see step 3 below for what each option means.
    - **Booking link** — see step 4.
-   - **Booking button text** — says "Book your seat" unless you change it.
+   - **Booking button text** — the words printed on the booking button. It says
+     *Book your seat* unless you change it, and if you empty it, it goes back to
+     saying *Book your seat*.
    - **Programme** — the running order of the day. Add one row for each thing
      that happens: a welcome, a talk, a break, anything. These rows live inside
      the event you are already editing — you are not creating another event.
      Fill in **What happens** (required) and, if you have them, **Time**,
-     **Speaker** and **Note**. Rows appear on the website in the order you put
-     them in here and the website never reorders them for you, so move them
-     around until the order matches the day. A row with no time is fine; that is
-     how you add a break like lunch or a coffee break, which does not have a
-     speaker either. If you do fill in **Time**, write it as a 24-hour time, for
-     example `09:00`, or a range like `09:00 - 09:20`. Anything else (an
-     "am"/"pm" time, or a time with a full stop instead of a colon) will stop the
-     rebuild — see section 8 for what happens next.
+     **Speaker** and **Note**. Rows appear on the website in the order they are
+     in here and the website never reorders them for you. To move a row, drag it
+     by the handle — the six dots to the left of the row — and drop it where it
+     belongs. A row with no time is fine; that is how you add a break like lunch
+     or a coffee break, which does not have a speaker either. If you do fill in
+     **Time**, write it as a 24-hour time, for example `09:00`, or a range like
+     `09:00 - 09:20`. Anything else (an "am"/"pm" time, or a time with a full
+     stop instead of a colon) will stop the rebuild — see section 8 for what
+     happens next.
+   - **Hide from the website** — see the note at the end of section 1.
    - **Full description** — the main body text of the event page. Use this for
      anything that does not fit in the short summary.
 3. Choose the **Ticket status** (this field is required):
@@ -94,16 +124,18 @@ work down the page.
    - *Sold out* / *Registrations closed* — no booking button.
 4. If you chose **Tickets on sale** or **Free entry — registration required**,
    paste the **Booking link** from your ticketing platform (Eventbrite, a Google
-   Form, or anything else) — it opens in a new tab. Skip this step for the other
-   ticket statuses.
+   Form, or anything else) — it opens in a new tab. The form cannot put a
+   *Required* mark on that field, because whether it is required depends on the
+   ticket status you picked; if you forget it, the rebuild stops and tells you.
+   Skip this step for the other ticket statuses.
 5. Click **Save**.
 
 The event moves from *Upcoming* to *Past editions* by itself once it is over. You
 do not need to do anything.
 
-Tip: both talks and events have a **Hide from the website** toggle. Turn it on to
-take an entry off the site temporarily without deleting it (for example, to
-postpone an event) — turn it off again to bring it back.
+Tip: **Hide from the website** is also how you take an event off the site
+temporarily without deleting it — to postpone it, for instance. Turn it off
+again to bring it back.
 
 One thing to know before you hide an event: if any visible talk is linked to
 that edition, the rebuild stops and tells you which talk it is. That is on
@@ -112,9 +144,15 @@ hide those talks too, or leave the event visible.
 
 ## 4. Adding a speaker
 
-Open **Speakers** and start a new entry. The fields, from the top:
+Open **Speakers** and start a new entry. This section is separate from
+**Talks**: adding a speaker here does not create a talk, and adding a talk does
+not create a speaker. Someone who spoke at a TEDxKigali event and whose talk is
+on the website usually needs both, with the name written the same way in each.
 
-- **Full name** (required) — as it should appear on the speakers page.
+The fields, from the top:
+
+- **Full name** (required) — as it should appear on the speakers page, and
+  exactly as it is written under **Speaker name** in their talk.
 - **Role or organisation** — shown under the name, for example *Environmental
   researcher, University of Rwanda*.
 - **Photo** — if you upload one, you must also fill in **Photo description**, a
@@ -124,7 +162,8 @@ Open **Speakers** and start a new entry. The fields, from the top:
   Do not delete a talk that is still chosen here: empty this field first, or the
   rebuild stops.
 - **Links** — where else to find this person. Each row needs a **Name** (for
-  example *LinkedIn*) and a complete **Link** starting with `https://`.
+  example *LinkedIn*, which is the word visitors read and click) and a complete
+  **Link** starting with `https://`. The form refuses a link that does not.
 - **Display order** — who comes first on the speakers page. The lowest number is
   first; anyone you leave empty comes after everyone with a number. Number them
   in tens — 10, 20, 30 — so you can slot somebody in later without renumbering
@@ -143,7 +182,7 @@ more than anywhere else on the site:
 - **Logo description** (required) — for example *Acme Ltd logo*. Read aloud to
   visitors who use a screen reader.
 - **Website** — the complete address, starting with `https://`. The logo becomes
-  a link to it.
+  a link to it. The form refuses an address that does not start with `https://`.
 - **Partner level** (required) — this decides which block of the Partners page
   the logo appears in. The four choices produce the headings **Headline
   partner**, **Gold partners**, **Partners** and **Community partners**, in that
@@ -154,18 +193,36 @@ more than anywhere else on the site:
 
 ## 6. Changing the home page or About text
 
-Open **Site texts**. These fields appear across the whole website, so read them
-twice before saving. Every one of them is required — none can be left empty.
+Open **Site texts**. Every field here appears on every page of the website, or on
+the home page, so a mistake in this form is a mistake everywhere. Every one of
+them is required — none can be left empty.
 
+- **Site name** is the name of the event. It follows the page name in the
+  browser tab and in search results, and it is the name shown when somebody
+  shares a page.
+- **Tagline** is the line after the site name in the browser tab and in search
+  results for the home page. It is not printed anywhere on the page itself; it
+  is also read aloud after the logo to visitors using a screen reader. If you
+  are trying to change the big line on the home page, that is **Home page
+  headline**, not this. The two currently hold the same sentence, which makes
+  them easy to confuse.
+- **Home page headline** is the big line across the top of the home page.
+- **Home page intro** is the paragraph under it.
 - **Short about text** is the paragraph on the home page and at the top of the
   About page.
 - **About page text** is the main text of the About page. Leave a blank line
   between two paragraphs to start a new paragraph.
+- **Contact email** is the address printed in the footer of every page.
+- **Social links** are the links in the footer. In each row, **Name** is the word
+  visitors read and click — *Instagram*, *LinkedIn* — and **Link** is the
+  address, starting with `https://`. Do not paste the address into **Name**.
 - **Search engine description** is the sentence Google and social networks show
   under the name of the site. At most 300 characters.
-
-The **TED licence notice** field is required by TED. Change its wording only if
-TED itself updates the required text.
+- **TED licence notice** is required by TED. Change its wording only if TED
+  itself updates the required text.
+- **Meaning of the x** is the line that explains the x in TEDx — today, *x =
+  independently organized TED event*. It is printed in the footer of every page
+  and inside the "What is TEDx?" paragraph on the About page.
 
 ## 7. What happens after you press Save
 
@@ -173,41 +230,33 @@ Your change is saved to GitHub the moment you press Save. That part always
 happens, and nothing you have typed is lost after it — it stays in the file
 exactly as you left it, even if everything below goes wrong.
 
-What happens next depends on a connection between GitHub and the hosting, which
-the site maintainer sets up once. When it is in place, the website is rebuilt
-from your change and the new version is published on its own, and you refresh
-the page to see it.
+Every save then starts a rebuild of the website, on its own, with nothing for
+you or anybody else to press. It usually takes two or three minutes. Refresh the
+page when it is done and your change is there.
 
-**Before you start editing, ask the site maintainer three things:** whether that
-connection is set up; roughly how long a publish takes, so you know how long to
-wait before worrying; and whether the website goes on showing the last version
-that worked when a rebuild stops. Until they answer, assume your change is
-stored but not yet published, and check the live site yourself after each save.
-Section 8 adds a fourth thing to ask them in the same conversation.
-
-If a rebuild stops because something is wrong, your change is still saved. Go
-back into the entry, fix the field, and save again — see section 8.
+If the rebuild stops because something is wrong, nothing is published and the
+website goes on showing the last version that worked. Your change is still
+saved. Go back into the entry, fix the field, and save again — see section 8.
 
 ## 8. If something goes wrong
 
-**How you find out.** Look at the website a few minutes after you save. If your
-change is not there, the rebuild stopped.
-
-Before you start editing, ask the site maintainer to set up a failure email to
-your address, and to test it once with you. Until you have seen one arrive, do
-not count on being told — check the site yourself after each save.
+**How you find out.** GitHub emails you when a rebuild fails. It goes to the
+address on the GitHub account you signed in with. If you have never seen one and
+you think you should have, check the notification settings on your GitHub
+account — and in the meantime, look at the website a few minutes after you save:
+if your change is not there, the rebuild stopped.
 
 **What to do:**
 
-1. If a failure email reached you, read the message in it. It says what is wrong
-   in plain English and what to do about it, for example *"YouTube link not
-   recognised. Copy the full link from your browser address bar"*, or *"This
-   event has no venue. Write the name of the place it happens"*.
+1. Read the message in the email. It says what is wrong in plain English and
+   what to do about it, for example *"YouTube link not recognised. Copy the full
+   link from your browser address bar"*, or *"This event has no venue. Write the
+   name of the place it happens"*.
 2. Go back into the CMS, open that entry, fix the field, and save again.
-3. If no email reached you, or you cannot work out what is wrong, contact the
-   site maintainer. Tell them which entry you saved and roughly when — the
-   message is waiting for them in the build record. A screenshot of the email,
-   if you have one, saves them a step.
+3. If you cannot work out what is wrong, contact the site maintainer. Tell them
+   which entry you saved and roughly when — the message is waiting for them in
+   the build record. A screenshot of the email, if you have one, saves them a
+   step.
 
 ## 9. Images
 
