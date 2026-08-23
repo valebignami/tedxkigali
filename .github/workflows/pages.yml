@@ -1,0 +1,70 @@
+name: Deploy to GitHub Pages
+
+# Separate from ci.yml on purpose. CI answers "is this change sound?" and runs
+# on pull requests too; this one answers "put it in front of the public", which
+# may only ever happen from main.
+on:
+  push:
+    branches: [main]
+  # So a deploy can be re-run from the Actions tab without an empty commit —
+  # useful after changing the Pages settings in the repository itself.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Two pushes in a minute must not race each other into the same environment.
+# cancel-in-progress is false rather than true: a half-finished deployment is
+# worse than a queued one.
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Before the build, and in this order, because a red suite must not
+      # publish: the deploy job below needs this one, and a failed step fails
+      # the job, so nothing reaches the environment. The build itself is also a
+      # test here — the content rules stop it with an editor-facing message when
+      # an event has been saved in an impossible state.
+      - run: npm test
+      - run: npm run check
+
+      # No `static_site_generator: astro` input, deliberately. That input makes
+      # the action write an Astro config override that sets `site` and `base`
+      # from the repository name, which would quietly take over the two values
+      # astro.config.mjs sets from PUBLISHED_AT — and then moving to a real
+      # domain would change nothing. Without it the action only enables Pages
+      # and reports the url.
+      - uses: actions/configure-pages@v5
+
+      - run: npm run build
+
+      # Pages deployments made from an artifact are served as uploaded; Jekyll
+      # never runs over them, so Astro's _astro/ directory needs no .nojekyll.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
