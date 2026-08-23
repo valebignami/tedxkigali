@@ -85,7 +85,7 @@ describe('the messages for the lists of choices', () => {
   it('spell out the programmes by the names TED gives them', () => {
     expect(PROGRAMME_MESSAGE).toContain('TEDxKigali Women');
     expect(PROGRAMME_MESSAGE).toContain('TEDxKigali Countdown');
-    expect(PROGRAMME_MESSAGE).not.toMatch(/flagship|countdown"/);
+    expect(PROGRAMME_MESSAGE).not.toMatch(/standard|countdown"/);
   });
 
   it('spell out the partner levels the way the CMS labels them', () => {

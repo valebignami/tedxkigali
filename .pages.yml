@@ -30,7 +30,7 @@ content:
       # Programme is a column but not a sort key, for the reason written
       # against the partners list below: a select sorts on the value it
       # stores, not the label it shows, so sorting on it would order the
-      # editions countdown, flagship, kids, women, youth — an order that
+      # editions countdown, kids, standard, women, youth — an order that
       # matches nothing on the screen. The column is enough to see at a
       # glance which edition belongs to what.
       sort: [startDate, title]
@@ -68,11 +68,11 @@ content:
       - name: programme
         label: TEDx programme
         type: select
-        default: flagship
+        default: standard
         description: 'Which TEDx programme this edition belongs to — not the running order of the day, which is "Programme of the day" further down. Leave it on "TEDxKigali" for a main edition. It groups the archive on the Events page, it puts the programmes across the top of the Talks page, and it puts this one on the About page. None of it shows while there is only one programme on the website: with one, every page looks exactly as it did before, which is correct and not a fault. A programme reaches the About page on the day its first event goes live.'
         options:
           values:
-            - { value: flagship, label: TEDxKigali }
+            - { value: standard, label: TEDxKigali }
             - { value: women, label: TEDxKigali Women }
             - { value: youth, label: TEDxKigali Youth }
             - { value: kids, label: TEDxKigali Kids }

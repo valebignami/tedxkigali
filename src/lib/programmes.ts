@@ -16,7 +16,13 @@
 // contain: their programme for young people is Youth. It is offered because the
 // organisers asked for it, and whoever holds the licence should confirm it is a
 // type they may run before an event is published under it.
-export const PROGRAMMES = ['flagship', 'women', 'youth', 'kids', 'countdown'] as const;
+// The ids are read by a volunteer, not only by the code: the CMS list shows a
+// select's stored value and not its label — the ticket status column has always
+// read "open" and "closed" — so the events list prints these words under "TEDx
+// programme". Four of them are the word in the name. The fifth was "flagship",
+// which named nothing a volunteer had seen; it is "standard" because that is
+// TED's own word for the main event type.
+export const PROGRAMMES = ['standard', 'women', 'youth', 'kids', 'countdown'] as const;
 
 export type Programme = (typeof PROGRAMMES)[number];
 
@@ -25,10 +31,10 @@ export type Programme = (typeof PROGRAMMES)[number];
  * before this field existed is a main-edition event, and so is the common case
  * afterwards, so the field is never one an editor has to think about.
  */
-export const DEFAULT_PROGRAMME: Programme = 'flagship';
+export const DEFAULT_PROGRAMME: Programme = 'standard';
 
 export const PROGRAMME_NAMES: Record<Programme, string> = {
-  flagship: 'TEDxKigali',
+  standard: 'TEDxKigali',
   women: 'TEDxKigali Women',
   youth: 'TEDxKigali Youth',
   kids: 'TEDxKigali Kids',
@@ -46,7 +52,7 @@ export const PROGRAMME_NAMES: Record<Programme, string> = {
  * would be a promise nobody checked.
  */
 export const PROGRAMME_BLURBS: Record<Programme, string> = {
-  flagship: 'Our main edition: a day of talks in Kigali, open to anyone who books a seat.',
+  standard: 'Our main edition: a day of talks in Kigali, open to anyone who books a seat.',
   women: "Talks built around the ideas and the work of women, part of TED's TEDWomen programme.",
   youth: 'Planned and hosted with young people, in the schools and communities they come from.',
   kids: 'Talks and activities made for younger children, and for the adults who bring them.',

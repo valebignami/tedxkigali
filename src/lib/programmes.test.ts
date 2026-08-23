@@ -88,8 +88,8 @@ describe('the default programme', () => {
 
 describe('programmesInOrder', () => {
   it('returns the programmes present, in declaration order and not the order given', () => {
-    expect(programmesInOrder(['countdown', 'women', 'flagship'])).toEqual([
-      'flagship',
+    expect(programmesInOrder(['countdown', 'women', 'standard'])).toEqual([
+      'standard',
       'women',
       'countdown',
     ]);
@@ -100,7 +100,7 @@ describe('programmesInOrder', () => {
   });
 
   it('leaves out the programmes nothing belongs to', () => {
-    expect(programmesInOrder(['flagship'])).toEqual(['flagship']);
+    expect(programmesInOrder(['standard'])).toEqual(['standard']);
     expect(programmesInOrder([])).toEqual([]);
   });
 
@@ -108,8 +108,8 @@ describe('programmesInOrder', () => {
   // site with a single kind of event keeps the layout it had before programmes
   // existed. That is a behaviour, not an accident of the data.
   it('returns one entry for a site that only runs the main edition', () => {
-    const everyEventIsFlagship: Programme[] = ['flagship', 'flagship', 'flagship'];
-    expect(programmesInOrder(everyEventIsFlagship)).toHaveLength(1);
+    const everyEventIsStandard: Programme[] = ['standard', 'standard', 'standard'];
+    expect(programmesInOrder(everyEventIsStandard)).toHaveLength(1);
   });
 });
 
@@ -124,11 +124,11 @@ describe('editionLabelUnder', () => {
   });
 
   // The main edition's name is the prefix of every other programme's, so a
-  // flagship title must not be cut at "TEDxKigali " when it reads
+  // standard title must not be cut at "TEDxKigali " when it reads
   // "TEDxKigali Women …" — it never does, because a title only reaches this
   // function under its own programme.
   it('leaves the main edition its year and theme', () => {
-    expect(editionLabelUnder('TEDxKigali 2026 — Rising', 'flagship')).toBe('2026 — Rising');
+    expect(editionLabelUnder('TEDxKigali 2026 — Rising', 'standard')).toBe('2026 — Rising');
   });
 
   // An editor can title an edition anything. Cutting at a prefix that is not

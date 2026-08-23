@@ -5,7 +5,7 @@ endDate: 2025-10-18T17:00:00
 venue: "Kigali Public Library"
 address: "KG 9 Avenue, Kacyiru, Kigali, Rwanda"
 theme: "Roots"
-programme: "flagship"
+programme: "standard"
 summary: "Nine speakers on where we come from and what we carry forward."
 ticketStatus: "closed"
 ---

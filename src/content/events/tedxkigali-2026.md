@@ -5,7 +5,7 @@ endDate: 2026-11-14T18:00:00
 venue: "Kigali Convention Centre"
 address: "KG 2 Roundabout, Kigali, Rwanda"
 theme: "Rising"
-programme: "flagship"
+programme: "standard"
 summary: "A full day of talks on how Rwanda is building what comes next, from climate innovation to storytelling."
 schedule:
   - title: "Doors open & registration"
