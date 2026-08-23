@@ -3619,16 +3619,46 @@ volontari entrino.
    provato un titolo con un trattino lungo o un accento (`TEDxKigali 2026 —
    Rising`), quindi la forma esatta dello slug per quei caratteri resta da
    guardare al primo evento vero.
-2. **Che cosa scrive `value: '{name}'` in un campo `reference`.** La
-   documentazione elenca `{path}`, `{name}`, `{primary}` e `{fields.<path>}`, e
-   descrive `{name}` come "Entry name" senza dire se comprende `.md`. Il sito
-   cerca l'edizione per l'id, che e' il nome del file **senza** estensione:
-   aprire il talk creato al punto precedente e leggere il valore di `edition:` su
-   GitHub. Se e' `tedxkigali-2026-rising` il build passa; se e'
-   `tedxkigali-2026-rising.md` o un percorso, il talk non trovera' mai la sua
-   edizione e il messaggio che il volontario ricevera' e' quello di
-   `src/lib/editions.ts`, che in quel caso gli dice di scrivere al manutentore.
-   La correzione e' cambiare `value` in `.pages.yml`.
+2. **RISPOSTA (23/08/2026): `value: '{name}'` scrive il nome del file,
+   estensione compresa.** Il primo talk creato dal proprietario nel CMS vero,
+   `src/content/talks/test-talk.md`, e' atterrato su GitHub con
+   `edition: test.md`, mentre l'evento a cui punta e'
+   `src/content/events/test.md` e il suo id Astro e' `test`. Quindi `{name}` =
+   "nome del file con l'estensione", non l'id.
+
+   **La correzione non e' cambiare `value`.** La documentazione del campo
+   `reference` (pagescms.org/docs/configuration/fields/reference/, riletta il
+   23/08/2026) elenca `{path}`, `{name}`, `{primary}`, `{fields.<path>}` e la
+   scorciatoia `{<path>}`: **nessuno** di questi restituisce il nome del file
+   senza estensione. `{path}` scriverebbe il percorso intero. Non esiste un
+   token che risolva il problema, quindi `.pages.yml` resta com'e' — con un
+   commento sopra i due campi che lo spiega — ed e' il sito ad accettare quello
+   che il CMS scrive: `src/lib/stored-reference.ts` (`referencedId`) normalizza
+   un riferimento salvato prima di confrontarlo con un id, togliendo la cartella
+   della collection e l'estensione e portando tutto in minuscolo. Ci passano
+   tutti i punti di risoluzione: `src/lib/editions.ts`,
+   `src/lib/speaker-talk.ts`, `src/pages/talks.astro`,
+   `src/pages/events/[slug].astro`, `src/pages/speakers.astro` e
+   `src/components/TalkCard.astro` (l'attributo `data-edition`, che i pulsanti
+   di filtro confrontano con l'id dell'edizione).
+
+   Le due forme convivono: `edition: tedxkigali-2025` scritto a mano e
+   `edition: test.md` scritto dal CMS arrivano allo stesso evento. Un
+   riferimento che non corrisponde davvero a niente ferma il build come prima, e
+   il messaggio continua a citare **il valore salvato** (`"test.md"`), non l'id
+   cercato: e' l'unica stringa che il volontario, o il manutentore a cui il
+   messaggio lo manda, puo' ritrovare nel file.
+
+   Lo stesso difetto era in `talk` degli speaker (stesso `value: '{name}'`),
+   dove nessuno l'aveva ancora esercitato: e' corretto insieme a questo.
+
+   Resta da guardare al primo evento vero con un titolo non banale: il CMS
+   slugifica il titolo per fare il nome del file, ma non e' provato che lo
+   slugifichi **come** github-slugger, che e' quello che Astro usa per fare
+   l'id. Per un titolo come `TEDxKigali 2026 — Rising` le due regole potrebbero
+   divergere sul trattino lungo o su un accento, e in quel caso il talk non
+   troverebbe la sua edizione nemmeno con la normalizzazione. Si vede
+   confrontando il nome del file su GitHub con l'id nell'errore di build.
 3. **RISPOSTA (23/08/2026): il CMS non scrive `body` nel frontmatter.** Il
    primo evento salvato dal CMS ha prodotto un frontmatter con `title`,
    `startDate`, `endDate`, `venue`, `summary`, `ticketStatus`, `bookingLabel` e
