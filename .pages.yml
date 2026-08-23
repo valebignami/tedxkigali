@@ -3,6 +3,22 @@ media:
   output: src/assets/uploads
   extensions: [jpg, jpeg, png, webp, avif, svg, JPG, JPEG, PNG, WEBP, AVIF, SVG]
 
+# `pattern` is a Pages CMS field key of its own, not an entry under `options`,
+# and it takes either a bare regex or `{ regex, message }` — fields/core/string
+# builds `z.string().regex(new RegExp(pattern), message)` from it. Two things
+# follow, and both are load-bearing below:
+#
+#  - The form validates the value it holds, and an untouched optional field
+#    holds an empty string, not nothing. A pattern on an optional field has to
+#    allow `^$` or the entry cannot be saved until that field is filled in.
+#  - The regex is not anchored for us. Every one below anchors itself.
+#
+# The patterns are stricter than the schemas they guard: the schemas take any
+# `z.url()`, these take https:// only, which is what every description and
+# WEB_ADDRESS_MESSAGE have always told the volunteer to paste. The schema check
+# stays as it is — the form is the first line, not the only one, and a file
+# edited by hand never passes through the form at all.
+
 content:
   - name: events
     label: Events
@@ -10,7 +26,7 @@ content:
     path: src/content/events
     filename: '{fields.title}.md'
     view:
-      fields: [title, startDate, ticketStatus]
+      fields: [title, startDate, ticketStatus, draft]
       sort: [startDate, title]
       default:
         sort: startDate
@@ -18,14 +34,27 @@ content:
     fields:
       - { name: title, label: Event title, type: string, required: true, description: 'For example: TEDxKigali 2026 — Rising' }
       - { name: startDate, label: Start date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ss", time: true }, required: true, description: 'Enter the time as it will show on a clock in Kigali. You do not have to convert anything: wherever in the world you are sitting, and whatever your own computer clock says, the website reads what you pick here as Kigali time.' }
-      - { name: endDate, label: End date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ss", time: true }, description: 'Optional, and read as Kigali time in the same way as the start. It has to be later than the start. If you leave it empty, the event is assumed to last four hours.' }
-      - { name: venue, label: Venue, type: string, required: true }
-      - { name: address, label: Address, type: string }
-      - { name: mapUrl, label: Map link, type: string, description: "Optional. The website already builds a Google Maps link from the venue and address above, so you usually don't need this. Fill it in only if searching for the venue and address sends people to the wrong place. If you do: open the place in Google Maps and copy the link out of your browser's address bar. Do not use the Share button — the short maps.app.goo.gl link it gives you is not guaranteed to keep working." }
+      # `default: ''` is what keeps this field empty on a new event. Without it
+      # the date field fills itself with the current date and time — Pages CMS
+      # does that for every date field that has no default of its own — and the
+      # first event ever saved from this CMS was refused by the build because
+      # the start and the end were the same untouched moment. An empty string is
+      # a value, so it wins over that fallback, and the field's own check reads
+      # "empty is fine unless the field is required".
+      - { name: endDate, label: End date and time, type: date, default: '', options: { format: "yyyy-MM-dd'T'HH:mm:ss", time: true }, description: 'Optional, and read as Kigali time in the same way as the start. It has to be later than the start. If you leave it empty, the event is assumed to last four hours.' }
+      - { name: venue, label: Venue, type: string, required: true, description: 'The name of the place, for example: Kigali Convention Centre. The website builds the "open in Google Maps" link from this and the address below.' }
+      - { name: address, label: Address, type: string, description: 'Optional. The street address, for example: KG 2 Roundabout, Kigali. It is printed after the venue on the event page, and it is what makes the map link land on the right spot.' }
+      - name: mapUrl
+        label: Map link
+        type: string
+        pattern:
+          regex: '^$|^https://\S+$'
+          message: 'A map link has to be a complete web address starting with https:// — copy the whole thing from the address bar of your browser, or leave the field empty.'
+        description: "Optional. Fill this in only if the map link built from the venue and address sends people to the wrong place. Then open the right place in Google Maps and copy the link from your browser's address bar — not from the Share button, whose short maps.app.goo.gl link is not guaranteed to keep working."
       - { name: image, label: Event image, type: image }
       - { name: imageAlt, label: Image description, type: string, description: 'Required if you upload an image. Describe it for people using a screen reader.' }
       - { name: theme, label: Edition theme, type: string, description: 'One or two words, for example: Rising.' }
-      - { name: summary, label: Short summary, type: text, required: true, options: { maxlength: 300 }, description: 'Max 300 characters. Shown in listings and when the page is shared.' }
+      - { name: summary, label: Short summary, type: text, required: true, options: { maxlength: 300 }, description: 'Max 300 characters — the box stops you at 300. Shown in listings and when the page is shared.' }
       - name: ticketStatus
         label: Ticket status
         type: select
@@ -37,19 +66,34 @@ content:
             - { value: free, label: 'Free entry — registration required' }
             - { value: sold-out, label: Sold out }
             - { value: closed, label: Registrations closed }
-      - { name: bookingUrl, label: Booking link, type: string, description: 'Paste the link from your ticketing platform. Required when tickets are on sale or entry is free.' }
-      - { name: bookingLabel, label: Booking button text, type: string, default: 'Book your seat' }
+      # The label carries the rule as well as the description does, because this
+      # is the one field on the site that is required without being marked
+      # Required: whether it is depends on the Ticket status above, and a form
+      # built from YAML cannot say "it depends". The check itself lives in
+      # BOOKING_URL_MESSAGE, which stops the build.
+      - name: bookingUrl
+        label: Booking link — required if tickets are on sale or entry is free
+        type: string
+        pattern:
+          regex: '^$|^https://\S+$'
+          message: 'A booking link has to be a complete web address starting with https:// — copy the whole thing from the address bar of your browser.'
+        description: 'Paste the link from your ticketing platform. It is required when the ticket status is "Tickets on sale" or "Free entry — registration required", and ignored for the other three.'
+      - { name: bookingLabel, label: Booking button text, type: string, default: 'Book your seat', description: 'The words printed on the booking button. Change them if "Book your seat" is not what this event needs; empty the field and the button says "Book your seat" again.' }
+      # The label has to carry the orientation, because a list field's
+      # description is not shown until the list has something in it, and from
+      # then on it is repeated under every single row. So: what the list is goes
+      # in the label, and what to do with one row goes in the description.
       - name: schedule
-        label: Programme
+        label: Programme — one row for each thing that happens in the day
         type: object
         list: true
-        description: 'The running order of the day. Add one row for each thing that happens. Rows appear on the website in the order you put them in here, so move them around until the order matches the day.'
+        description: 'Rows appear on the website in the order they are in here. To move one, drag the handle on its left.'
         fields:
-          - { name: time, label: Time, type: string, description: 'Optional. Use 24-hour time, for example "09:00", or a range like "09:00 - 09:20". Leave empty for a row with no fixed time, such as a break.' }
           - { name: title, label: What happens, type: string, required: true, description: 'For example: "Opening remarks" or "Coffee break".' }
+          - { name: time, label: Time, type: string, description: 'Optional. Use 24-hour time, for example "09:00", or a range like "09:00 - 09:20". Leave empty for a row with no fixed time, such as a break.' }
           - { name: speaker, label: Speaker, type: string, description: 'Optional. Leave empty for a row that has no speaker, such as a break.' }
           - { name: note, label: Note, type: string, description: 'Optional. Anything extra worth knowing about this row.' }
-      - { name: draft, label: Hide from the website, type: boolean, default: false }
+      - { name: draft, label: Hide from the website, type: boolean, default: false, description: 'Turn this on and the entry stays off the website until you turn it off again. Everything else you save is published within a few minutes, so turn this on first if you are practising.' }
       - { name: body, label: Full description, type: rich-text }
 
   - name: talks
@@ -58,16 +102,16 @@ content:
     path: src/content/talks
     filename: '{fields.title}.md'
     view:
-      fields: [title, speaker, date]
+      fields: [title, speaker, date, edition, draft]
       sort: [date, title, speaker]
       default:
         sort: date
         order: desc
     fields:
       - { name: title, label: Talk title, type: string, required: true }
-      - { name: speaker, label: Speaker name, type: string, required: true }
+      - { name: speaker, label: Speaker name, type: string, required: true, description: 'The full name of the person who gave the talk, as it should appear under the video. This is only text: it does not create a page for them. To give this person a page, add them under Speakers as well and write the name there the same way.' }
       - { name: youtubeUrl, label: YouTube link, type: string, required: true, description: 'Open the talk on YouTube and copy the link from the address bar. A link to a single video is what is needed: a playlist, a channel page, a music.youtube.com link or anything copied out of YouTube Studio will not be accepted.' }
-      - { name: date, label: Talk date, type: date, options: { format: 'yyyy-MM-dd' }, required: true }
+      - { name: date, label: Talk date, type: date, options: { format: 'yyyy-MM-dd' }, required: true, description: 'The day of the event where the talk was filmed, not the day the video was uploaded. It sets the order of the talks page and the year printed on the card when no edition is chosen below.' }
       # value: '{name}' writes the event's *file name*, extension included —
       # `test.md` for the event whose Astro id is `test`, proved by the first
       # real CMS session on 23/08/2026. It is left as it is because none of the
@@ -84,12 +128,12 @@ content:
           collection: events
           value: '{name}'
           label: '{fields.title}'
-      - { name: summary, label: Short summary, type: text, options: { maxlength: 300 }, description: 'Max 300 characters.' }
+      - { name: summary, label: Short summary, type: text, options: { maxlength: 300 }, description: 'Max 300 characters — the box stops you at 300.' }
       - { name: thumbnail, label: Cover image, type: image, description: 'Optional. Leave empty to use the YouTube preview image.' }
       - { name: thumbnailAlt, label: Cover image description, type: string, description: 'Required if you upload a cover image.' }
-      - { name: featured, label: Show on the home page, type: boolean, default: false }
-      - { name: tags, label: Tags, type: string, list: true, description: 'Optional keywords used to filter the talks page, for example: community, climate, public speaking.' }
-      - { name: draft, label: Hide from the website, type: boolean, default: false }
+      - { name: featured, label: Show on the home page, type: boolean, default: false, description: 'The home page shows six talks. Turn this on for the ones you want there: mark more than six and it shows the six most recently dated of them, mark none and it shows the six most recent talks of all.' }
+      - { name: tags, label: Tags — keywords that filter the talks page, type: string, list: true, description: 'Optional. One keyword per row, for example: community, climate, public speaking.' }
+      - { name: draft, label: Hide from the website, type: boolean, default: false, description: 'Turn this on and the entry stays off the website until you turn it off again. Everything else you save is published within a few minutes, so turn this on first if you are practising.' }
 
   - name: speakers
     label: Speakers
@@ -97,13 +141,13 @@ content:
     path: src/content/speakers
     filename: '{fields.name}.md'
     view:
-      fields: [name, role, order]
+      fields: [name, role, order, draft]
       sort: [name, order]
       default:
         sort: order
         order: asc
     fields:
-      - { name: name, label: Full name, type: string, required: true }
+      - { name: name, label: Full name, type: string, required: true, description: 'The full name as it should appear on the speakers page, for example: Aline Uwase. If this person has a talk on the website, write the name here exactly as it is written in that talk under "Speaker name" — nothing links the two for you.' }
       - { name: role, label: Role or organisation, type: string, description: 'Optional. Shown under the name, for example: Environmental researcher, University of Rwanda.' }
       - { name: photo, label: Photo, type: image }
       - { name: photoAlt, label: Photo description, type: string, description: 'Required if you upload a photo.' }
@@ -118,15 +162,22 @@ content:
           value: '{name}'
           label: '{fields.title}'
       - name: links
-        label: Links
+        label: Links — where else to find this person
         type: object
         list: true
-        description: 'Optional. Where else to find this person. Every row needs both a name and a complete link starting with https://'
+        description: 'Optional. Every row needs both a name and a complete link starting with https://'
         fields:
-          - { name: label, label: Name, type: string, required: true, description: 'What the link is, for example: LinkedIn.' }
-          - { name: url, label: Link, type: string, required: true }
+          - { name: label, label: Name, type: string, required: true, description: 'What the link is, for example: LinkedIn. This is the word visitors read and click.' }
+          - name: url
+            label: Link
+            type: string
+            required: true
+            pattern:
+              regex: '^https://\S+$'
+              message: 'A link has to be a complete web address starting with https:// — copy the whole thing from the address bar of your browser.'
+            description: 'The complete address of the page, starting with https://'
       - { name: order, label: Display order, type: number, description: 'Optional. Lower numbers appear first; anyone left empty comes after everyone numbered. Number in tens — 10, 20, 30 — so you can slot somebody in later without renumbering the rest.' }
-      - { name: draft, label: Hide from the website, type: boolean, default: false }
+      - { name: draft, label: Hide from the website, type: boolean, default: false, description: 'Turn this on and the entry stays off the website until you turn it off again. Everything else you save is published within a few minutes, so turn this on first if you are practising.' }
       - { name: body, label: Short biography, type: rich-text }
 
   - name: sponsors
@@ -135,13 +186,26 @@ content:
     path: src/content/sponsors
     filename: '{fields.name}.md'
     view:
-      fields: [name, tier, order]
+      fields: [name, tier, order, draft]
       sort: [name, tier, order]
+      # Sorting by name, which is what this list already did with no `default`
+      # of its own, and what makes a partner findable. Not by tier: the stored
+      # tier is a code, so sorting on it gives community, gold, headline,
+      # partner — neither alphabetical by heading nor the order of the page.
+      default:
+        sort: name
+        order: asc
     fields:
       - { name: name, label: Organisation name, type: string, required: true }
       - { name: logo, label: Logo, type: image, required: true, description: 'Required. PNG or SVG with a transparent background works best.' }
       - { name: logoAlt, label: Logo description, type: string, required: true, description: 'For example: Acme Ltd logo.' }
-      - { name: url, label: Website, type: string, description: 'Optional. The complete address of their website, starting with https:// — the logo becomes a link to it.' }
+      - name: url
+        label: Website
+        type: string
+        pattern:
+          regex: '^$|^https://\S+$'
+          message: 'A website has to be a complete web address starting with https:// — copy the whole thing from the address bar of your browser, or leave the field empty.'
+        description: 'Optional. The complete address of their website, starting with https:// — the logo becomes a link to it.'
       - name: tier
         label: Partner level
         type: select
@@ -154,27 +218,49 @@ content:
             - { value: partner, label: Partner }
             - { value: community, label: Community partner }
       - { name: order, label: Display order, type: number, description: 'Optional. Lower numbers appear first inside the block; anyone left empty comes after everyone numbered. Number in tens — 10, 20, 30 — so you can slot one in later without renumbering the rest.' }
-      - { name: draft, label: Hide from the website, type: boolean, default: false }
+      - { name: draft, label: Hide from the website, type: boolean, default: false, description: 'Turn this on and the entry stays off the website until you turn it off again. Everything else you save is published within a few minutes, so turn this on first if you are practising.' }
 
   - name: settings
     label: Site texts
     type: file
     path: src/content/settings/site.json
     fields:
-      - { name: siteName, label: Site name, type: string, required: true }
-      - { name: tagline, label: Tagline, type: string, required: true }
-      - { name: heroTitle, label: Home page headline, type: string, required: true }
-      - { name: heroSubtitle, label: Home page intro, type: text, required: true }
+      - { name: siteName, label: Site name, type: string, required: true, description: 'The name of the event. It follows the page name in the browser tab and in search results, it is the name link previews show when a page is shared, and it is the organiser Google reads out of an event page.' }
+      # Tagline is the field most likely to be edited by mistake, because the
+      # value in site.json is the same sentence as Home page headline. It is
+      # printed nowhere on the page — Header.astro puts it in an sr-only span —
+      # but it is not invisible: buildPageTitle() makes the home page's title
+      # "TEDxKigali | <tagline>", which is the browser tab and the blue line in
+      # Google. The description says both, and points at the field they probably
+      # wanted.
+      - { name: tagline, label: Tagline, type: string, required: true, description: 'The line after the site name in the browser tab and in search results for the home page, and the line read aloud after the logo to visitors using a screen reader. It is not printed on the page: the big line on the home page is "Home page headline" below.' }
+      - { name: heroTitle, label: Home page headline, type: string, required: true, description: 'The big line across the top of the home page.' }
+      - { name: heroSubtitle, label: Home page intro, type: text, required: true, description: 'The paragraph under the big line on the home page.' }
       - { name: aboutShort, label: Short about text, type: text, required: true, description: 'One or two sentences. Shown on the home page and at the top of the About page.' }
       - { name: aboutBody, label: About page text, type: text, required: true, description: 'The main text of the About page. Leave a blank line between two paragraphs to start a new paragraph.' }
-      - { name: contactEmail, label: Contact email, type: string, required: true, description: 'The address visitors write to. It appears in the footer of every page.' }
+      - name: contactEmail
+        label: Contact email
+        type: string
+        required: true
+        pattern:
+          regex: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+          message: 'This has to be a complete email address, for example hello@tedxkigali.rw'
+        description: 'The address visitors write to. It appears in the footer of every page.'
       - name: socials
         label: Social links
         type: object
         list: true
+        description: 'Optional. One row per account.'
         fields:
-          - { name: label, label: Name, type: string, required: true }
-          - { name: url, label: Link, type: string, required: true }
+          - { name: label, label: Name, type: string, required: true, description: 'The word visitors read and click, for example: Instagram. Not the address — that goes in Link below.' }
+          - name: url
+            label: Link
+            type: string
+            required: true
+            pattern:
+              regex: '^https://\S+$'
+              message: 'A link has to be a complete web address starting with https:// — copy the whole thing from the address bar of your browser.'
+            description: 'The complete address of the account, starting with https://'
       - { name: seoDescription, label: Search engine description, type: text, required: true, options: { maxlength: 300 }, description: 'Max 300 characters. This is the sentence Google and social networks show under the name of the site.' }
       - { name: tedxLicenceNotice, label: TED licence notice, type: string, required: true, description: 'Required by TED. Change only if TED updates the required wording.' }
-      - { name: tedxXExplanation, label: Meaning of the x, type: string, required: true }
+      - { name: tedxXExplanation, label: Meaning of the x, type: string, required: true, description: 'The line that explains the x in TEDx, for example: x = independently organized TED event. It is printed in the footer of every page and inside the "What is TEDx?" paragraph on the About page.' }
