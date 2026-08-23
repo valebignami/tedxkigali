@@ -2445,7 +2445,7 @@ import BaseLayout from '~/layouts/BaseLayout.astro';
 import { siteSettings } from '~/lib/settings';
 ---
 
-<BaseLayout title="About" description="What TEDxKigali is, who runs it, and how to take part.">
+<BaseLayout title="About" description="What TEDxKigali is and how to take part.">
   <section class="mx-auto max-w-3xl px-4 py-16">
     <h1 class="text-4xl font-black uppercase md:text-6xl">About</h1>
 
@@ -2495,7 +2495,12 @@ import { siteSettings } from '~/lib/settings';
       <h2>The short version</h2>
       <p>
         This website sets no cookies of its own, runs no analytics and has no user accounts.
-        We do not collect, store or share personal data about visitors.
+        We build no profiles of visitors, and we never sell or share data for advertising.
+      </p>
+      <p>
+        Two things are worth knowing all the same: the servers that host this site keep
+        standard logs that include IP addresses, and choosing to play a talk hands your
+        request to YouTube. Both are explained below.
       </p>
 
       <h2>Videos</h2>
@@ -2509,8 +2514,8 @@ import { siteSettings } from '~/lib/settings';
 
       <h2>Booking tickets</h2>
       <p>
-        Tickets are sold by an external ticketing platform. When you follow a booking link you
-        leave this website, and the data you enter there is handled by that platform under its
+        Tickets are sold by an external ticketing platform. A booking link opens that platform
+        in a new tab, and from there on the data you enter is handled by that platform under its
         own terms.
       </p>
 
@@ -3514,7 +3519,8 @@ Annotare ogni punto in cui si è bloccata e correggere `docs/EDITING.md` o le et
 4. **Lighthouse mobile** su home, `/talks` e `/events`: ≥ 95 nelle quattro categorie. Se Performance scende sotto la soglia, verificare per prima cosa il peso delle immagini caricate.
 5. **Dati strutturati**: Rich Results Test sull'URL pubblico dell'evento.
 6. **Accessibilità**: navigazione completa da tastiera, contrasti, testo alternativo su tutte le immagini.
-7. **Marchio TEDx**: footer con la dicitura di licenza e la spiegazione della `x` su ogni pagina; confronto con la guida ufficiale per gli organizzatori TEDx.
+7. **Riferimento normativo**: far confermare da qualcuno con conoscenza legale locale che la citazione della legge rwandese 058/2021 nella pagina privacy sia corretta per numero e titolo. Una citazione sbagliata su una pagina privacy pubblica e' di per se' un problema di credibilita'.
+8. **Marchio TEDx**: footer con la dicitura di licenza e la spiegazione della `x` su ogni pagina; confronto con la guida ufficiale per gli organizzatori TEDx.
 
 - [ ] **Step 10: Commit finale**
 
