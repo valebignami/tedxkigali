@@ -2,7 +2,7 @@
 // their wording binding: a volunteer meets them in the CMS or in the email the
 // failed build sends, never in a stack trace. They must say what to do next and
 // must not name a field by its code name — the CMS shows "Booking link",
-// "Map link", "Website", never bookingUrl, mapUrl or url.
+// "Exact map link (optional)", "Website", never bookingUrl, mapUrl or url.
 
 /**
  * Shown when a link is not a complete web address. The likeliest mistake by far

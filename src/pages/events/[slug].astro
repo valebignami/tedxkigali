@@ -6,6 +6,7 @@ import EventJsonLd from '~/components/EventJsonLd.astro';
 import VideoJsonLd from '~/components/VideoJsonLd.astro';
 import TalkCard from '~/components/TalkCard.astro';
 import { eventEnd, eventState, isBookable, ticketStatusLine } from '~/lib/events';
+import { eventMapUrl } from '~/lib/maps';
 import { resolveUploadedImage } from '~/lib/images';
 import { canonicalUrl } from '~/lib/seo';
 import { formatEventDate } from '~/lib/dates';
@@ -28,6 +29,11 @@ const image = data.image ? resolveUploadedImage(data.image) : null;
 const ogImage = image && Astro.site ? new URL(image.src, Astro.site).toString() : undefined;
 
 const dateLabel = formatEventDate(data.startDate);
+const venueLabel = `${data.venue}${data.address ? ` — ${data.address}` : ''}`;
+const mapUrl = eventMapUrl(data);
+// Comma-separated, unlike venueLabel's em dash: this is read by a screen
+// reader alongside the visible text, not instead of it.
+const mapAriaLabel = `${data.venue}${data.address ? `, ${data.address}` : ''} — open in Google Maps`;
 
 const { Content } = await render(event);
 
@@ -63,15 +69,15 @@ const organiserUrl = Astro.site?.toString() ?? canonicalUrl(Astro.url.pathname, 
       <time datetime={data.startDate.toISOString()}>{dateLabel}</time>
     </p>
     <p class="text-lg text-muted">
-      {data.venue}{data.address ? ` — ${data.address}` : ''}
-      {data.mapUrl && (
-        <>
-          {' '}
-          <a class="underline hover:no-underline" href={data.mapUrl} target="_blank" rel="noopener noreferrer">
-            View map
-          </a>
-        </>
-      )}
+      <a
+        class="underline hover:no-underline"
+        href={mapUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={mapAriaLabel}
+      >
+        {venueLabel}
+      </a>
     </p>
 
     {image && (

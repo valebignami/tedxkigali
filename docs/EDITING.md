@@ -54,7 +54,12 @@ The talk appears on the website about one minute later.
 3. Optional fields you may also want to set:
    - **End date and time** — if you leave this empty, the website assumes the
      event lasts four hours.
-   - **Address** and **Map link** (a link to Google Maps).
+   - **Address** — the website builds its own "open in Google Maps" link from
+     the venue and address, so you do not need to go and find a map link
+     yourself.
+   - **Exact map link (optional)** — leave this empty unless you have checked
+     that searching for the venue and address sends people to the wrong
+     place. Only then, paste the correct Google Maps link here.
    - **Edition theme** — one or two words, for example: *Rising*.
    - **Event image** — if you upload one, you must also fill in **Image
      description** (screen reader text).

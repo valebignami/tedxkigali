@@ -3,6 +3,7 @@ title: "TEDxKigali 2024 — Threads"
 startDate: 2024-09-21T09:00:00+02:00
 endDate: 2024-09-21T17:00:00+02:00
 venue: "Kigali Convention Centre"
+address: "KG 2 Roundabout, Kigali, Rwanda"
 theme: "Threads"
 summary: "Eight speakers on the invisible threads that connect a city to its people."
 ticketStatus: "closed"
