@@ -37,24 +37,45 @@ const year = date.getUTCFullYear();
     data-youtube-id={videoId}
     data-video-title={`${title} — ${speaker}`}
   >
-    <!-- The YouTube branch below carries two sources, for two different reasons.
-         srcset lets a phone take the 480px still rather than the 1280px one for
-         a card barely wider than a thumb; onerror covers the videos YouTube
-         never generated a maxres still for, and clears srcset first, or the
-         browser would keep choosing the missing file over the src just set. -->
+    <!-- sizes is the width of one card, and a card is one of three columns from
+         1024px up, one of two from 640px, and the full width below that. The
+         card on an event page is a little wider than 400px at desktop sizes;
+         declaring the narrower of the two is the safe direction here, because
+         the only thing above 400 CSS px in the set is the 1280px still.
+
+         The YouTube branch below carries two sources, for two different reasons.
+
+         srcset does not spare a modern phone the large still, and never could:
+         at 390 CSS px on a 2× screen the browser needs 780px, and the only
+         still YouTube publishes at or above that is maxresdefault. What it does
+         is give every 1× display the 480px one instead — an ordinary desktop
+         monitor, where the card is 400 CSS px, and the older and cheaper phones
+         that are still on dpr 1. The rule for this set is simply that 1× takes
+         hqdefault and 2× takes maxresdefault. That is worth one attribute, so
+         the set stays; there is no third rung that would change any of it.
+
+         The two stills are not the same shape: hqdefault is 480x360, 4:3, with
+         black bars top and bottom, against the 16:9 width/height declared here.
+         object-cover crops exactly the bars away, so the card looks right
+         either way, but nothing here should start relying on the intrinsic
+         ratio of what was downloaded.
+
+         onerror covers the videos YouTube never generated a maxres still for,
+         and clears srcset first, or the browser would keep choosing the missing
+         file over the src just set. -->
     {uploaded ? (
       <Image
         src={uploaded}
         alt={thumbnailAlt ?? ''}
         widths={[400, 800, 1200]}
-        sizes="(min-width: 1024px) 400px, 100vw"
+        sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
         class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
     ) : (
       <img
         src={thumbs.primary}
         srcset={`${thumbs.fallback} 480w, ${thumbs.primary} 1280w`}
-        sizes="(min-width: 1024px) 400px, 100vw"
+        sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
         data-fallback={thumbs.fallback}
         onerror={`this.onerror=null;this.srcset='';this.src='${thumbs.fallback}';`}
         alt=""
