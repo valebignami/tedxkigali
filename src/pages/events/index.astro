@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import EventCard from '~/components/EventCard.astro';
 import { eventState } from '~/lib/events';
+import { PROGRAMME_NAMES, programmesInOrder } from '~/lib/programmes';
 
 const now = new Date();
 const events = await getCollection('events', ({ data }) => !data.draft);
@@ -14,6 +15,27 @@ const upcoming = events
 const past = events
   .filter((event) => eventState(event.data.startDate, event.data.endDate, now) === 'past')
   .sort((a, b) => b.data.startDate.getTime() - a.data.startDate.getTime());
+
+// The archive is split by programme, and the headings appear only once there is
+// more than one to tell apart: a single "TEDxKigali" heading over every card an
+// organisation has ever run says nothing and costs a line of the page.
+//
+// The groups are built from every published event, not only the past ones, so
+// an upcoming edition that finishes while somebody is reading has a group to be
+// moved into by event-status.ts. A group with nothing in it yet is hidden here
+// and un-hidden by that same script.
+const programmes = programmesInOrder(events.map((event) => event.data.programme));
+const grouped = programmes.length > 1;
+const pastGroups = programmes.map((programme) => ({
+  programme,
+  name: PROGRAMME_NAMES[programme],
+  events: past.filter((event) => event.data.programme === programme),
+}));
+
+// Upcoming editions are not grouped. There are rarely more than one or two, and
+// each already carries its programme in the title it was given — "TEDxKigali
+// Women 2025 — In the Room" — so a heading above a single card would only
+// repeat it.
 ---
 
 <BaseLayout title="Events" description="Upcoming TEDxKigali events and the archive of past editions.">
@@ -38,9 +60,27 @@ const past = events
          data-event-section would make the archive hide itself. -->
     <div id="events-past-section" class="mt-16" hidden={past.length === 0}>
       <h2 class="text-2xl font-bold uppercase tracking-wide">Past editions</h2>
-      <div id="events-past" class="mt-6 grid gap-6 md:grid-cols-2">
-        {past.map((event) => <EventCard event={event} now={now} />)}
-      </div>
+
+      {grouped ? (
+        <div id="events-past" class="mt-6">
+          {pastGroups.map((group) => (
+            <div
+              class="mt-10 first:mt-0"
+              data-past-group={group.programme}
+              hidden={group.events.length === 0}
+            >
+              <h3 class="text-sm font-bold uppercase tracking-widest text-muted">{group.name}</h3>
+              <div class="mt-4 grid gap-6 md:grid-cols-2" data-past-grid={group.programme}>
+                {group.events.map((event) => <EventCard event={event} now={now} />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div id="events-past" class="mt-6 grid gap-6 md:grid-cols-2">
+          {past.map((event) => <EventCard event={event} now={now} />)}
+        </div>
+      )}
     </div>
   </section>
 

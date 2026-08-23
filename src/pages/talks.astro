@@ -1,9 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import FilterButton from '~/components/FilterButton.astro';
 import TalkCard from '~/components/TalkCard.astro';
 import VideoJsonLd from '~/components/VideoJsonLd.astro';
 import { resolveEditions } from '~/lib/editions';
+import { DEFAULT_PROGRAMME, PROGRAMME_NAMES, programmesInOrder } from '~/lib/programmes';
 import { referencedId } from '~/lib/stored-reference';
 
 const talks = (await getCollection('talks', ({ data }) => !data.draft)).sort(
@@ -36,6 +38,26 @@ const editionTitleOf = (stored: string | undefined) => {
   return id ? titleById.get(id) : undefined;
 };
 
+// A talk has no programme of its own: it takes the one its edition carries.
+// Every id in the resolved editions came out of the events above, so the
+// fallback is unreachable today and is here so a later caller cannot make this
+// throw on an id it did not expect.
+const programmeOfEdition = new Map(events.map((event) => [event.id, event.data.programme]));
+const programmeOf = (editionId: string) => programmeOfEdition.get(editionId) ?? DEFAULT_PROGRAMME;
+
+// The edition buttons are sorted into programmes, and a programme name is
+// printed above its buttons only once there is more than one — a single
+// "TEDxKigali" line over every button on the page organises nothing. Inside a
+// programme the editions keep the order resolveEditions gave them, newest first.
+const editionGroups = programmesInOrder(editions.map((edition) => programmeOf(edition.id))).map(
+  (programme) => ({
+    programme,
+    name: PROGRAMME_NAMES[programme],
+    editions: editions.filter((edition) => programmeOf(edition.id) === programme),
+  }),
+);
+const groupedFilters = editionGroups.length > 1;
+
 const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
 ---
 
@@ -53,39 +75,43 @@ const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
 
     {editions.length > 0 && (
       <div id="talk-filters" class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter talks by edition or tag">
-        <button
-          type="button"
-          data-filter-kind="all"
-          data-filter-value="all"
-          aria-pressed="true"
-          class="rounded-full border border-line px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted aria-pressed:border-ted-red aria-pressed:text-ink"
-        >
-          All
-        </button>
-        {editions.map((edition) => (
-          <button
-            type="button"
-            data-filter-kind="edition"
-            data-filter-value={edition.id}
-            aria-pressed="false"
-            class="rounded-full border border-line px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted aria-pressed:border-ted-red aria-pressed:text-ink"
-          >
-            {edition.title}
-          </button>
-        ))}
+        <FilterButton kind="all" value="all" label="All" pressed />
 
-        {tags.length > 0 && (
-          <div class="mt-3 flex w-full flex-wrap gap-2">
-            {tags.map((tag) => (
-              <button
-                type="button"
-                data-filter-kind="tag"
-                data-filter-value={tag}
-                aria-pressed="false"
-                class="rounded-full border border-line px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted aria-pressed:border-kigali-sun aria-pressed:text-ink"
+        {editionGroups.map((group) =>
+          groupedFilters ? (
+            <div
+              class="mt-3 flex w-full flex-wrap gap-2"
+              role="group"
+              aria-labelledby={`talk-filters-${group.programme}`}
+            >
+              <p
+                id={`talk-filters-${group.programme}`}
+                class="w-full text-xs font-bold uppercase tracking-widest text-muted"
               >
-                {tag}
-              </button>
+                {group.name}
+              </p>
+              {group.editions.map((edition) => (
+                <FilterButton kind="edition" value={edition.id} label={edition.title} />
+              ))}
+            </div>
+          ) : (
+            group.editions.map((edition) => (
+              <FilterButton kind="edition" value={edition.id} label={edition.title} />
+            ))
+          ),
+        )}
+
+        <!-- Labelled whether or not the editions above are grouped. Once they
+             are, an unlabelled row of pills under the last programme heading
+             reads as more of that programme; and even alone, nothing on the
+             page said what the small pills were. -->
+        {tags.length > 0 && (
+          <div class="mt-3 flex w-full flex-wrap gap-2" role="group" aria-labelledby="talk-filters-topics">
+            <p id="talk-filters-topics" class="w-full text-xs font-bold uppercase tracking-widest text-muted">
+              Topics
+            </p>
+            {tags.map((tag) => (
+              <FilterButton kind="tag" value={tag} label={tag} />
             ))}
           </div>
         )}

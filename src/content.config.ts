@@ -58,6 +58,7 @@ import {
   withKigaliEventTimes,
   writtenEventTitle,
 } from '~/lib/event-times';
+import { DEFAULT_PROGRAMME, PROGRAMMES, PROGRAMME_MESSAGE } from '~/lib/programmes';
 import { isValidScheduleTime } from '~/lib/schedule';
 import { SPONSOR_TIERS } from '~/lib/sponsors';
 
@@ -238,6 +239,12 @@ const events = defineCollection({
     image: uploadPath.optional(),
     imageAlt: z.string(EVENT_IMAGE_ALT_MESSAGE).optional(),
     theme: z.string(EVENT_THEME_MESSAGE).optional(),
+    // Which TEDx programme this edition belongs to. .default() rather than
+    // .optional(): every event written before this field existed is a main
+    // edition, and the pages that group by it need a value that is always
+    // there. A talk has no programme of its own — it takes the one its edition
+    // carries, so the two can never disagree.
+    programme: z.enum(PROGRAMMES, { error: PROGRAMME_MESSAGE }).default(DEFAULT_PROGRAMME),
     summary: z
       .string({ error: EVENT_SUMMARY_MESSAGE })
       .min(1, { message: EVENT_SUMMARY_MESSAGE })

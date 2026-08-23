@@ -26,8 +26,8 @@ content:
     path: src/content/events
     filename: '{fields.title}.md'
     view:
-      fields: [title, startDate, ticketStatus, draft]
-      sort: [startDate, title]
+      fields: [title, programme, startDate, ticketStatus, draft]
+      sort: [startDate, title, programme]
       default:
         sort: startDate
         order: desc
@@ -54,6 +54,23 @@ content:
       - { name: image, label: Event image, type: image }
       - { name: imageAlt, label: Image description, type: string, description: 'Required if you upload an image. Describe it for people using a screen reader.' }
       - { name: theme, label: Edition theme, type: string, description: 'One or two words, for example: Rising.' }
+      # The five programmes and their names are TED's, not ours, and the name
+      # of a licensed event is part of its licence — src/lib/programmes.ts
+      # holds them and says why. A volunteer picks from this list and never
+      # types a name, so a typo cannot reach a heading on the website. Keep
+      # these values and labels in step with that file; a test compares them.
+      - name: programme
+        label: TEDx programme
+        type: select
+        default: flagship
+        description: 'Which TEDx programme this edition belongs to — not the running order of the day, which is "Programme of the day" further down. Leave it on "TEDxKigali" for a main edition. It groups the archive on the Events page and the buttons on the Talks page, and it is what puts a programme on the About page — one appears there as soon as it has its first published event.'
+        options:
+          values:
+            - { value: flagship, label: TEDxKigali }
+            - { value: women, label: TEDxKigali Women }
+            - { value: youth, label: TEDxKigali Youth }
+            - { value: kids, label: TEDxKigali Kids }
+            - { value: countdown, label: TEDxKigali Countdown }
       - { name: summary, label: Short summary, type: text, required: true, options: { maxlength: 300 }, description: 'Max 300 characters — the box stops you at 300. Shown in listings and when the page is shared.' }
       - name: ticketStatus
         label: Ticket status
@@ -84,7 +101,7 @@ content:
       # then on it is repeated under every single row. So: what the list is goes
       # in the label, and what to do with one row goes in the description.
       - name: schedule
-        label: Programme — one row for each thing that happens in the day
+        label: Programme of the day — one row for each thing that happens
         type: object
         list: true
         description: 'Rows appear on the website in the order they are in here. To move one, drag the handle on its left.'

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 import { MAX_TEXT_LENGTH } from '~/lib/content-rules';
 import { TICKET_STATUSES, ticketStatusLabel } from '~/lib/events';
+import { DEFAULT_PROGRAMME, PROGRAMMES, PROGRAMME_NAMES } from '~/lib/programmes';
 import { siteSettingsErrorMessage, siteSettingsSchema } from '~/lib/settings';
 import { SPONSOR_TIER_LABELS, SPONSOR_TIERS } from '~/lib/sponsors';
 
@@ -22,6 +23,7 @@ type Field = {
   type?: string;
   required?: boolean;
   description?: string;
+  default?: unknown;
   pattern?: string | { regex: string; message?: string };
   options?: Record<string, unknown>;
   fields?: Field[];
@@ -68,6 +70,21 @@ describe('the choices the CMS offers', () => {
     for (const choice of values) {
       expect(choice.label).toBe(ticketStatusLabel(choice.value as (typeof TICKET_STATUSES)[number]));
     }
+  });
+
+  it("are the five TEDx programmes the site knows, with the site's own names", () => {
+    const values = selectValues(field('events', 'programme'));
+    expect(values.map((choice) => choice.value)).toEqual([...PROGRAMMES]);
+    for (const choice of values) {
+      expect(choice.label).toBe(PROGRAMME_NAMES[choice.value as (typeof PROGRAMMES)[number]]);
+    }
+  });
+
+  // A select with no default starts a new event on no programme at all, and
+  // an editor who never opens the field saves an event the build then has to
+  // guess about. The schema guesses the same way; this keeps the two agreed.
+  it('start a new event on the programme the build assumes', () => {
+    expect(field('events', 'programme').default).toBe(DEFAULT_PROGRAMME);
   });
 
   it('are the four partner levels the site knows', () => {

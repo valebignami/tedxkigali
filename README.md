@@ -37,6 +37,19 @@ Editors do not clone this repository. They sign in at
   `.pages.yml` must match it field for field, or a value an editor types is
   silently discarded.
 
+## Programmes
+
+An edition belongs to one of the TEDx programmes in `src/lib/programmes.ts`,
+and a talk takes the programme of the edition it was filmed at. The names are
+TED's and the field is a fixed list, because the name of a licensed TEDx event
+is part of its licence — nobody types one.
+
+Nothing about the programmes is shown until more than one of them has a
+published event. Then the events archive and the talk filters group themselves
+under programme headings and the About page grows an "Our programmes" block.
+A site running only the main edition looks exactly as it did before the field
+existed, and the About page never names a programme that has not happened.
+
 ## How the video player works
 
 Talks are on YouTube, but no YouTube player is loaded until someone presses

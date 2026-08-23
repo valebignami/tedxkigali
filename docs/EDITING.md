@@ -102,6 +102,10 @@ anything: the file keeps the name it was given when it was first saved.
    - **Event image** — if you upload one, you must also fill in **Image
      description** (read aloud to visitors who use a screen reader).
    - **Edition theme** — one or two words, for example: *Rising*.
+   - **TEDx programme** — which kind of TEDx event this edition is. Leave it
+     on *TEDxKigali* unless it is one of the others; see "The five
+     programmes" at the end of this section. This is not the running order of
+     the day, which is **Programme of the day** further down the same form.
    - **Short summary** (required) — shown in listings and when the page is
      shared. The box stops you at 300 characters.
    - **Ticket status** (required) — see step 3 below for what each option means.
@@ -109,7 +113,7 @@ anything: the file keeps the name it was given when it was first saved.
    - **Booking button text** — the words printed on the booking button. It says
      *Book your seat* unless you change it, and if you empty it, it goes back to
      saying *Book your seat*.
-   - **Programme** — the running order of the day. Add one row for each thing
+   - **Programme of the day** — the running order of the day. Add one row for each thing
      that happens: a welcome, a talk, a break, anything. These rows live inside
      the event you are already editing — you are not creating another event.
      Fill in **What happens** (required) and, if you have them, **Time**,
@@ -149,6 +153,46 @@ One thing to know before you hide an event: if any visible talk is linked to
 that edition, the rebuild stops and tells you which talk it is. That is on
 purpose — the talk would otherwise advertise an edition nobody can open. Either
 hide those talks too, or leave the event visible.
+
+### The five programmes
+
+TEDxKigali does not run only one kind of event. Every edition belongs to one of
+five programmes, and the **TEDx programme** field is where you say which:
+
+| Choice | What it is |
+|---|---|
+| **TEDxKigali** | The main edition. This is the right answer for most events. |
+| **TEDxKigali Women** | Held alongside TEDWomen, on the ideas and work of women. |
+| **TEDxKigali Youth** | Planned and hosted with young people, in their schools and communities. |
+| **TEDxKigali Kids** | For younger children and the adults who bring them. |
+| **TEDxKigali Countdown** | Part of Countdown, TED's global initiative on the climate crisis. |
+
+You pick from the list and never type a name, and that is deliberate: the name
+of a licensed TEDx event is part of its licence, and TED's own rule is that the
+programme word comes after the location with a single space — *TEDxKigali
+Youth*, not *TEDxYouth@Kigali* and not *TEDx Kigali Youth*. Nobody can mistype
+one into a heading on the website.
+
+Picking a programme changes three things, all by itself:
+
+- **Events** groups the past editions under a heading for each programme.
+- **Talks** groups the filter buttons the same way.
+- **About** gains an "Our programmes" block explaining what each one is.
+
+All three appear only once there is more than one programme with a published
+event, and a programme joins the About page on the day its first edition goes
+live. That is on purpose: a programme named on the About page before it has ever
+happened reads to a visitor as a promise that one is coming.
+
+Write the event title with the programme in it — *TEDxKigali Women 2025 — In the
+Room* — the same way the main editions are titled. The heading above the group
+and the title on the card are both read, and they should agree.
+
+> **One caution about TEDxKigali Kids.** The other four are event types TED
+> lists by name. "Kids" is not in that list — the TED programme for young people
+> is Youth. It is offered here because it was asked for, but before you publish
+> an event under it, check with whoever holds the TEDxKigali licence that it is
+> a type you may run. Nothing on the website can check that for you.
 
 ## 4. Adding a speaker
 

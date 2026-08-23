@@ -6,6 +6,7 @@ import { eventInSubFolderMessage } from '~/lib/event-files';
 import { missingTimeOfDayMessage } from '~/lib/event-times';
 import { notAnImageMessage } from '~/lib/image-files';
 import { imageNotFoundMessage } from '~/lib/images';
+import { PROGRAMME_MESSAGE } from '~/lib/programmes';
 import { missingTalkMessage } from '~/lib/speaker-talk';
 import { YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { siteSettingsErrorMessage, siteSettingsSchema } from '~/lib/settings';
@@ -19,6 +20,7 @@ const entries: Array<[string, string]> = [
   ...Object.entries(messages),
   ['BOOKING_URL_MESSAGE', BOOKING_URL_MESSAGE],
   ['YOUTUBE_HELP_MESSAGE', YOUTUBE_HELP_MESSAGE],
+  ['PROGRAMME_MESSAGE', PROGRAMME_MESSAGE],
   ['unknownFieldMessage', unknownFieldMessage(['Summary'])],
   ['missingEditionMessage', missingEditionMessage('The market at dawn', 'tedxkigali-2027')],
   ['hiddenEditionMessage', hiddenEditionMessage('The market at dawn', 'TEDxKigali 2025 — Roots')],
@@ -73,11 +75,17 @@ describe('WEB_ADDRESS_MESSAGE', () => {
 
 // The stored codes are not what the CMS shows: a volunteer who reads
 // "coming-soon" has nothing in front of them that says so.
-describe('the messages for the two lists of choices', () => {
+describe('the messages for the lists of choices', () => {
   it('spell out the ticket statuses the way the CMS labels them', () => {
     expect(messages.TICKET_STATUS_MESSAGE).toContain('Tickets coming soon');
     expect(messages.TICKET_STATUS_MESSAGE).toContain('Sold out');
     expect(messages.TICKET_STATUS_MESSAGE).not.toMatch(/coming-soon|sold-out/);
+  });
+
+  it('spell out the programmes by the names TED gives them', () => {
+    expect(PROGRAMME_MESSAGE).toContain('TEDxKigali Women');
+    expect(PROGRAMME_MESSAGE).toContain('TEDxKigali Countdown');
+    expect(PROGRAMME_MESSAGE).not.toMatch(/flagship|countdown"/);
   });
 
   it('spell out the partner levels the way the CMS labels them', () => {

@@ -1,0 +1,39 @@
+---
+// One filter pill on the talks page. Extracted when the edition pills were
+// grouped by programme: the grouped and ungrouped branches render the same
+// button, and a second copy of these class lists is exactly the kind of thing
+// that drifts — a pressed colour changed in one place and not the other would
+// look like a bug in the filter rather than in the stylesheet.
+interface Props {
+  /** Read back by talk-filters.ts to decide what this button matches on. */
+  kind: 'all' | 'edition' | 'tag';
+  value: string;
+  label: string;
+  /** Only the "All" button starts pressed; the script moves it from there. */
+  pressed?: boolean;
+}
+
+const { kind, value, label, pressed = false } = Astro.props;
+
+// Written out rather than left as a boolean: aria-pressed is an enumerated
+// attribute, not a boolean one, so the string is what belongs in the markup
+// and talk-filters.ts writes the same two strings back when the choice moves.
+const state: 'true' | 'false' = pressed ? 'true' : 'false';
+
+// Tags are the smaller, secondary row and take the sun colour when pressed.
+// "All" and the editions are one set of pills and share a shape on purpose.
+const shape =
+  kind === 'tag'
+    ? 'rounded-full border border-line px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted aria-pressed:border-kigali-sun aria-pressed:text-ink'
+    : 'rounded-full border border-line px-4 py-2 text-sm font-semibold uppercase tracking-wide text-muted aria-pressed:border-ted-red aria-pressed:text-ink';
+---
+
+<button
+  type="button"
+  data-filter-kind={kind}
+  data-filter-value={value}
+  aria-pressed={state}
+  class={shape}
+>
+  {label}
+</button>

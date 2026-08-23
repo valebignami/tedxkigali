@@ -1,5 +1,8 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import { internalHref } from '~/lib/base-path';
+import { PROGRAMME_BLURBS, PROGRAMME_NAMES, programmesInOrder } from '~/lib/programmes';
 import { siteSettings } from '~/lib/settings';
 import { withFullStop } from '~/lib/text';
 
@@ -9,6 +12,19 @@ const aboutParagraphs = siteSettings.aboutBody
   .split(/\n\s*\n/)
   .map((paragraph) => paragraph.trim())
   .filter((paragraph) => paragraph !== '');
+
+// The programmes that have actually happened, in the order src/lib/
+// programmes.ts declares them. Only the ones with a published event: this
+// block is the only place on the site that says what these names mean, and a
+// programme listed here that has never been held would read as a promise that
+// one is coming. A programme joins the list on the day its first edition is
+// published, and needs no separate editing.
+//
+// One programme is not a list. An organisation that only runs the main edition
+// would otherwise get a heading, a sentence about having several kinds of
+// event, and one bullet contradicting it.
+const events = await getCollection('events', ({ data }) => !data.draft);
+const programmes = programmesInOrder(events.map((event) => event.data.programme));
 ---
 
 <BaseLayout title="About" description="What TEDxKigali is and how to take part.">
@@ -27,6 +43,24 @@ const aboutParagraphs = siteSettings.aboutBody
 
       <h2>TEDxKigali</h2>
       {aboutParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+
+      {programmes.length > 1 && (
+        <>
+          <h2>Our programmes</h2>
+          <p>
+            TEDxKigali runs more than one kind of event, each licensed by TED under its own
+            name. These are the ones we have held so far — every edition of each of them is
+            listed under <a href={internalHref('/events')}>Events</a>.
+          </p>
+          <ul>
+            {programmes.map((programme) => (
+              <li>
+                <strong>{PROGRAMME_NAMES[programme]}</strong> — {PROGRAMME_BLURBS[programme]}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
       <h2>Take part</h2>
       <p>

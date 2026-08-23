@@ -26,6 +26,7 @@ const dateLabel = formatEventDate(data.startDate);
   class="flex flex-col overflow-hidden rounded-lg border border-line bg-surface"
   data-event
   data-event-state={state}
+  data-programme={data.programme}
   data-event-start={data.startDate.toISOString()}
   data-event-end={eventEnd(data.startDate, data.endDate).toISOString()}
   data-ticket-status={ticketStatus}

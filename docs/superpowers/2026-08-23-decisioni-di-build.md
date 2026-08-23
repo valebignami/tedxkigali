@@ -255,3 +255,63 @@ caso che non puo' diventare falso.
 
 Se una revisione futura segnala l'assenza del prezzo come lacuna: non lo e', e'
 una scelta del committente presa vedendo il compromesso.
+
+## I programmi TEDx (23 agosto 2026)
+
+Il committente ha chiesto di rappresentare le categorie di eventi TEDx: TEDx
+Kigali, Women, Youth, Kids e Countdown.
+
+**Struttura: raggruppamento, non filtri.** La prima proposta era una fila di
+filtri per categoria. Il committente ha obiettato ("sicuro che abbia senso
+cosi'? non ci sono modi migliori?") e aveva ragione. Un filtro risponde a
+"mostrami di meno"; la domanda vera di un visitatore davanti a "TEDxKigali
+Women" e' "che cos'e'?", e nessuno filtra per una parola che non capisce. Con
+tre edizioni e quattro talk, cinque pulsanti in piu' sopra a quelli per edizione
+e per argomento sarebbero stati una pulsantiera sopra dieci elementi, e
+soprattutto un filtro *nasconde* l'esistenza delle categorie invece di
+mostrarla: chi non clicca non scopre mai che i programmi sono cinque.
+
+Quindi: l'archivio degli eventi e i pulsanti della pagina Talks si raggruppano
+sotto un titolo per programma, e la pagina About guadagna un blocco "Our
+programmes" con una riga di spiegazione ciascuno — che e' l'unica cosa che
+rende quei nomi comprensibili, e che nessun filtro puo' dare. Un filtro per
+programma si potra' aggiungere quando scorrere sara' diventato il problema; i
+dati sono gia' quelli giusti. Anche una pagina per programma resta possibile
+senza rifare nulla: il modello dei dati e' lo stesso.
+
+**Tutto e' condizionato a `programmesInOrder(...).length > 1`.** Un sito che
+fa solo l'edizione principale non vede ne' titoli ne' blocco About: resta
+identico a prima. Ed e' anche una difesa contro l'errore gia' commesso una
+volta su questo progetto (accessi in sedia a rotelle promessi su un evento
+inventato): un programma compare nella pagina About solo quando ha la sua prima
+edizione pubblicata, quindi il sito non puo' annunciare un programma che non e'
+mai stato fatto.
+
+**I nomi.** Verificati sulle pagine TED, non dedotti. TED scrive, sulla pagina
+degli eventi Youth: *"The word 'Youth' is included at the end of their names
+(e.g. TEDx[Your City] Youth). Include a space between the last word of the
+location name and the word 'Youth.'"* Quindi `TEDxKigali Youth`, non
+`TEDxYouth@Kigali` — la forma con la chiocciola era stata detta al committente
+in una risposta precedente ed e' **sbagliata**, e' la convenzione vecchia. Women
+e Countdown sono tipi di licenza "named after the location-based community it
+serves", quindi stessa forma. Sono in `src/lib/programmes.ts`, campo a scelta
+fissa: nessuno li digita.
+
+**"TEDxKigali Kids" non esiste nell'elenco dei tipi di evento di TED.** Il
+programma TED per i piu' giovani e' Youth. E' stato incluso perche' e' stato
+chiesto, ma prima di pubblicare un evento sotto quel nome chi tiene la licenza
+deve confermare che sia un tipo che puo' organizzare. Il sito non puo'
+verificarlo. La cautela e' scritta anche in `docs/EDITING.md` e nel commento in
+testa a `src/lib/programmes.ts`.
+
+**Due campi non possono chiamarsi entrambi "Programme".** La scaletta della
+giornata si chiamava cosi' nel CMS. Ora e' "Programme of the day" e il campo
+nuovo e' "TEDx programme"; il titolo stampato sulla pagina dell'evento resta
+"Programme".
+
+**Un'edizione di esempio in piu'.** `tedxkigali-women-2025.md` e il talk
+collegato esistono solo per far vedere la funzione: senza una seconda edizione
+in un programma diverso, nulla di tutto questo si vede. Sono contenuti
+inventati come gli altri e vanno via con il resto al lancio — Task 18 del piano
+li elenca e spiega che togliendoli i raggruppamenti spariscono da soli, il che
+e' il comportamento voluto.
