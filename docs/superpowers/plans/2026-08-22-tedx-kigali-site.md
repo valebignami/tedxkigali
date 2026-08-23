@@ -3466,8 +3466,14 @@ Rimuovere i due talk segnaposto e i due eventi di esempio, inserendo i contenuti
 ```bash
 rm src/content/talks/2025-10-18-the-hills-that-listen.md
 rm src/content/talks/2025-10-18-rebuilding-trust.md
+rm src/content/talks/2024-09-21-the-market-at-dawn.md
 rm src/content/speakers/aline-uwase.md
+rm src/content/events/tedxkigali-2026.md
+rm src/content/events/tedxkigali-2025.md
+rm src/content/events/tedxkigali-2024.md
 ```
+
+> **Nessun contenuto di esempio deve sopravvivere al lancio.** I tre talk puntano tutti allo stesso video segnaposto, l'edizione 2026 ha un `bookingUrl` verso `example-ticketing.com` e un `mapUrl` che porta alla pagina generica di Google Maps, e le edizioni 2024 e 2025 sono inventate. Su un sito TEDx reale sarebbero contenuti falsi. Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ` e `example-ticketing.com` che non ne resti traccia.
 
 Creare gli eventi e i talk reali seguendo la stessa struttura di frontmatter. Verificare dopo ogni aggiunta con `npm run build`.
 
@@ -3533,7 +3539,7 @@ Annotare ogni punto in cui si è bloccata e correggere `docs/EDITING.md` o le et
 
 - [ ] **Step 9: Verifiche finali sul sito in produzione**
 
-1. **Video**: riproduzione su Android Chrome, iOS Safari e desktop; l'audio si interrompe alla chiusura dell'overlay.
+1. **Video**: riproduzione su Android Chrome, iOS Safari e desktop, **incluso un telefono tenuto in orizzontale** (è come si guardano i video, ed è il caso in cui il player rischia di essere tagliato); l'audio si interrompe alla chiusura dell'overlay.
 2. **Rete**: nella scheda Network, nessuna richiesta a `youtube.com` prima del clic sul play.
 3. **Prenotazione**: il pulsante apre la piattaforma esterna in una nuova scheda.
 4. **Lighthouse mobile** su home, `/talks` e `/events`: ≥ 95 nelle quattro categorie. Se Performance scende sotto la soglia, verificare per prima cosa il peso delle immagini caricate.
