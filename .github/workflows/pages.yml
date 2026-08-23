@@ -49,9 +49,12 @@ jobs:
 
       # Before the build, and in this order, because a red suite must not
       # publish: the deploy job below needs this one, and a failed step fails
-      # the job, so nothing reaches the environment. The build itself is also a
-      # test here — the content rules stop it with an editor-facing message when
-      # an event has been saved in an impossible state.
+      # the job, so nothing reaches the environment. The content rules are part
+      # of this too, and they are reached earlier than the build: `astro check`
+      # syncs the content collections before it type-checks anything, so an
+      # event saved in an impossible state stops the run there, with the message
+      # written for the editor. The build would stop on the same message; it
+      # rarely gets the chance.
       #
       # Each of the three keeps its own copy of what it printed, as well as
       # printing it into the run. That copy is what the notice step at the end of
