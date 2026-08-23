@@ -223,3 +223,35 @@ FINAL FIX WAVE: due deviazioni segnalate invece che forzate — @fontsource-vari
 FINAL RE-REVIEW: tutti gli item di Gruppo A, B e C ADDRESSED; A1 e A2 verificati nell'output costruito (il revisore ha letto il chunk minificato di event-status per confermare che il vero eventState sopravvive al bundling); entrambe le deviazioni giudicate corrette; nessun danno strutturale introdotto
 FINAL RE-REVIEW: 2 Important residui, entrambi modifiche di una stringa
 FINAL: Ruling: applico questi due invece di rinviarli, contro la regola "una sola ondata di fix". Motivo: (a) il messaggio della guardia B12 indica l'unico rimedio sbagliato per il caso che la guida stessa raccomanda — un volontario che lo segue alla lettera riattribuisce pubblicamente un talk all'edizione sbagliata, con build verde; (b) due pagine pubbliche, inclusa la privacy, rendono "Write to us athello@tedxkigali.rw" perche' la compressione HTML mangia lo spazio. Sono due stringhe, rischio nullo, e sarebbero l'ultima cosa che il cliente vede. Se sbagliato: un giro di dispatch in piu'.
+
+---
+
+## Decisioni del committente — 23 agosto 2026
+
+Le due questioni che erano state lasciate aperte perche' non erano nostre da
+decidere. Il committente ha visto le opzioni e ha scelto. Nessuna delle due
+richiede modifiche: entrambe confermano lo stato attuale.
+
+**Favicon.** Resta il segno a x (barre incrociate a 44 gradi in
+`public/favicon.svg`), non il marchio "TEDx" scritto per esteso. Le due opzioni
+sono state rasterizzate a 16, 32 e 180 pixel e guardate: a 16 pixel — la
+dimensione peggiore, e quella di una scheda su uno schermo non retina — il
+marchio scritto e' una macchia illeggibile, mentre la x tiene la forma. A 32
+pixel il marchio si legge, minuscola compresa. Scelto il segno perche' una
+favicon si sceglie per il caso peggiore.
+
+Va detto con onesta' che questo **non chiude** la segnalazione originale del
+committente ("la x dovrebbe essere minuscola"): in un segno isolato il caso
+della lettera non e' rappresentabile, come documentato nel commento del file.
+Il committente lo sa e ha accettato il compromesso. Non riaprirla.
+
+**Prezzo del biglietto nei dati strutturati.** Resta omesso per gli eventi a
+pagamento, confermando il ruling del Task 10 piu' sopra. Il motivo decisivo per
+il committente e' la cache di Google: un prezzo cambiato sulla piattaforma di
+biglietteria resta vecchio nei risultati di ricerca per giorni, e chi arriva
+paga una cifra diversa da quella che ha letto. Il prezzo vive dove viene
+incassato. Un evento gratuito continua a dichiarare `price: '0'`, che e' l'unico
+caso che non puo' diventare falso.
+
+Se una revisione futura segnala l'assenza del prezzo come lacuna: non lo e', e'
+una scelta del committente presa vedendo il compromesso.
