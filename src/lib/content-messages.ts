@@ -4,10 +4,14 @@
 // must not name a field by its code name — the CMS shows "Booking link",
 // "Exact map link", "Website", never bookingUrl, mapUrl or url.
 //
-// Astro prints a content message as "<code path>: <message>" and offers no way
-// to change that (src/lib/settings.ts is the one form where the prefix is ours
-// to write). Each message therefore names on its own what it is about, so that
-// it still reads as a whole sentence to a volunteer who skips past the prefix.
+// Astro prints a content message as "<code path>: <message>". There is a way to
+// stop it — an issue carrying params.isHoistedAstroError makes Astro throw that
+// one error by itself — but it throws that one and drops every other mistake in
+// the same save, so a volunteer with three of them would fix them one failed
+// build at a time. The prefix is the cheaper of the two. Each message therefore
+// names on its own what it is about, so that it still reads as a whole sentence
+// to a volunteer who skips past the prefix. src/lib/settings.ts is the one form
+// where the whole message is ours to write.
 
 import { MAX_TEXT_LENGTH } from '~/lib/content-rules';
 

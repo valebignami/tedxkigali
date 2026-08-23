@@ -13,7 +13,7 @@ export const KIGALI_UTC_OFFSET = '+02:00';
 const WRITTEN_DATE_TIME = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?)\s*([+-]\d{2}:?\d{2}|Z)$/i;
 
 /** The CMS labels of the two event fields that carry a time of day. */
-export const EVENT_DATE_FIELDS: ReadonlyArray<readonly [key: string, label: string]> = [
+const EVENT_DATE_FIELDS: ReadonlyArray<readonly [key: string, label: string]> = [
   ['startDate', 'Start date and time'],
   ['endDate', 'End date and time'],
 ];

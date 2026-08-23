@@ -24,7 +24,7 @@ export function missingTalkMessage(speakerName: string, talkId: string): string 
 export const TALKS_ARCHIVE_HREF = '/talks';
 
 export interface SpeakerTalkLink {
-  /** Present unless the talk is hidden, in which case the archive is the honest link. */
+  /** The talk's own card when there is one, the archive when there is not. */
   href: string;
 }
 

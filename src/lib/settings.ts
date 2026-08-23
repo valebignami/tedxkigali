@@ -54,10 +54,9 @@ export const siteSettingsSchema = z.strictObject(
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 
 // The labels the CMS puts above these fields, which are the only names a
-// volunteer has ever seen for them. Astro writes the code name in front of a
-// content-collection message and there is no way to stop it; here the whole
-// message is ours, so it uses the labels instead. Keep in step with the
-// "Site texts" section of .pages.yml.
+// volunteer has ever seen for them. This form is not a content collection, so
+// unlike everywhere else nothing prepends a code name and the whole message is
+// ours to write. Keep in step with the "Site texts" section of .pages.yml.
 const SITE_TEXT_LABELS: Record<string, string> = {
   siteName: 'Site name',
   tagline: 'Tagline',

@@ -138,7 +138,6 @@ function eventsLoader(): Loader {
   const files = glob({ pattern: '**/*.md', base: EVENTS_DIR });
   return {
     ...files,
-    name: 'events',
     load: async (context) => {
       await files.load(context);
       for (const fileName of readdirSync(EVENTS_DIR).filter((name) => name.endsWith('.md'))) {
