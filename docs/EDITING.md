@@ -248,23 +248,73 @@ saved. Go back into the entry, fix the field, and save again — see section 8.
 
 ## 8. If something goes wrong
 
-**How you find out.** GitHub emails you when a rebuild fails. It goes to the
-address on the GitHub account you signed in with. If you have never seen one and
-you think you should have, check the notification settings on your GitHub
-account — and in the meantime, look at the website a few minutes after you save:
-if your change is not there, the rebuild stopped.
+**How you find out.** You are told. When a rebuild stops, the website's own
+repository opens a page on GitHub — GitHub calls it an *issue* — that says what
+went wrong, and it writes your name on that page. GitHub emails you as soon as
+that happens, at the address on the account you signed in to the CMS with. There
+is nothing to switch on: being named on a page is one of the few things GitHub
+emails everybody about without being asked.
+
+The subject of the email is always the same sentence:
+
+> The website was not updated — your last save did not go live
+
+Follow the link in it and you land on the page. It looks like this:
+
+> **@your-name — the change just saved has not gone live. The website was not
+> updated.**
+>
+> *"This event ends at the same moment it starts, or earlier. Check the end date
+> and time — the same time left in both fields, or a mistyped year, is the usual
+> cause — or empty it, and the website will assume four hours."*
+>
+> It is the entry saved as `tedxkigali-2026`, under **Events** in the CMS.
+>
+> **Nothing is broken.** The website is still showing exactly what it showed
+> before this save, and visitors see a working site. Nothing was published, and
+> nothing was damaged. The words that were typed are not lost either: they are
+> saved, exactly as they were left.
+>
+> **What to do.** Open the CMS at https://app.pagescms.org, go back into that
+> entry, change what is asked for above, and save. […]
+
+The quoted sentence near the top is the whole of it. It is written for you, it
+says which field is wrong and what to do about it, and it is the only part you
+have to read. Under it is the name of the entry to go and open — that is the
+name of the file, so it may not be quite the title you typed, but it is close
+enough to recognise. Everything below that is the same reassurance every time,
+and a link to the technical record for whoever maintains the site. There is no
+stack trace, no red log and nothing addressed to a programmer.
+
+If more than one thing is wrong with the same entry, all of them are quoted, as
+a list. Fix them all before you save.
 
 **What to do:**
 
-1. Read the message in the email. It says what is wrong in plain English and
-   what to do about it, for example *"YouTube link not recognised. Copy the full
-   link from your browser address bar"*, or *"This event has no venue. Write the
-   name of the place it happens"*.
+1. Read the quoted sentence and note the entry named under it.
 2. Go back into the CMS, open that entry, fix the field, and save again.
-3. If you cannot work out what is wrong, contact the site maintainer. Tell them
-   which entry you saved and roughly when — the message is waiting for them in
-   the build record. A screenshot of the email, if you have one, saves them a
-   step.
+3. Nothing else. The save starts a new rebuild; if it works, the website
+   publishes and that same page closes itself, with one last note on it telling
+   you so. You get an email for that too, so you know it went through.
+
+**If it stops again.** You get a new email, but not a new page: the same one is
+used for every failed save until one of them works, with your name and the new
+message added at the bottom. That is on purpose — one page, however many
+attempts, so nobody has to wade through a pile of them.
+
+**If the page says it was not your doing.** Some failures have nothing to do with
+what anybody typed. Then the page says so, in those words — *"This is not
+something you did wrong"* — and there is no entry to go and fix. Send the link to
+whoever maintains the site; everything they need is on it.
+
+**If you would rather look than wait.** Every one of these pages, open and
+closed, is listed at
+<https://github.com/valebignami/tedxkigali/issues>. If you ever suspect a save
+did not land, look there.
+
+**And while any of this is going on**, the website is up and unchanged, showing
+the last version that worked. A failed save never takes the site down and never
+shows visitors half a page.
 
 ## 9. Images
 

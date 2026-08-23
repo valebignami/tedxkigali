@@ -57,7 +57,20 @@ booking button and says so, without anyone rebuilding the site.
 Published to GitHub Pages at <https://valebignami.github.io/tedxkigali/> by
 `.github/workflows/pages.yml`, on every push to `main`. That workflow runs the
 tests, `astro check` and the build before it uploads anything, so a red commit
-cannot reach the public site. `.github/workflows/ci.yml` runs the same checks
+cannot reach the public site.
+
+Stopping is only half of it. When a run stops,
+[`.github/scripts/publish-notice.mjs`](.github/scripts/publish-notice.mjs) digs
+the editor-facing sentence out of the log of the step that failed and opens one
+issue carrying it, @-mentioning the account the commit was made under — which,
+for a save from the CMS, is the volunteer who made it. Every later failure
+reuses that same issue, and a run that publishes closes it. It needs nothing but
+`issues: write` on the workflow's own token: no secret, no mail server, no third
+party. Without it a save fails in silence: the first event ever saved from the
+CMS had its start and end at the same moment, the run went red, the site did not
+update, and nobody was told.
+
+`.github/workflows/ci.yml` runs the same checks
 on pull requests as well and publishes nothing. Neither is scheduled: GitHub
 disables scheduled workflows after 60 days without repository activity, which
 for a volunteer-run site is a normal autumn.
