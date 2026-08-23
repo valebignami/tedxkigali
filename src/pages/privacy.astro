@@ -1,0 +1,47 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import { siteSettings } from '~/lib/settings';
+---
+
+<BaseLayout title="Privacy" description="How this website handles your data.">
+  <section class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-4xl font-black uppercase md:text-6xl">Privacy</h1>
+
+    <div class="prose prose-invert mt-8 max-w-none">
+      <h2>The short version</h2>
+      <p>
+        This website sets no cookies of its own, runs no analytics and has no user accounts.
+        We do not collect, store or share personal data about visitors.
+      </p>
+
+      <h2>Videos</h2>
+      <p>
+        Talks are hosted on YouTube. Until you press play, your browser only loads the
+        preview image from <code>i.ytimg.com</code>. When you press play, the video is loaded
+        from <code>youtube-nocookie.com</code> and, from that moment, YouTube (Google) may
+        store data on your device and process your IP address under its own privacy policy.
+        Pressing play is your choice, and it is the only way this site contacts YouTube.
+      </p>
+
+      <h2>Booking tickets</h2>
+      <p>
+        Tickets are sold by an external ticketing platform. When you follow a booking link you
+        leave this website, and the data you enter there is handled by that platform under its
+        own terms.
+      </p>
+
+      <h2>Hosting and logs</h2>
+      <p>
+        The site is served as static files by our hosting provider, which keeps standard server
+        logs (including IP addresses) for security and reliability purposes.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        We follow Rwanda's Law No. 058/2021 on the protection of personal data and privacy.
+        For any question about this page, write to
+        <a href={`mailto:${siteSettings.contactEmail}`}>{siteSettings.contactEmail}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
