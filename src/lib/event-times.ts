@@ -5,12 +5,15 @@
 // looks wrong. The offset only exists in the text of the file, which is why
 // these functions read the file and not the parsed entry.
 
-import { EVENT_TIME_ZONE_MESSAGE } from '~/lib/content-messages';
+import { EVENT_TIME_ZONE_MESSAGE, MISSING_TIME_OF_DAY_MESSAGE } from '~/lib/content-messages';
 
 /** Kigali is on CAT all year: no daylight saving, so one offset covers every date. */
 export const KIGALI_UTC_OFFSET = '+02:00';
 
 const WRITTEN_DATE_TIME = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?)\s*([+-]\d{2}:?\d{2}|Z)$/i;
+
+/** A day on its own, with nothing after it: "2026-11-14". */
+const WRITTEN_DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
 
 /** The CMS labels of the two event fields that carry a time of day. */
 const EVENT_DATE_FIELDS: ReadonlyArray<readonly [key: string, label: string]> = [
@@ -43,17 +46,47 @@ export function writtenEventTitle(source: string): string {
   return writtenValue(frontmatterOf(source), 'title');
 }
 
+/**
+ * The CMS labels of the date fields in this file that carry a day and no time
+ * of day. Refusing these is right — YAML reads a bare date as midnight UTC,
+ * which is 02:00 in Kigali, an hour nobody chose — but the remedy is to pick a
+ * time, not to move the computer's clock, so they are told apart from the
+ * fields the time-zone check below answers for.
+ */
+export function missingTimeOfDayFields(source: string): string[] {
+  const frontmatter = frontmatterOf(source);
+  return EVENT_DATE_FIELDS.filter(([key]) => WRITTEN_DATE_ONLY.test(writtenValue(frontmatter, key))).map(
+    ([, label]) => label,
+  );
+}
+
 /** The CMS labels of the date fields in this file that are not on Kigali time. */
 export function offKigaliTimeFields(source: string): string[] {
   const frontmatter = frontmatterOf(source);
   return EVENT_DATE_FIELDS.filter(([key]) => {
     const written = writtenValue(frontmatter, key);
-    return written !== '' && !isOnKigaliTime(written);
+    if (written === '' || WRITTEN_DATE_ONLY.test(written)) return false;
+    return !isOnKigaliTime(written);
   }).map(([, label]) => label);
+}
+
+/**
+ * Names the event and the fields, then says what to do. The first clause used
+ * to be `The event "X", in "Start date and time".` — no verb in it, which is
+ * not a sentence, and it is the first thing a reader working in a second
+ * language meets.
+ */
+function aboutTheEvent(eventTitle: string, labels: ReadonlyArray<string>): string {
+  const which = labels.map((label) => `"${label}"`).join(' and ');
+  return `The event "${eventTitle}" has a problem in ${which}.`;
 }
 
 /** The build-failure message a volunteer receives for a mistimed event. */
 export function offKigaliTimeMessage(eventTitle: string, labels: ReadonlyArray<string>): string {
-  const which = labels.map((label) => `"${label}"`).join(' and ');
-  return `The event "${eventTitle}", in ${which}. ${EVENT_TIME_ZONE_MESSAGE}`;
+  return `${aboutTheEvent(eventTitle, labels)} ${EVENT_TIME_ZONE_MESSAGE}`;
+}
+
+/** The build-failure message for an event given a day but no time of day. */
+export function missingTimeOfDayMessage(eventTitle: string, labels: ReadonlyArray<string>): string {
+  return `${aboutTheEvent(eventTitle, labels)} ${MISSING_TIME_OF_DAY_MESSAGE}`;
 }

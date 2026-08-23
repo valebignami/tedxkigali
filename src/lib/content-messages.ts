@@ -154,6 +154,17 @@ export const EVENT_TIME_ZONE_MESSAGE =
   'or ask somebody in Rwanda to do it, then open the event again, pick the date ' +
   'and time once more, and save.';
 
+/**
+ * Shown when a start or end holds a day with no time of day on it. The website
+ * prints the hour an event starts, and a day on its own does not carry one; the
+ * time zone message is the wrong answer here, because there is no time to have
+ * saved on the wrong clock.
+ */
+export const MISSING_TIME_OF_DAY_MESSAGE =
+  'It holds a day but no time of day, so the website cannot say what time the ' +
+  'event starts. Open the event in the CMS, pick the day and the time together ' +
+  'from the calendar, and save.';
+
 /** Shown when the ticket status is not one of the five choices in the list. */
 export const TICKET_STATUS_MESSAGE =
   'The ticket status has to be one of the choices in the list: "Tickets coming ' +

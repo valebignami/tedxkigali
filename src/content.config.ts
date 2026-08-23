@@ -49,7 +49,14 @@ import {
   YES_NO_MESSAGE,
 } from '~/lib/content-messages';
 import { editorError } from '~/lib/editor-error';
-import { offKigaliTimeFields, offKigaliTimeMessage, writtenEventTitle } from '~/lib/event-times';
+import { eventFilesInSubFolders, eventInSubFolderMessage } from '~/lib/event-files';
+import {
+  missingTimeOfDayFields,
+  missingTimeOfDayMessage,
+  offKigaliTimeFields,
+  offKigaliTimeMessage,
+  writtenEventTitle,
+} from '~/lib/event-times';
 import { isValidScheduleTime } from '~/lib/schedule';
 import { SPONSOR_TIERS } from '~/lib/sponsors';
 
@@ -141,10 +148,25 @@ const talks = defineCollection({
 const EVENTS_DIR = './src/content/events';
 
 /**
- * The glob loader, plus the one check that cannot be made from the loaded data:
- * whether the times in the file are Kigali's. It runs on every content sync,
- * because a file the editor saved a minute ago has to be checked with the same
- * build that publishes it.
+ * The glob loader, plus the two checks that cannot be made from the loaded
+ * data: whether the file sits somewhere the site can build a page for it, and
+ * whether the times written in it are Kigali's.
+ *
+ * These run whenever `load` runs, which is every `astro build` and every cold
+ * start of `astro dev` — so nothing is ever published without them. They do
+ * *not* run when the dev server picks up a change to a file it is already
+ * watching: astro/dist/content/loaders/glob.js registers `watcher.on("change")`
+ * and answers it with syncData() for that one entry, never with another call to
+ * `load`. A maintainer who edits an event against a running dev server can
+ * therefore see a wrong hour rendered green, and then be stopped by the next
+ * build. Worse, `astro dev` daemonises: the error thrown here on a cold start
+ * kills the server and the CLI prints only "Dev server process exited before
+ * becoming ready", so the sentence written for the editor never reaches the
+ * screen. Both are dev-only; production is gated by `astro build`.
+ *
+ * One mistake is reported per build, and a schema error in any event file is
+ * reported before either of these, because files.load() throws on the first
+ * invalid entry.
  */
 function eventsLoader(): Loader {
   const files = glob({ pattern: '**/*.md', base: EVENTS_DIR });
@@ -152,12 +174,20 @@ function eventsLoader(): Loader {
     ...files,
     load: async (context) => {
       await files.load(context);
-      // Recursive, because the loader's pattern is: a folder per year is a
-      // shape the CMS could produce, and an event inside one would otherwise be
-      // published without ever being checked.
+      // Recursive, because a file one folder down is exactly what has to be
+      // caught: the events route is single-segment, so such an event cannot be
+      // published at all — see src/lib/event-files.ts. Without the recursion it
+      // would reach the router instead and die there with a raw
+      // "TypeError: Missing parameter: slug".
       const fileNames = readdirSync(EVENTS_DIR, { recursive: true }) as string[];
+      const buried = eventFilesInSubFolders(fileNames);
+      if (buried.length > 0) throw editorError(eventInSubFolderMessage(buried[0]));
       for (const fileName of fileNames.filter((name) => name.endsWith('.md'))) {
         const source = readFileSync(join(EVENTS_DIR, fileName), 'utf8');
+        const undated = missingTimeOfDayFields(source);
+        if (undated.length > 0) {
+          throw editorError(missingTimeOfDayMessage(writtenEventTitle(source) || fileName, undated));
+        }
         const wrong = offKigaliTimeFields(source);
         if (wrong.length === 0) continue;
         throw editorError(offKigaliTimeMessage(writtenEventTitle(source) || fileName, wrong));
