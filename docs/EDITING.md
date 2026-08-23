@@ -182,6 +182,7 @@ connection is set up; roughly how long a publish takes, so you know how long to
 wait before worrying; and whether the website goes on showing the last version
 that worked when a rebuild stops. Until they answer, assume your change is
 stored but not yet published, and check the live site yourself after each save.
+Section 8 adds a fourth thing to ask them in the same conversation.
 
 If a rebuild stops because something is wrong, your change is still saved. Go
 back into the entry, fix the field, and save again — see section 8.
