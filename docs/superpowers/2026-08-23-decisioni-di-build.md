@@ -101,7 +101,7 @@ Task 5: dispatched (implementer sonnet, BASE d957d65) — content.config.ts, con
 Task 5: report DONE (commit 507c442, 57 test, entrambi i fallimenti di build deliberati con messaggi comprensibili; segnalato un quasi-incidente in ripristino, corretto)
 Task 5: review 1 — spec ✅, quality Approved (0 Critical, 0 Important); ripristino post-rottura verificato pulito in modo indipendente
 Task 5: minor (deferred): nessuno schema usa .strict(), quindi una chiave di frontmatter scritta male viene ignorata in silenzio invece di far fallire il build. Rischio reale basso (il CMS genera le chiavi da form, non a mano) ma e' un buco rispetto all'obiettivo dichiarato della rete di sicurezza — DA TRIAGGIARE NELLA REVIEW FINALE
-Task 5: minor (deferred): mapUrl di esempio e' la radice di Google Maps senza place id — valido come URL ma porta a una pagina generica; il Task 18 deve sostituirlo esplicitamente
+Task 5: minor (deferred): mapUrl di esempio e' la radice di Google Maps senza place id — valido come URL ma porta a una pagina generica; il Task 18 deve sostituirlo esplicitamente — SUPERATO il 2026-08-23: il campo mapUrl e' stato tolto dall'edizione 2026 e la pagina evento costruisce il link da venue e address, quindi il Task 18 non ha piu' nulla da sostituire
 Task 5: minor (carry-forward al Task 6): settings.ts non e' importato da nessuno, quindi siteSettingsSchema.parse(raw) non e' ancora mai stato eseguito in un build reale; il Task 6 e' il primo consumatore e la sua review deve verificarlo
 Task 5: complete (commits d957d65..507c442, review clean)
 Task 6: dispatched (implementer sonnet, BASE 507c442) — BaseLayout, Header, Footer, seo.ts (TDD), robots.txt

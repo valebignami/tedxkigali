@@ -3461,7 +3461,7 @@ Aggiornare `contactEmail`, `socials` e `tedxLicenceNotice` in `src/content/setti
 
 - [ ] **Step 3: Sostituire i contenuti di esempio con quelli reali**
 
-Rimuovere i due talk segnaposto e i due eventi di esempio, inserendo i contenuti reali:
+Rimuovere tutti i contenuti di esempio (tre talk, tre eventi, una scheda speaker), inserendo i contenuti reali:
 
 ```bash
 rm src/content/talks/2025-10-18-the-hills-that-listen.md
@@ -3473,7 +3473,11 @@ rm src/content/events/tedxkigali-2025.md
 rm src/content/events/tedxkigali-2024.md
 ```
 
-> **Nessun contenuto di esempio deve sopravvivere al lancio.** I tre talk puntano tutti allo stesso video segnaposto, l'edizione 2026 ha un `bookingUrl` verso `example-ticketing.com` e un `mapUrl` che porta alla pagina generica di Google Maps, e le edizioni 2024 e 2025 sono inventate. L'edizione 2026 include anche una `schedule` di esempio e una descrizione estesa con nomi di relatori inventati (Diane Uwimana, Eric Niyonzima, Aline Mukamana, Jean Bosco Habimana, Grace Ingabire, Patrick Nsengimana, Solange Umutoni, Claudine Mutesi, Robert Kayitare, Belise Ishimwe): anche questi sono fittizi e vanno via con il resto del file quando viene rimosso, non copiati nel contenuto reale. Su un sito TEDx reale sarebbero contenuti falsi. Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ`, `example-ticketing.com` e `Diane Uwimana` che non ne resti traccia.
+> **Nessun contenuto di esempio deve sopravvivere al lancio.** I sette file elencati sopra sono l'intero contenuto di esempio del sito: tre talk che puntano tutti allo stesso video segnaposto, tre eventi inventati e una scheda speaker inventata. `src/content/sponsors/` e' vuoto e `src/content/settings/site.json` non e' contenuto di esempio, ma va comunque rivisto allo Step 2. L'edizione 2026 ha in piu' un `bookingUrl` verso `example-ticketing.com`, una `schedule` di esempio e una descrizione estesa con nomi di relatori inventati (Diane Uwimana, Eric Niyonzima, Aline Mukamana, Jean Bosco Habimana, Grace Ingabire, Patrick Nsengimana, Solange Umutoni, Claudine Mutesi, Robert Kayitare, Belise Ishimwe): anche questi sono fittizi e vanno via con il resto del file quando viene rimosso, non copiati nel contenuto reale. Su un sito TEDx reale sarebbero contenuti falsi.
+>
+> Ogni file di esempio si dichiara tale: gli eventi e la scheda speaker aprono il corpo con un blockquote "Sample content", i tre talk aprono la loro `summary` con "Sample content — this talk is invented". Sono avvisi visibili al visitatore e vanno via insieme ai file: se dopo la sostituzione una ricerca di `Sample content` trova ancora qualcosa, quel contenuto e' rimasto indietro.
+>
+> Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ`, `example-ticketing.com`, `Diane Uwimana` e `Sample content` che non ne resti traccia.
 
 Creare gli eventi e i talk reali seguendo la stessa struttura di frontmatter. Verificare dopo ogni aggiunta con `npm run build`.
 

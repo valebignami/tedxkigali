@@ -125,6 +125,7 @@ Tutti i campi immagine sono accompagnati da un campo testo alternativo obbligato
 | `imageAlt` | testo | se c'è `image` | |
 | `theme` | testo | no | Tema dell'edizione |
 | `summary` | testo (max 300) | sì | Usato in home, nelle liste e nei meta social |
+| `schedule` | lista di righe | no | Programma della giornata; ogni riga ha `title` (obbl.), `time`, `speaker`, `note`. Reso nell'ordine scritto, mai riordinato |
 | corpo del file | Markdown | no | Descrizione lunga nella pagina evento |
 | `bookingUrl` | URL | no | Link alla piattaforma esterna |
 | `bookingLabel` | testo | no | Default `Book your seat` |

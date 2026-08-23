@@ -14,7 +14,7 @@ You will see five sections: **Events**, **Talks**, **Speakers**, **Partners** an
 
 ## 2. Adding a talk
 
-1. Open **Talks** and click **Add an entry**.
+1. Open **Talks** and start a new entry.
 2. Fill in the required fields:
    - **Talk title** — exactly as it appears on stage.
    - **Speaker name**.
@@ -40,7 +40,7 @@ The talk appears on the website about one minute later.
 
 ## 3. Adding an event
 
-1. Open **Events** and click **Add an entry**.
+1. Open **Events** and start a new entry.
 2. Fill in the required fields:
    - **Event title**.
    - **Start date and time** — enter the time as it will show on a clock in
@@ -57,25 +57,27 @@ The talk appears on the website about one minute later.
    - **Address** — the website builds its own "open in Google Maps" link from
      the venue and address, so you do not need to go and find a map link
      yourself.
-   - **Exact map link (optional)** — leave this empty unless you have checked
-     that searching for the venue and address sends people to the wrong
-     place. Only then, paste the correct Google Maps link here.
+   - **Exact map link** — leave this empty unless you have checked that
+     searching for the venue and address sends people to the wrong place. Only
+     then, paste the correct Google Maps link here.
    - **Edition theme** — one or two words, for example: *Rising*.
    - **Event image** — if you upload one, you must also fill in **Image
      description** (screen reader text).
    - **Full description** — the main body text of the event page. Use this for
      anything that does not fit in the short summary.
-   - **Programme** — the running order of the day. Click **Add an entry** for
-     each row: a welcome, a talk, a break, anything that happens on the day.
-     Fill in **What happens** (required) and, if you have them, **Time**,
-     **Speaker** and **Note**. Rows appear on the website in the order you put
-     them in here, so use **Move up** / **Move down** to get the order right —
-     the website never reorders them for you. A row with no time is fine; that
-     is how you add a break like lunch or a coffee break, which does not have
-     a speaker either. If you do fill in **Time**, write it as a 24-hour time,
-     for example `09:00`, or a range like `09:00 - 09:20`. Anything else (an
-     "am"/"pm" time, or a time with a full stop instead of a colon) will stop
-     the rebuild — see section 7 for what happens next.
+   - **Programme** — the running order of the day. Inside the **Programme**
+     field, add one row for each thing that happens: a welcome, a talk, a
+     break, anything. These rows live inside the event you are already
+     editing — you are not creating another event. Fill in **What happens**
+     (required) and, if you have them, **Time**, **Speaker** and **Note**.
+     Rows appear on the website in the order you put them in here and the
+     website never reorders them for you, so move them around until the order
+     matches the day. A row with no time is fine; that is how you add a break
+     like lunch or a coffee break, which does not have a speaker either. If
+     you do fill in **Time**, write it as a 24-hour time, for example `09:00`,
+     or a range like `09:00 - 09:20`. Anything else (an "am"/"pm" time, or a
+     time with a full stop instead of a colon) will stop the rebuild — see
+     section 7 for what happens next.
 4. Choose the **Ticket status** (this field is required):
    - *Tickets coming soon* — the event is announced, no booking button yet.
    - *Tickets on sale* / *Free entry — registration required* — a booking

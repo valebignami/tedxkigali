@@ -21,7 +21,7 @@ content:
       - { name: endDate, label: End date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ssxxx", time: true }, description: 'Optional. If empty, the event is assumed to last four hours.' }
       - { name: venue, label: Venue, type: string, required: true }
       - { name: address, label: Address, type: string }
-      - { name: mapUrl, label: Exact map link (optional), type: string, description: "The website already builds a Google Maps link from the venue and address above, so you usually don't need this. Fill it in only if searching for the venue and address sends people to the wrong place — paste the correct Google Maps link here instead." }
+      - { name: mapUrl, label: Exact map link, type: string, description: "Optional. The website already builds a Google Maps link from the venue and address above, so you usually don't need this. Fill it in only if searching for the venue and address sends people to the wrong place — paste the correct Google Maps link here instead." }
       - { name: image, label: Event image, type: image }
       - { name: imageAlt, label: Image description, type: string, description: 'Required if you upload an image. Describe it for people using a screen reader.' }
       - { name: theme, label: Edition theme, type: string, description: 'One or two words, for example: Rising.' }
@@ -30,7 +30,7 @@ content:
         label: Programme
         type: object
         list: true
-        description: 'The running order of the day. Rows appear on the website in the order you write them here — use "Move up" / "Move down" to reorder, and "Add an entry" to add a row.'
+        description: 'The running order of the day. Add one row for each thing that happens. Rows appear on the website in the order you put them in here, so move them around until the order matches the day.'
         fields:
           - { name: time, label: Time, type: string, description: 'Optional. Use 24-hour time, for example "09:00", or a range like "09:00 - 09:20". Leave empty for a row with no fixed time, such as a break.' }
           - { name: title, label: What happens, type: string, required: true, description: 'For example: "Opening remarks" or "Coffee break".' }
