@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as messages from '~/lib/content-messages';
 import { BOOKING_URL_MESSAGE, unknownFieldMessage } from '~/lib/content-rules';
-import { missingEditionMessage } from '~/lib/editions';
+import { hiddenEditionMessage, missingEditionMessage } from '~/lib/editions';
 import { eventInSubFolderMessage } from '~/lib/event-files';
 import { missingTimeOfDayMessage, offKigaliTimeMessage } from '~/lib/event-times';
 import { notAnImageMessage } from '~/lib/image-files';
@@ -21,6 +21,7 @@ const entries: Array<[string, string]> = [
   ['YOUTUBE_HELP_MESSAGE', YOUTUBE_HELP_MESSAGE],
   ['unknownFieldMessage', unknownFieldMessage(['Summary'])],
   ['missingEditionMessage', missingEditionMessage('The market at dawn', 'tedxkigali-2027')],
+  ['hiddenEditionMessage', hiddenEditionMessage('The market at dawn', 'TEDxKigali 2025 — Roots')],
   ['missingTalkMessage', missingTalkMessage('Aline Uwase', 'the-hills-that-listen')],
   ['offKigaliTimeMessage', offKigaliTimeMessage('TEDxKigali 2026', ['Start date and time'])],
   ['missingTimeOfDayMessage', missingTimeOfDayMessage('TEDxKigali 2026', ['Start date and time'])],

@@ -27,6 +27,20 @@ function openVideo(id: string, title: string): void {
 
 let scrollLock: string | null = null;
 
+// Two known edges, both accepted rather than overlooked.
+//
+// On a desktop browser that reserves a scrollbar gutter, hiding the overflow
+// takes the scrollbar away and the page behind the dialog shifts by its width
+// for as long as the player is open. Compensating for it means measuring the
+// gutter and padding the body, which is more moving parts than a shift nobody
+// is looking at during a video.
+//
+// On iOS Safari `overflow: hidden` on the root is not a reliable lock: a touch
+// drag can still rubber-band the page. The fix that does work there is
+// position: fixed on the body plus restoring the scroll position afterwards,
+// which is exactly the code that loses a reader's place when it goes wrong. The
+// mobile audit could not test on iOS, so nothing here is written against a
+// device nobody has held.
 function lockScroll(): void {
   scrollLock = document.documentElement.style.overflow;
   document.documentElement.style.overflow = 'hidden';

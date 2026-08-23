@@ -56,14 +56,38 @@ export function missingEditionMessage(talkTitle: string, editionId: string): str
 }
 
 /**
+ * The build-failure message for the one case of the three above that can be
+ * told apart from the others: the event is still in the CMS and only hidden.
+ *
+ * It is worth telling apart because it is the common one — the guide
+ * recommends "Hide from the website" for postponing an edition — and because
+ * being able to name the event by the title the volunteer gave it, rather than
+ * by the id stored in the file, is the difference between a sentence about
+ * their work and a sentence about the repository.
+ */
+export function hiddenEditionMessage(talkTitle: string, editionTitle: string): string {
+  return (
+    `The talk "${talkTitle}" is filed under "${editionTitle}", and that event is hidden ` +
+    'from the website, so there is no page for this talk to belong to. Open that event in ' +
+    'the CMS and turn "Hide from the website" off, or hide this talk with it and save.'
+  );
+}
+
+/**
  * Maps published talks onto the published editions they belong to, throwing an
  * editor-friendly error when a talk points at an event that was deleted or
- * hidden. Pass only the editions that are actually built: an event hidden with
- * "Hide from the website" has no page, so it must count as missing here.
+ * hidden. Pass only the editions that are actually built as `editions`: an
+ * event hidden with "Hide from the website" has no page, so it must count as
+ * missing here.
+ *
+ * `titlesOfEveryEdition` is for the message alone and changes no resolution:
+ * pass the title of every event including the hidden ones, and a talk filed
+ * under one of those is told so by name instead of by stored id.
  */
 export function resolveEditions(
   talks: ReadonlyArray<TalkEditionRef>,
   editions: ReadonlyArray<EditionSummary>,
+  titlesOfEveryEdition?: ReadonlyMap<string, string>,
 ): ResolvedEditions {
   const byId = new Map(editions.map((edition) => [edition.id, edition]));
   const used = new Map<string, EditionSummary>();
@@ -71,7 +95,14 @@ export function resolveEditions(
   for (const talk of talks) {
     if (!talk.editionId) continue;
     const edition = byId.get(talk.editionId);
-    if (!edition) throw editorError(missingEditionMessage(talk.title, talk.editionId));
+    if (!edition) {
+      const hiddenTitle = titlesOfEveryEdition?.get(talk.editionId);
+      throw editorError(
+        hiddenTitle
+          ? hiddenEditionMessage(talk.title, hiddenTitle)
+          : missingEditionMessage(talk.title, talk.editionId),
+      );
+    }
     used.set(edition.id, edition);
   }
 

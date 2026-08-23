@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { missingEditionMessage, resolveEditions, type EditionSummary } from '~/lib/editions';
+import {
+  hiddenEditionMessage,
+  missingEditionMessage,
+  resolveEditions,
+  type EditionSummary,
+} from '~/lib/editions';
 
 const editions: EditionSummary[] = [
   { id: 'tedxkigali-2024', title: 'TEDxKigali 2024 — Threads', startDate: new Date('2024-09-21T09:00:00+02:00') },
@@ -49,6 +54,41 @@ describe('resolveEditions', () => {
     expect(() => resolveEditions([{ title: 'A talk', editionId: 'tedxkigali-2025' }], published)).toThrow(
       /make it visible again/i,
     );
+  });
+
+  // The hidden event is still in the CMS, under a name the volunteer chose, so
+  // there is no reason to answer them with the stored id.
+  it('names a hidden edition by its title when the caller can supply one', () => {
+    const published = editions.filter((edition) => edition.id !== 'tedxkigali-2025');
+    const allTitles = new Map(editions.map((edition) => [edition.id, edition.title]));
+    expect(() =>
+      resolveEditions([{ title: 'A talk', editionId: 'tedxkigali-2025' }], published, allTitles),
+    ).toThrow(/TEDxKigali 2025 — Roots/);
+  });
+
+  // A deleted or renamed event has no title anywhere, so the stored id is the
+  // only thing left to quote and the general message still has to serve.
+  it('falls back to the stored id when no title is known for it', () => {
+    const allTitles = new Map(editions.map((edition) => [edition.id, edition.title]));
+    expect(() =>
+      resolveEditions([{ title: 'A talk', editionId: 'tedxkigali-2027' }], editions, allTitles),
+    ).toThrow(/tedxkigali-2027/);
+  });
+});
+
+describe('hiddenEditionMessage', () => {
+  const message = hiddenEditionMessage('The market at dawn', 'TEDxKigali 2025 — Roots');
+
+  it('names the talk and the edition the way the CMS lists them', () => {
+    expect(message).toContain('The market at dawn');
+    expect(message).toContain('TEDxKigali 2025 — Roots');
+    expect(message).not.toMatch(/tedxkigali-2025"/);
+  });
+
+  it('offers un-hiding the event and hiding the talk, and nothing that loses the facts', () => {
+    expect(message).toMatch(/hidden/i);
+    expect(message).toMatch(/hide this talk/i);
+    expect(message).not.toMatch(/pick the edition again/i);
   });
 });
 

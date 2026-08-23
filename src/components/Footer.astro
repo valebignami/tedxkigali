@@ -25,8 +25,15 @@ const year = new Date().getFullYear();
         </a>
       </p>
       <!-- py-1 on these links, and on the two above and below, lifts them from a
-           17px line box to 25px: WCAG 2.5.8 sets 24px as the floor for a tap
-           target, and "X" is a two-character link on a phone. -->
+           17px line box to 25px, which clears the 24px floor WCAG 2.5.8 sets
+           for a tap target. That is the height only. The shortest social label
+           here is "X" — one character, which the mobile audit measured at about
+           10px wide — and no amount of vertical padding widens it, so the width
+           conforms through 2.5.8's spacing exception instead: gap-4 puts 16px
+           between two links, so two 10px-wide ones have their centres 26px
+           apart and their 24px circles clear each other by 2px. That margin is
+           the reason to leave the gap alone; anything tighter than gap-4 here
+           stops conforming. -->
       <ul class="mt-3 flex flex-wrap gap-4 text-sm">
         {siteSettings.socials.map((social) => (
           <li>

@@ -14,9 +14,17 @@ const talks = (await getCollection('talks', ({ data }) => !data.draft)).sort(
 // rather than let a talk advertise an edition nobody can open.
 const events = await getCollection('events', ({ data }) => !data.draft);
 
+// The hidden ones as well, for the message only. A talk whose edition is merely
+// hidden can then be told which event it means, by the title the volunteer gave
+// it, instead of by the id stored in its file.
+const everyEditionTitle = new Map(
+  (await getCollection('events')).map((event) => [event.id, event.data.title]),
+);
+
 const { titleById, used: editions } = resolveEditions(
   talks.map((talk) => ({ title: talk.data.title, editionId: talk.data.edition })),
   events.map((event) => ({ id: event.id, title: event.data.title, startDate: event.data.startDate })),
+  everyEditionTitle,
 );
 
 const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
