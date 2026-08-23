@@ -5,7 +5,7 @@ endDate: 2026-11-14T18:00:00+02:00
 venue: "Kigali Convention Centre"
 address: "KG 2 Roundabout, Kigali, Rwanda"
 theme: "Rising"
-summary: "A full day of talks on how Rwanda is building what comes next, from climate innovation to storytelling."
+summary: "Sample content — this event is invented and must be replaced before the site goes live. A full day of talks on how Rwanda is building what comes next, from climate innovation to storytelling."
 schedule:
   - title: "Doors open & registration"
     time: "08:00"
@@ -22,6 +22,10 @@ schedule:
     title: "Session two: Built to last"
     speaker: "Grace Ingabire, Patrick Nsengimana and Solange Umutoni"
     note: "Three talks on institutions, craft and what outlasts a single generation."
+  - time: "13:00 - 14:00"
+    title: "Lunch break"
+  - title: "Live music in the foyer"
+    note: "Musicians and spoken-word performers play through the coffee and lunch breaks."
   - time: "14:00 - 16:00"
     title: "Session three: Rising"
     speaker: "Claudine Mutesi, Robert Kayitare and Belise Ishimwe"
@@ -33,9 +37,13 @@ bookingLabel: "Book your seat"
 ticketStatus: "open"
 ---
 
+> **Sample content.** This page is a demonstration of how the website works.
+> The event, the people, the programme and the details below are invented, and
+> must all be replaced with the real ones before the site goes live.
+
 TEDxKigali 2026 gathers speakers from across Rwanda and the region for a day of
 talks, performances and conversations under the theme **Rising**. It is our
-fourth independently organised edition, and the first to move to the Kigali
+third independently organised edition, and the second to be held at the Kigali
 Convention Centre — a bigger room for a bigger conversation.
 
 ## What Rising means
@@ -56,23 +64,15 @@ midday. Between sessions, look out for musicians and spoken-word performers
 from Kigali's own stages.
 
 Every talk is followed by a short Q&A hosted from the audience, and the full
-programme — including which speaker takes which slot and when the breaks
-are — is published below.
+programme — the three sessions, the speakers in each of them, and when the
+breaks fall — is published below.
 
 ## Practical information
 
-Latecomers can be seated between talks, not during one, so arriving before
-09:00 is worth it. The Kigali Convention Centre is served by public
-minibuses and has on-site parking. Talks are given in English and
-Kinyarwanda, with live interpretation into the other language available
-through headsets at the registration desk — ask a volunteer when you arrive.
-
-The venue is wheelchair accessible, including the stage-side seating area and
-the restrooms nearest the main hall. If you need anything specific to attend
-comfortably, write to us beforehand at the contact address on this website
-and we will make sure it is arranged. Your ticket covers entry to all three
-sessions, coffee and lunch, and a seat for the closing performance; it does
-not cover transport to or from the venue.
+This is where the practical details for the day go: how to reach the venue,
+what to bring, and anything a guest should arrange before travelling.
+Latecomers are usually seated between talks rather than during one, so it is
+worth arriving early.
 
 ## After the event
 
