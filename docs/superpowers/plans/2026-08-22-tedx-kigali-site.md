@@ -3533,11 +3533,103 @@ Aggiungere i redattori come collaboratori con permesso di scrittura dalle impost
 2. Il preset Astro viene rilevato automaticamente; confermare `npm run build` e cartella di output `dist`.
 3. In **Settings → General**, impostare Node.js 22.
 4. In **Settings → Domains**, aggiungere il dominio e configurare i record DNS indicati.
-5. In **Settings → Notifications**, verificare che le email di build fallito arrivino anche all'indirizzo della redazione.
+
+- [ ] **Step 6b: Far arrivare a Kigali l'email di build fallito**
+
+Finché questo step non e' fatto **e provato**, nessun volontario viene avvisato
+quando un suo salvataggio ferma la pubblicazione: il sito smette semplicemente di
+aggiornarsi e nessuno lo sa. Nel repository non c'e' nulla che possa provvederci —
+`.github/workflows/ci.yml` esegue test, check e build ma non pubblica e non
+notifica — quindi tutto quanto segue si configura fuori dal repository.
+
+`docs/EDITING.md` §8 dice al volontario di chiedere al manutentore di
+predisporre questa email **e di provarla una volta insieme a lui**, e di non
+contare sull'essere avvisato finche' non ne ha vista arrivare una. Questo step e'
+la promessa corrispondente.
+
+1. **Decidere chi riceve.** L'email di deploy fallito di Vercel arriva ai
+   *membri del team Vercel*, non ai collaboratori GitHub del repository. Un
+   volontario a cui e' stato dato accesso come collaboratore GitHub
+   (`docs/EDITING.md` §1) non ne riceve nessuna. O si aggiunge ogni redattore al
+   team Vercel, oppure si sceglie l'alternativa del punto 3.
+2. **Vercel → Settings → Notifications.** Attivare le notifiche di deploy
+   fallito e verificare, indirizzo per indirizzo, che ogni redattore compaia fra
+   i destinatari.
+3. **Alternativa, se non si vogliono account Vercel per i volontari.** Un
+   indirizzo di gruppo della redazione come unico membro del team Vercel, con
+   inoltro a chi edita; oppure, sul lato GitHub Actions, verificare che
+   `.github/workflows/ci.yml` fallisca sullo stesso commit e che GitHub mandi la
+   sua email di run fallito all'autore del commit. Quest'ultima strada dipende da
+   due cose non verificate: che Pages CMS attribuisca il commit all'account del
+   redattore, e che le sue notifiche GitHub siano attive. Va provata, non
+   supposta — e quello che consegna e' un avviso "CI workflow run failed", non il
+   messaggio scritto per il volontario, che resta dentro il log.
+4. **Prova end-to-end, dal posto giusto.** Farla eseguire **a un volontario, dal
+   suo account, dal CMS** — non dal manutentore e non da riga di comando:
+   svuotare il campo **Venue** di un evento e salvare. Attendere. Verificare
+   tutte e tre le cose: (a) l'email arriva, e all'indirizzo giusto; (b) contiene
+   o porta al messaggio "This event has no venue. Write the name of the place it
+   happens…"; (c) il sito pubblico continua a mostrare la versione precedente.
+   Poi rimettere il venue e verificare che la pubblicazione riparta.
+5. **Misurare il tempo di pubblicazione**, su questa prova e su un salvataggio
+   valido, e scrivere il numero reale in `docs/EDITING.md` §7 se si vuole
+   dichiararlo: la guida oggi non promette nessuna durata proprio perche'
+   nessuno l'ha misurata.
+6. **Cache di build.** Cancellare dal CMS un partner (o uno speaker) che ha un
+   logo caricato e rilanciare il deploy. In locale una voce cancellata sopravvive
+   in `node_modules/.astro/data-store.json` e continua a far fallire il build
+   contro un file che non esiste piu'; se la cache di Vercel copre quel percorso
+   succede lo stesso in produzione, e il volontario riceve un messaggio che gli
+   dice di ricaricare un'immagine che voleva togliere. Se accade, disattivare la
+   cache di build o aggiungere `node_modules/.astro` a quelle da ignorare.
 
 - [ ] **Step 7: Collegare Pages CMS ed eseguire la verifica rimandata dal Task 13**
 
 Eseguire ora tutti i punti dello Step 3 del Task 13 sul repository reale, incluso il test di creazione e cancellazione di un talk di prova.
+
+In piu', queste cinque domande non sono mai state verificate contro il CMS vero e
+si chiudono tutte in una decina di minuti, creando **un evento, un talk che lo
+indica e uno speaker con foto**. Vanno chiuse **prima** che i volontari entrino.
+
+1. **Come si chiama il file che il CMS crea.** `filename: '{fields.title}.md'`:
+   la documentazione di Pages CMS dice che `{fields.<name>}` viene *slugificato*,
+   quindi un evento intitolato `TEDxKigali 2026 — Rising` dovrebbe atterrare come
+   `tedxkigali-2026-rising.md`. Guardare il file che compare su GitHub. Se il
+   nome non e' uno slug (spazi, maiuscole, il trattino lungo), l'URL della pagina
+   evento sara' di una forma diversa da quella dei contenuti scritti a mano, e la
+   decisione su `filename` va ripresa qui, con il CMS davanti.
+2. **Che cosa scrive `value: '{name}'` in un campo `reference`.** La
+   documentazione elenca `{path}`, `{name}`, `{primary}` e `{fields.<path>}`, e
+   descrive `{name}` come "Entry name" senza dire se comprende `.md`. Il sito
+   cerca l'edizione per l'id, che e' il nome del file **senza** estensione:
+   aprire il talk creato al punto precedente e leggere il valore di `edition:` su
+   GitHub. Se e' `tedxkigali-2026-rising` il build passa; se e'
+   `tedxkigali-2026-rising.md` o un percorso, il talk non trovera' mai la sua
+   edizione e il messaggio che il volontario ricevera' e' quello di
+   `src/lib/editions.ts`, che in quel caso gli dice di scrivere al manutentore.
+   La correzione e' cambiare `value` in `.pages.yml`.
+3. **Dove finisce il campo `body`.** Gli schemi sono `strictObject`: se Pages CMS
+   scrive `body:` dentro il frontmatter invece di usarlo come corpo Markdown,
+   **il primo salvataggio di ogni evento e di ogni speaker fallisce**. Salvare un
+   evento con qualcosa scritto in **Full description** e guardare il file: il
+   testo deve stare sotto il `---` di chiusura, non dentro.
+4. **Il fuso orario del datetime.** Coperto anche dallo Step 9.7, ma si prova
+   qui in un minuto: creare un evento da un browser **non** impostato su
+   Africa/Kigali. Il build ora rifiuta un orario che non porta l'offset di
+   Kigali, quindi il risultato atteso e' un build fallito con il messaggio di
+   `EVENT_TIME_ZONE_MESSAGE`. Se invece passa, controllare che cosa il CMS ha
+   davvero scritto nel file.
+5. **Il modulo e' quello che la guida descrive.** `docs/EDITING.md` nomina
+   "Sign in with GitHub", "il progetto tedxkigali", "start a new entry" e
+   "Save", elenca cinque sezioni e descrive i campi nell'ordine di `.pages.yml`.
+   Nessuno di questi nomi e' stato letto sullo schermo vero. Aprire il CMS con la
+   guida a fianco e correggere la guida dove i nomi non corrispondono. Guardare
+   in particolare: se **Display order** (`type: number`) accetta `1.5` — gli
+   schemi ammettono i decimali di proposito, la documentazione del campo non
+   documenta nessuna opzione `step`, e la guida per ora consiglia di numerare di
+   dieci in dieci proprio per non doverne mai avere bisogno; se il contatore di
+   `maxlength: 300` si vede davvero sui tre campi di testo lunghi; e se l'elenco
+   dei talk rispetta l'ordinamento dichiarato in `view.sort`.
 
 - [ ] **Step 8: Prova di aggiornamento fatta dalla redazione**
 
