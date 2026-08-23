@@ -3,15 +3,19 @@
   <!-- Self-authored, no external assets: the site background (#0A0A0A) with the
        TED red x mark (#EB0028). Red on black is used as a shape here, never as
        small text, so the body-copy contrast rule does not apply.
-       Two constraints fight each other here, and both were verified by looking
-       at the file rendered down to 16x16, the size a browser tab uses:
-       the mark sits low in the tile (more room above than below) so it reads as
-       the lowercase x of the TEDx wordmark rather than a capital X, but it still
-       spans about two thirds of the tile, because a smaller mark turns into an
-       unreadable smudge at 16 pixels. -->
+
+       The bars cross at 34 degrees rather than 45, which is the whole point of
+       this file. An isolated mark has no baseline and no capital beside it, so
+       vertical position cannot tell anyone which case it is; what does survive
+       is proportion. A capital X is as tall as it is wide, a lowercase x is
+       squat and wide, and that difference is still legible at 16x16 — the size
+       a browser tab renders. An earlier attempt shrank a 45-degree cross and
+       dropped it toward a baseline instead; rasterised at tab size it lost its
+       shape entirely while reading no less like a capital. Verified by
+       rasterising this file at 16x16 and looking at it. -->
   <rect width="64" height="64" rx="8" fill="#0A0A0A" />
   <g fill="#EB0028">
-    <rect x="8" y="29.5" width="48" height="11" rx="2" transform="rotate(45 32 35)" />
-    <rect x="8" y="29.5" width="48" height="11" rx="2" transform="rotate(-45 32 35)" />
+    <rect x="7" y="28.5" width="50" height="11" rx="2" transform="rotate(34 32 34)" />
+    <rect x="7" y="28.5" width="50" height="11" rx="2" transform="rotate(-34 32 34)" />
   </g>
 </svg>
