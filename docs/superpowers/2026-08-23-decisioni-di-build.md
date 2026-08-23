@@ -349,3 +349,57 @@ griglia dei talk in sezioni come l'archivio (coerente, ma perde il filtro per
 singola edizione e con ventidue talk fa scorrere invece di scegliere). Il
 mock-up con i quattro layout a confronto e' stato costruito e mostrato prima di
 scrivere una riga di sito.
+
+### I filtri della pagina Talks si sommano, non si sostituiscono (23 agosto 2026)
+
+Segnalato dal committente usando il sito, non trovato da un test: filtrando
+Women, poi una sua edizione, poi un argomento, il conteggio faceva
+**22 → 5 → 3 → 4**. Un numero che *sale* quando aggiungi un filtro e' la pagina
+che butta via la risposta precedente.
+
+I pulsanti erano una scelta unica, difendibile quando la fila era una sola. Con
+tre livelli impilati si leggono come passi che restringono, quindi ora sono due
+dimensioni e un talk deve passare entrambe: la fila in alto sceglie l'ambito
+(tutto / un programma / una sua edizione), la fila degli argomenti taglia dentro
+quell'ambito. Lo stesso percorso adesso fa **22 → 5 → 3 → 2**.
+
+L'argomento gia' premuto si toglie ripremendolo, perche' quella fila non ha un
+pulsante "nessuno"; la fila dell'ambito ce l'ha ("All") e quindi li' niente fa
+da interruttore — due modi di fare la stessa cosa sono il modo migliore per non
+ricordare quale si e' usato.
+
+Due cose emerse di conseguenza: scegliendo un'edizione il suo programma perdeva
+lo stato premuto e nulla indicava piu' quale pulsante avesse aperto quella riga
+(risolto con `aria-expanded`, che serve anche a chi la riga non la vede
+comparire); e un risultato vuoto adesso e' raggiungibile, quindi la frase
+relativa non dice piu' "questo filtro" al singolare.
+
+Le regole di confronto stanno in `src/lib/talk-filter.ts` per essere provabili
+senza browser. Lo script `filter-audit.mjs` percorre ogni pulsante, ogni coppia
+ordinata, ogni ambito incrociato con ogni argomento nei due ordini e
+l'interruttore: **343 stati**, confrontati con le schede e non con una lista
+scritta a mano.
+
+### Il test dal vivo del CMS (23 agosto 2026)
+
+Fatto dopo il push, sull'app vera, non sulla configurazione. Verificato:
+
+- La lista Eventi mostra le 11 edizioni e la colonna **TEDx programme**.
+- Il form ha "TEDx programme" e "Programme of the day": nessuna collisione fra i
+  due campi che prima si chiamavano entrambi "Programme".
+- La tendina offre i cinque nomi TED nell'ordine giusto e parte su "TEDxKigali".
+- Tre eventi salvati rileggono il programma corretto.
+- **Il giro completo di salvataggio conserva tutto.** Salvato dal CMS un evento
+  Women senza toccare nulla: `programme: women` resta, la scaletta resta (con le
+  chiavi riordinate come il form), il CMS aggiunge `bookingLabel` e `draft` con
+  i valori predefiniti, e la build successiva e' verde. Gli orari vengono
+  riscritti senza virgolette (`time: 14:00`): in YAML 1.1 sarebbe il numero 840,
+  ma il parser che Astro usa e' 1.2 e resta una stringa — verificato sul file
+  che il CMS ha scritto davvero.
+
+Un rilievo, corretto: la colonna della lista mostra il **valore salvato**, non
+l'etichetta — e' come Pages CMS si comporta, lo faceva gia' con `open`/`closed`
+per lo stato dei biglietti. Quattro programmi su cinque si leggevano bene perche'
+l'id e' la parola del nome; il quinto diceva `flagship`, che non e' niente che un
+volontario abbia mai visto. Rinominato `standard`, che e' la parola di TED per il
+tipo di evento principale.
