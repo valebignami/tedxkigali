@@ -763,6 +763,7 @@ Creare `src/lib/content-rules.test.ts`:
 ```ts
 import { describe, expect, it } from 'vitest';
 import { BOOKING_URL_MESSAGE, requiresBookingUrl } from '~/lib/content-rules';
+import { SPONSOR_TIERS } from '~/lib/sponsors';
 
 describe('requiresBookingUrl', () => {
   it('requires a booking link when tickets are on sale', () => {
@@ -818,6 +819,7 @@ import { glob } from 'astro/loaders';
 import { parseYouTubeId, YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { TICKET_STATUSES } from '~/lib/events';
 import { BOOKING_URL_MESSAGE, requiresBookingUrl } from '~/lib/content-rules';
+import { SPONSOR_TIERS } from '~/lib/sponsors';
 
 const uploadPath = z
   .string()
@@ -3064,12 +3066,31 @@ git commit -m "feat: add speakers collection and page"
 ## Task 16: Partner e sponsor (Fase 2)
 
 **Files:**
-- Create: `src/components/SponsorGrid.astro`, `src/pages/partners.astro`, `src/content/sponsors/.gitkeep`
+- Create: `src/lib/sponsors.ts`, `src/components/SponsorGrid.astro`, `src/pages/partners.astro`, `src/content/sponsors/.gitkeep`
 - Modify: `src/content.config.ts`, `src/pages/index.astro`, `.pages.yml`
 
 **Interfaces:**
 - Consumes: `resolveUploadedImage` (Task 4), `siteSettings` (Task 5)
 - Produces: collection `sponsors`; `SponsorGrid` con props `{ tierOrder?: SponsorTier[] }`
+
+- [ ] **Step 0: Creare `src/lib/sponsors.ts`, fonte unica dei livelli**
+
+```ts
+// Same shape as TICKET_STATUSES in src/lib/events.ts: the Zod enum and the
+// component both read the tiers from here, so renaming one cannot leave the
+// other behind. The CMS select in .pages.yml is a fourth copy that YAML cannot
+// avoid — keep it in step with this list by hand.
+export const SPONSOR_TIERS = ['headline', 'gold', 'partner', 'community'] as const;
+
+export type SponsorTier = (typeof SPONSOR_TIERS)[number];
+
+export const SPONSOR_TIER_LABELS: Record<SponsorTier, string> = {
+  headline: 'Headline partner',
+  gold: 'Gold partners',
+  partner: 'Partners',
+  community: 'Community partners',
+};
+```
 
 - [ ] **Step 1: Aggiungere la collection `sponsors` in `src/content.config.ts`**
 
@@ -3081,7 +3102,7 @@ const sponsors = defineCollection({
     logo: uploadPath,
     logoAlt: z.string().min(1, 'Describe the logo, for example "Acme Ltd logo".'),
     url: z.url().optional(),
-    tier: z.enum(['headline', 'gold', 'partner', 'community']),
+    tier: z.enum(SPONSOR_TIERS),
     order: z.number().int().optional(),
     draft: z.boolean().default(false),
   }),
@@ -3106,28 +3127,20 @@ Nessuno sponsor di esempio: i loghi reali richiedono file immagine, che arrivano
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import { resolveUploadedImage } from '~/lib/images';
-
-type SponsorTier = 'headline' | 'gold' | 'partner' | 'community';
+import { SPONSOR_TIERS, SPONSOR_TIER_LABELS, type SponsorTier } from '~/lib/sponsors';
 
 interface Props {
-  tierOrder?: SponsorTier[];
+  tierOrder?: readonly SponsorTier[];
 }
 
-const { tierOrder = ['headline', 'gold', 'partner', 'community'] } = Astro.props;
-
-const TIER_LABELS: Record<SponsorTier, string> = {
-  headline: 'Headline partner',
-  gold: 'Gold partners',
-  partner: 'Partners',
-  community: 'Community partners',
-};
+const { tierOrder = SPONSOR_TIERS } = Astro.props;
 
 const sponsors = await getCollection('sponsors', ({ data }) => !data.draft);
 
 const groups = tierOrder
   .map((tier) => ({
     tier,
-    label: TIER_LABELS[tier],
+    label: SPONSOR_TIER_LABELS[tier],
     items: sponsors
       .filter((sponsor) => sponsor.data.tier === tier)
       .sort((a, b) => (a.data.order ?? 9999) - (b.data.order ?? 9999)),
@@ -3136,7 +3149,7 @@ const groups = tierOrder
 ---
 
 {groups.length === 0 ? (
-  <p class="text-muted">Partner logos will appear here soon.</p>
+  <p class="mt-8 text-muted">Partner logos will appear here soon.</p>
 ) : (
   groups.map((group) => (
     <section class="mt-10">
