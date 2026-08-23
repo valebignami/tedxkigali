@@ -763,7 +763,6 @@ Creare `src/lib/content-rules.test.ts`:
 ```ts
 import { describe, expect, it } from 'vitest';
 import { BOOKING_URL_MESSAGE, requiresBookingUrl } from '~/lib/content-rules';
-import { SPONSOR_TIERS } from '~/lib/sponsors';
 
 describe('requiresBookingUrl', () => {
   it('requires a booking link when tickets are on sale', () => {
@@ -819,7 +818,6 @@ import { glob } from 'astro/loaders';
 import { parseYouTubeId, YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { TICKET_STATUSES } from '~/lib/events';
 import { BOOKING_URL_MESSAGE, requiresBookingUrl } from '~/lib/content-rules';
-import { SPONSOR_TIERS } from '~/lib/sponsors';
 
 const uploadPath = z
   .string()
@@ -3093,6 +3091,14 @@ export const SPONSOR_TIER_LABELS: Record<SponsorTier, string> = {
 ```
 
 - [ ] **Step 1: Aggiungere la collection `sponsors` in `src/content.config.ts`**
+
+Aggiungere l'import in cima al file, accanto agli altri:
+
+```ts
+import { SPONSOR_TIERS } from '~/lib/sponsors';
+```
+
+e la collection prima dell'export:
 
 ```ts
 const sponsors = defineCollection({
