@@ -1,0 +1,94 @@
+media:
+  input: src/assets/uploads
+  output: src/assets/uploads
+  extensions: [jpg, jpeg, png, webp, svg]
+
+content:
+  - name: events
+    label: Events
+    type: collection
+    path: src/content/events
+    filename: '{fields.title}.md'
+    view:
+      fields: [title, startDate, ticketStatus]
+      sort: [startDate, title]
+      default:
+        sort: startDate
+        order: desc
+    fields:
+      - { name: title, label: Event title, type: string, required: true, description: 'For example: TEDxKigali 2026 — Rising' }
+      - { name: startDate, label: Start date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ssxxx", time: true }, required: true, description: 'Kigali time (CAT).' }
+      - { name: endDate, label: End date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ssxxx", time: true }, description: 'Optional. If empty, the event is assumed to last four hours.' }
+      - { name: venue, label: Venue, type: string, required: true }
+      - { name: address, label: Address, type: string }
+      - { name: mapUrl, label: Map link, type: string, description: 'Optional link to Google Maps.' }
+      - { name: image, label: Event image, type: image }
+      - { name: imageAlt, label: Image description, type: string, description: 'Required if you upload an image. Describe it for people using a screen reader.' }
+      - { name: theme, label: Edition theme, type: string }
+      - { name: summary, label: Short summary, type: text, required: true, description: 'Max 300 characters. Shown in listings and when the page is shared.' }
+      - name: ticketStatus
+        label: Ticket status
+        type: select
+        required: true
+        options:
+          values:
+            - { value: coming-soon, label: Tickets coming soon }
+            - { value: open, label: Tickets on sale }
+            - { value: free, label: 'Free entry — registration required' }
+            - { value: sold-out, label: Sold out }
+            - { value: closed, label: Registrations closed }
+      - { name: bookingUrl, label: Booking link, type: string, description: 'Paste the link from your ticketing platform. Required when tickets are on sale or entry is free.' }
+      - { name: bookingLabel, label: Booking button text, type: string, default: 'Book your seat' }
+      - { name: draft, label: Hide from the website, type: boolean, default: false }
+      - { name: body, label: Full description, type: rich-text }
+
+  - name: talks
+    label: Talks
+    type: collection
+    path: src/content/talks
+    filename: '{year}-{month}-{day}-{fields.title}.md'
+    view:
+      fields: [title, speaker, date]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - { name: title, label: Talk title, type: string, required: true }
+      - { name: speaker, label: Speaker name, type: string, required: true }
+      - { name: youtubeUrl, label: YouTube link, type: string, required: true, description: 'Open the talk on YouTube and copy the link from the address bar.' }
+      - { name: date, label: Talk date, type: date, options: { format: 'yyyy-MM-dd' }, required: true }
+      - name: edition
+        label: Event edition
+        type: reference
+        options:
+          collection: events
+          value: '{name}'
+          label: '{fields.title}'
+      - { name: summary, label: Short summary, type: text, description: 'Max 300 characters.' }
+      - { name: thumbnail, label: Cover image, type: image, description: 'Optional. Leave empty to use the YouTube preview image.' }
+      - { name: thumbnailAlt, label: Cover image description, type: string, description: 'Required if you upload a cover image.' }
+      - { name: featured, label: Show on the home page, type: boolean, default: false }
+      - { name: tags, label: Tags, type: string, list: true }
+      - { name: draft, label: Hide from the website, type: boolean, default: false }
+
+  - name: settings
+    label: Site texts
+    type: file
+    path: src/content/settings/site.json
+    fields:
+      - { name: siteName, label: Site name, type: string, required: true }
+      - { name: tagline, label: Tagline, type: string, required: true }
+      - { name: heroTitle, label: Home page headline, type: string, required: true }
+      - { name: heroSubtitle, label: Home page intro, type: text, required: true }
+      - { name: aboutShort, label: Short about text, type: text, required: true }
+      - { name: contactEmail, label: Contact email, type: string, required: true }
+      - name: socials
+        label: Social links
+        type: object
+        list: true
+        fields:
+          - { name: label, label: Name, type: string, required: true }
+          - { name: url, label: Link, type: string, required: true }
+      - { name: seoDescription, label: Search engine description, type: text, required: true }
+      - { name: tedxLicenceNotice, label: TED licence notice, type: string, required: true, description: 'Required by TED. Change only if TED updates the required wording.' }
+      - { name: tedxXExplanation, label: Meaning of the x, type: string, required: true }
