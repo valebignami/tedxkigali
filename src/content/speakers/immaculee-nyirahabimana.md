@@ -1,7 +1,7 @@
 ---
 name: Immaculée Nyirahabimana
 role: Retired judge
-talk: 2025-03-08-what-the-courtroom-taught-me-about-listening
+talk: "2025-03-08-what-the-courtroom-taught-me-about-listening.md"
 links:
   - label: LinkedIn
     url: https://www.linkedin.com/in/example

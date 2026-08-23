@@ -76,7 +76,11 @@ describe('referencedId', () => {
 // speaker on the site read like that until 23 August 2026.
 describe('the references stored in the content', () => {
   const stored = (dir: string, key: string): Array<[string, string]> => {
-    const pattern = new RegExp('^' + key + ': "([^"]+)"$', 'm');
+    // Quoted or not. The CMS rewrites a whole file when it saves one and
+    // drops the quotes it does not need, so a pattern that only reads quoted
+    // values goes blind to exactly the files this is about — it did, and it
+    // passed while the one entry the CMS had touched was still wrong.
+    const pattern = new RegExp('^' + key + ': *"?([^"\r\n]+?)"? *' + '$', 'm');
     const out: Array<[string, string]> = [];
     for (const file of readdirSync('src/content/' + dir)) {
       const found = readFileSync('src/content/' + dir + '/' + file, 'utf8').match(pattern);
