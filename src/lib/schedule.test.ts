@@ -10,6 +10,10 @@ describe('isValidScheduleTime', () => {
     '09:00 - 09:20',
     '09:00-09:20'.replace('-', '–'), // en dash
     '09:00 – 09:20',
+    // Em dash: every piece of editor-facing prose in the project uses one, and
+    // a word processor turns "--" into one without being asked.
+    '09:00-09:20'.replace('-', '—'),
+    '09:00 — 09:20',
   ])('accepts %s', (input) => {
     expect(isValidScheduleTime(input)).toBe(true);
   });

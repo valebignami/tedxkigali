@@ -2,7 +2,7 @@
 // their wording binding: a volunteer meets them in the CMS or in the email the
 // failed build sends, never in a stack trace. They must say what to do next and
 // must not name a field by its code name — the CMS shows "Booking link",
-// "Exact map link (optional)", "Website", never bookingUrl, mapUrl or url.
+// "Exact map link", "Website", never bookingUrl, mapUrl or url.
 
 /**
  * Shown when a link is not a complete web address. The likeliest mistake by far
@@ -26,6 +26,15 @@ export const TAG_SEPARATOR_MESSAGE =
   'A tag cannot contain the "|" character, because the talks page uses it to ' +
   'separate one tag from the next. Write two tags instead, for example ' +
   '"climate" and "policy".';
+
+/**
+ * Shown when an event has no venue. Spaces alone count as no venue: the page
+ * turns this text into the link that opens Google Maps, so a blank one leaves a
+ * link with nothing written on it pointing at an empty search.
+ */
+export const VENUE_MESSAGE =
+  'This event has no venue. Write the name of the place it happens, for ' +
+  'example "Kigali Convention Centre" — the website builds the map link from it.';
 
 /** Shown when a programme row was left without a "What happens" entry. */
 export const SCHEDULE_TITLE_MESSAGE =

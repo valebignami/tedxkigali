@@ -9,6 +9,7 @@ import {
   SCHEDULE_TITLE_MESSAGE,
   TAG_EMPTY_MESSAGE,
   TAG_SEPARATOR_MESSAGE,
+  VENUE_MESSAGE,
   WEB_ADDRESS_MESSAGE,
 } from '~/lib/content-messages';
 import { isValidScheduleTime } from '~/lib/schedule';
@@ -32,7 +33,12 @@ const scheduleEntry = z
       .refine((value) => !value || isValidScheduleTime(value), {
         message: SCHEDULE_TIME_MESSAGE,
       }),
-    title: z.string().trim().min(1, { message: SCHEDULE_TITLE_MESSAGE }),
+    // The message is given twice because two different mistakes reach it: the
+    // key missing altogether (a row saved before anything was typed into it)
+    // fails the type, and a blank or all-spaces value fails the length. Without
+    // the first, the volunteer gets Zod's own "expected string, received
+    // undefined" in the failed-build email.
+    title: z.string(SCHEDULE_TITLE_MESSAGE).trim().min(1, { message: SCHEDULE_TITLE_MESSAGE }),
     speaker: z.string().trim().optional(),
     note: z.string().trim().optional(),
   })
@@ -84,7 +90,7 @@ const events = defineCollection({
       title: z.string().min(1),
       startDate: z.coerce.date(),
       endDate: z.coerce.date().optional(),
-      venue: z.string().min(1),
+      venue: z.string(VENUE_MESSAGE).trim().min(1, { message: VENUE_MESSAGE }),
       address: z.string().optional(),
       mapUrl: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
       image: uploadPath.optional(),
