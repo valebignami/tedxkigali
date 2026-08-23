@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_EVENT_DURATION_MS,
+  PAST_EVENT_TICKET_LABEL,
+  TICKET_STATUSES,
   eventEnd,
   eventState,
   isBookable,
   ticketStatusLabel,
+  ticketStatusLine,
 } from '~/lib/events';
 
 // All fixtures use the Africa/Kigali offset (+02:00) written explicitly,
@@ -95,6 +98,27 @@ describe('isBookable', () => {
 
   it('still allows booking while the event is live', () => {
     expect(isBookable('live', 'open')).toBe(true);
+  });
+});
+
+describe('ticketStatusLine', () => {
+  it('shows the ticket status while the event has not ended', () => {
+    expect(ticketStatusLine('upcoming', 'open')).toBe('Tickets on sale');
+    expect(ticketStatusLine('live', 'open')).toBe('Tickets on sale');
+    expect(ticketStatusLine('upcoming', 'sold-out')).toBe('Sold out');
+  });
+
+  // The whole point of the line: a page built while tickets were on sale must
+  // never still read "Tickets on sale" once the event is over.
+  it('replaces every ticket status once the event is past', () => {
+    for (const status of TICKET_STATUSES) {
+      expect(ticketStatusLine('past', status)).toBe(PAST_EVENT_TICKET_LABEL);
+    }
+  });
+
+  it('has a past-event label that says the event is over', () => {
+    expect(PAST_EVENT_TICKET_LABEL.trim()).not.toBe('');
+    expect(PAST_EVENT_TICKET_LABEL).toMatch(/ended/i);
   });
 });
 

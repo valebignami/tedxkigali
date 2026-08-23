@@ -4,7 +4,7 @@
 // The duration is imported, never re-declared: the build stamps data-event-end
 // with it and this script falls back to it, so two copies drifting apart would
 // make the page disagree with itself about when an event ends.
-import { DEFAULT_EVENT_DURATION_MS } from '~/lib/events';
+import { DEFAULT_EVENT_DURATION_MS, PAST_EVENT_TICKET_LABEL } from '~/lib/events';
 
 const upcoming = document.querySelector<HTMLElement>('#events-upcoming');
 const past = document.querySelector<HTMLElement>('#events-past');
@@ -30,6 +30,16 @@ function refresh(): void {
 
     const booking = card.querySelector<HTMLAnchorElement>('[data-booking]');
     if (booking && state === 'past') booking.remove();
+
+    // Removing the button is not enough: a page built while tickets were on
+    // sale still carries that sentence, so the ticket line and the note about
+    // the external ticketing site have to go with it.
+    if (state === 'past') {
+      card.querySelectorAll<HTMLElement>('[data-ticket-status-label]').forEach((label) => {
+        label.textContent = PAST_EVENT_TICKET_LABEL;
+      });
+      card.querySelectorAll<HTMLElement>('[data-booking-note]').forEach((note) => note.remove());
+    }
 
     if (state === 'past' && past && card.parentElement !== past) past.prepend(card);
     if (state !== 'past' && upcoming && card.parentElement !== upcoming) upcoming.append(card);

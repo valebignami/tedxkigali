@@ -37,3 +37,15 @@ export function isBookable(state: EventState, ticketStatus: TicketStatus): boole
 export function ticketStatusLabel(status: TicketStatus): string {
   return TICKET_LABELS[status];
 }
+
+// What a past event says where a ticket status used to be. The site is static,
+// so a page built while tickets were on sale is still being served after the
+// event: without this the visitor reads "Tickets on sale" about a finished
+// event. Kept next to the labels so the build and the client-side re-check in
+// src/scripts/event-status.ts can never disagree on the wording.
+export const PAST_EVENT_TICKET_LABEL = 'This event has ended.';
+
+/** The ticket line a visitor reads, with past events overriding the status. */
+export function ticketStatusLine(state: EventState, status: TicketStatus): string {
+  return state === 'past' ? PAST_EVENT_TICKET_LABEL : ticketStatusLabel(status);
+}
