@@ -3473,7 +3473,7 @@ rm src/content/events/tedxkigali-2025.md
 rm src/content/events/tedxkigali-2024.md
 ```
 
-> **Nessun contenuto di esempio deve sopravvivere al lancio.** I tre talk puntano tutti allo stesso video segnaposto, l'edizione 2026 ha un `bookingUrl` verso `example-ticketing.com` e un `mapUrl` che porta alla pagina generica di Google Maps, e le edizioni 2024 e 2025 sono inventate. Su un sito TEDx reale sarebbero contenuti falsi. Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ` e `example-ticketing.com` che non ne resti traccia.
+> **Nessun contenuto di esempio deve sopravvivere al lancio.** I tre talk puntano tutti allo stesso video segnaposto, l'edizione 2026 ha un `bookingUrl` verso `example-ticketing.com` e un `mapUrl` che porta alla pagina generica di Google Maps, e le edizioni 2024 e 2025 sono inventate. L'edizione 2026 include anche una `schedule` di esempio e una descrizione estesa con nomi di relatori inventati (Diane Uwimana, Eric Niyonzima, Aline Mukamana, Jean Bosco Habimana, Grace Ingabire, Patrick Nsengimana, Solange Umutoni, Claudine Mutesi, Robert Kayitare, Belise Ishimwe): anche questi sono fittizi e vanno via con il resto del file quando viene rimosso, non copiati nel contenuto reale. Su un sito TEDx reale sarebbero contenuti falsi. Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ`, `example-ticketing.com` e `Diane Uwimana` che non ne resti traccia.
 
 Creare gli eventi e i talk reali seguendo la stessa struttura di frontmatter. Verificare dopo ogni aggiunta con `npm run build`.
 
