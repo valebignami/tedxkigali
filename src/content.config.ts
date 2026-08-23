@@ -4,7 +4,11 @@ import { glob } from 'astro/loaders';
 import { parseYouTubeId, YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { TICKET_STATUSES } from '~/lib/events';
 import { BOOKING_URL_MESSAGE, requiresBookingUrl } from '~/lib/content-rules';
-import { WEB_ADDRESS_MESSAGE } from '~/lib/content-messages';
+import {
+  TAG_EMPTY_MESSAGE,
+  TAG_SEPARATOR_MESSAGE,
+  WEB_ADDRESS_MESSAGE,
+} from '~/lib/content-messages';
 import { SPONSOR_TIERS } from '~/lib/sponsors';
 
 const uploadPath = z
@@ -28,9 +32,24 @@ const talks = defineCollection({
       thumbnail: uploadPath.optional(),
       thumbnailAlt: z.string().optional(),
       featured: z.boolean().default(false),
-      tags: z.array(z.string()).default([]),
+      // TalkCard joins these with "|" into data-tags and talk-filters.ts splits
+      // them again, so a tag containing that character would vanish from its
+      // own filter, and an empty one would render a button with no name.
+      tags: z
+        .array(
+          z
+            .string()
+            .trim()
+            .min(1, { message: TAG_EMPTY_MESSAGE })
+            .refine((tag) => !tag.includes('|'), { message: TAG_SEPARATOR_MESSAGE }),
+        )
+        .default([]),
       draft: z.boolean().default(false),
     })
+    // .strict() sits on the object, before the refinements: a field renamed in
+    // .pages.yml but not here (or the other way round) would otherwise write a
+    // key nobody reads, and the value would vanish with a green build.
+    .strict()
     .refine((data) => !data.thumbnail || (data.thumbnailAlt ?? '').trim() !== '', {
       message: 'Describe the cover image in "Cover image description" so screen readers can read it.',
       path: ['thumbnailAlt'],
@@ -56,6 +75,7 @@ const events = defineCollection({
       ticketStatus: z.enum(TICKET_STATUSES),
       draft: z.boolean().default(false),
     })
+    .strict()
     .refine((data) => !data.image || (data.imageAlt ?? '').trim() !== '', {
       message: 'Describe the event image in "Image description" so screen readers can read it.',
       path: ['imageAlt'],
@@ -76,11 +96,16 @@ const speakers = defineCollection({
       photoAlt: z.string().optional(),
       talk: reference('talks').optional(),
       links: z
-        .array(z.object({ label: z.string().min(1), url: z.url({ message: WEB_ADDRESS_MESSAGE }) }))
+        .array(
+          z.object({ label: z.string().min(1), url: z.url({ message: WEB_ADDRESS_MESSAGE }) }).strict(),
+        )
         .default([]),
-      order: z.number().int().optional(),
+      // See the sponsors collection: a decimal is a legitimate way to slot
+      // someone between two existing positions.
+      order: z.number().optional(),
       draft: z.boolean().default(false),
     })
+    .strict()
     .refine((data) => !data.photo || (data.photoAlt ?? '').trim() !== '', {
       message: 'Describe the photo in "Photo description" so screen readers can read it.',
       path: ['photoAlt'],
@@ -95,9 +120,12 @@ const sponsors = defineCollection({
     logoAlt: z.string().min(1, 'Describe the logo, for example "Acme Ltd logo".'),
     url: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
     tier: z.enum(SPONSOR_TIERS),
-    order: z.number().int().optional(),
+    // Not .int(): the CMS field is a plain number and the help text says
+    // "Lower numbers appear first", so a volunteer slotting a partner between
+    // 1 and 2 types 1.5. The sort works with it.
+    order: z.number().optional(),
     draft: z.boolean().default(false),
-  }),
+  }).strict(),
 });
 
 export const collections = { talks, events, speakers, sponsors };

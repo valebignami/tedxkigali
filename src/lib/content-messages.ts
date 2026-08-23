@@ -12,3 +12,17 @@
 export const WEB_ADDRESS_MESSAGE =
   'This does not look like a complete web address. Copy the whole link from ' +
   "your browser's address bar — it must start with https://";
+
+/** Shown when a tag row was left blank, which renders a nameless button. */
+export const TAG_EMPTY_MESSAGE =
+  'One of the tags is empty. Delete that row, or type a word into it: an empty ' +
+  'tag shows on the talks page as a button with nothing written on it.';
+
+/**
+ * Shown when a tag contains the character the talks page uses to separate one
+ * tag from the next. A tag containing it would disappear from its own filter.
+ */
+export const TAG_SEPARATOR_MESSAGE =
+  'A tag cannot contain the "|" character, because the talks page uses it to ' +
+  'separate one tag from the next. Write two tags instead, for example ' +
+  '"climate" and "policy".';

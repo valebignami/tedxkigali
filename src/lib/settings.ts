@@ -5,10 +5,12 @@ import { z } from 'astro/zod';
 import raw from '~/content/settings/site.json';
 import { WEB_ADDRESS_MESSAGE } from '~/lib/content-messages';
 
-const socialLink = z.object({
-  label: z.string().min(1),
-  url: z.url({ message: WEB_ADDRESS_MESSAGE }),
-});
+const socialLink = z
+  .object({
+    label: z.string().min(1),
+    url: z.url({ message: WEB_ADDRESS_MESSAGE }),
+  })
+  .strict();
 
 export const siteSettingsSchema = z.object({
   siteName: z.string().min(1),
@@ -22,7 +24,11 @@ export const siteSettingsSchema = z.object({
   seoDescription: z.string().min(1).max(300),
   tedxLicenceNotice: z.string().min(1),
   tedxXExplanation: z.string().min(1),
-});
+})
+  // A key here that no field in .pages.yml writes, or the other way round, is a
+  // rename that drifted: better a failed build than a text silently missing
+  // from every page.
+  .strict();
 
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;
 

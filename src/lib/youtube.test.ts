@@ -4,6 +4,7 @@ import {
   youtubeEmbedUrl,
   youtubeThumbnails,
   youtubeWatchUrl,
+  YOUTUBE_HELP_MESSAGE,
 } from '~/lib/youtube';
 
 const ID = 'dQw4w9WgXcQ';
@@ -40,6 +41,28 @@ describe('parseYouTubeId', () => {
     'https://www.youtube.com/@tedxkigali',
   ])('rejects %s', (input) => {
     expect(parseYouTubeId(input)).toBeNull();
+  });
+
+  // The host check is an exact match against a list, not a suffix test. If it
+  // is ever "simplified" to endsWith, these two lookalikes start parsing and
+  // the site embeds a video from somebody else's server.
+  it.each([
+    `https://notyoutube.com/watch?v=${ID}`,
+    `https://youtube.com.evil.com/watch?v=${ID}`,
+    `https://evil.com/youtu.be/${ID}`,
+    `https://myyoutu.be/${ID}`,
+  ])('rejects the lookalike host %s', (input) => {
+    expect(parseYouTubeId(input)).toBeNull();
+  });
+});
+
+// docs/EDITING.md quotes this message to explain what a failed build means, so
+// it has to keep saying what an editor should paste.
+describe('YOUTUBE_HELP_MESSAGE', () => {
+  it('is a non-empty message showing a full YouTube link', () => {
+    expect(YOUTUBE_HELP_MESSAGE.trim()).not.toBe('');
+    expect(YOUTUBE_HELP_MESSAGE).toContain('https://www.youtube.com/watch?v=');
+    expect(YOUTUBE_HELP_MESSAGE).toMatch(/address bar/i);
   });
 });
 
