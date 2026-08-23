@@ -15,7 +15,7 @@ const talks = (await getCollection('talks', ({ data }) => !data.draft)).sort(
 const events = await getCollection('events', ({ data }) => !data.draft);
 
 const { titleById, used: editions } = resolveEditions(
-  talks.map((talk) => ({ id: talk.id, editionId: talk.data.edition?.id })),
+  talks.map((talk) => ({ title: talk.data.title, editionId: talk.data.edition })),
   events.map((event) => ({ id: event.id, title: event.data.title, startDate: event.data.startDate })),
 );
 
@@ -81,7 +81,7 @@ const tags = [...new Set(talks.flatMap((talk) => talk.data.tags))].sort();
       <>
         <div id="talks-grid" class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {talks.map((talk) => (
-            <TalkCard talk={talk} editionTitle={talk.data.edition ? titleById.get(talk.data.edition.id) : undefined} />
+            <TalkCard talk={talk} editionTitle={talk.data.edition ? titleById.get(talk.data.edition) : undefined} />
           ))}
         </div>
         <p id="talks-empty" hidden class="mt-10 text-muted">No talks match this filter yet.</p>

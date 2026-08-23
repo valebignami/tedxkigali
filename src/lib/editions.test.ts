@@ -13,12 +13,12 @@ describe('resolveEditions', () => {
   });
 
   it('returns only the editions a talk belongs to', () => {
-    const { used } = resolveEditions([{ id: 'a-talk', editionId: 'tedxkigali-2024' }], editions);
+    const { used } = resolveEditions([{ title: 'A talk', editionId: 'tedxkigali-2024' }], editions);
     expect(used.map((edition) => edition.id)).toEqual(['tedxkigali-2024']);
   });
 
   it('ignores talks with no edition', () => {
-    const { used } = resolveEditions([{ id: 'a-talk' }], editions);
+    const { used } = resolveEditions([{ title: 'A talk' }], editions);
     expect(used).toEqual([]);
   });
 
@@ -30,32 +30,34 @@ describe('resolveEditions', () => {
       { id: 'earlier', title: 'Zulu', startDate: new Date('2023-11-14T09:00:00+02:00') },
     ];
     const { used } = resolveEditions(
-      [{ id: 'x', editionId: 'earlier' }, { id: 'y', editionId: 'later' }],
+      [{ title: 'X', editionId: 'earlier' }, { title: 'Y', editionId: 'later' }],
       dated,
     );
     expect(used.map((edition) => edition.id)).toEqual(['later', 'earlier']);
   });
 
   it('throws when the edition does not exist', () => {
-    expect(() => resolveEditions([{ id: 'the-market-at-dawn', editionId: 'tedxkigali-2027' }], editions)).toThrow(
-      missingEditionMessage('the-market-at-dawn', 'tedxkigali-2027'),
-    );
+    expect(() =>
+      resolveEditions([{ title: 'The market at dawn', editionId: 'tedxkigali-2027' }], editions),
+    ).toThrow(missingEditionMessage('The market at dawn', 'tedxkigali-2027'));
   });
 
   // A hidden event is absent from the list the caller passes in, so the same
   // guard covers it: the page it would link to was never built either.
   it('throws when the edition is hidden', () => {
     const published = editions.filter((edition) => edition.id !== 'tedxkigali-2025');
-    expect(() => resolveEditions([{ id: 'a-talk', editionId: 'tedxkigali-2025' }], published)).toThrow(
-      /does not exist or is hidden/,
+    expect(() => resolveEditions([{ title: 'A talk', editionId: 'tedxkigali-2025' }], published)).toThrow(
+      /make it visible again/i,
     );
   });
 });
 
 describe('missingEditionMessage', () => {
-  it('names the talk and the event it points at', () => {
-    const message = missingEditionMessage('the-market-at-dawn', 'tedxkigali-2027');
-    expect(message).toContain('the-market-at-dawn');
+  const message = missingEditionMessage('The market at dawn', 'tedxkigali-2027');
+
+  // The talk used to be named by its file name, which no list in the CMS shows.
+  it('names the talk by its title, and quotes what was stored for the edition', () => {
+    expect(message).toContain('The market at dawn');
     expect(message).toContain('tedxkigali-2027');
     expect(message).not.toMatch(/reference|zod|undefined/i);
   });
@@ -65,9 +67,17 @@ describe('missingEditionMessage', () => {
   // talk under an edition it was never filmed at, with a green build. The
   // message has to offer the two remedies that keep the facts intact.
   it('offers making the event visible again and hiding the talk, not only re-pointing it', () => {
-    const message = missingEditionMessage('the-market-at-dawn', 'tedxkigali-2027');
     expect(message).toMatch(/visible again/i);
     expect(message).toMatch(/hide this talk/i);
-    expect(message).toMatch(/pick a different edition/i);
+    expect(message).toMatch(/pick the edition again/i);
+  });
+
+  // The event can be there, and visible, and still not be found — the CMS may
+  // store a name the website does not look entries up by. Saying it "does not
+  // exist or is hidden" was then flatly untrue, and all three remedies failed.
+  it('claims nothing about the event existing, and has an answer when re-picking fails', () => {
+    expect(message).not.toMatch(/does not exist/i);
+    expect(message).toMatch(/keeps happening/i);
+    expect(message).toMatch(/maintainer/i);
   });
 });

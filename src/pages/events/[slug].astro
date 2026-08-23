@@ -38,7 +38,7 @@ const mapAriaLabel = `${venueLabel} — open in Google Maps`;
 
 const { Content } = await render(event);
 
-const talks = (await getCollection('talks', ({ data: talk }) => !talk.draft && talk.edition?.id === event.id)).sort(
+const talks = (await getCollection('talks', ({ data: talk }) => !talk.draft && talk.edition === event.id)).sort(
   (a, b) => a.data.title.localeCompare(b.data.title),
 );
 

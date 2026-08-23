@@ -1,29 +1,34 @@
 ---
-import { getCollection, getEntry, render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import SpeakerCard from '~/components/SpeakerCard.astro';
 import { compareOrder } from '~/lib/order';
+import { speakerTalkLink } from '~/lib/speaker-talk';
 
 const speakers = (await getCollection('speakers', ({ data }) => !data.draft)).sort((a, b) => {
   const byOrder = compareOrder(a.data.order, b.data.order);
   return byOrder !== 0 ? byOrder : a.data.name.localeCompare(b.data.name);
 });
 
-// getEntry resolves hidden entries as happily as published ones, while the
-// pages that render them exclude drafts. Linking one straight from here would
-// point at a page the build never produced, which is exactly what the "Hide
-// from the website" toggle is meant to be safe to use.
-const published = <T extends { data: { draft: boolean } }>(entry: T | undefined): T | undefined =>
-  entry && !entry.data.draft ? entry : undefined;
+// Every talk, hidden ones included, looked up by hand rather than through
+// getEntry: getEntry logs "Entry talks → … was not found" of its own accord,
+// which lands in the failed-build email above the sentence written for the
+// volunteer and says the same thing in the vocabulary the message exists to
+// keep out. The draft flag has to travel with the talk either way, because a
+// hidden talk and a deleted one need opposite answers.
+const talksById = new Map((await getCollection('talks')).map((talk) => [talk.id, talk]));
 
 const rendered = await Promise.all(
   speakers.map(async (speaker) => {
-    const talk = published(speaker.data.talk ? await getEntry(speaker.data.talk) : undefined);
+    const stored = speaker.data.talk;
+    const found = stored ? talksById.get(stored) : undefined;
+    const { href: talkHref } = speakerTalkLink(
+      speaker.data.name,
+      stored,
+      found && { id: found.id, draft: found.data.draft },
+    );
     const { Content } = await render(speaker);
-    // The talk card on /talks is the only thing on the site that addresses a
-    // single talk, so that is where "Watch the talk" goes. Without a published
-    // talk there is nothing to point at but the archive.
-    return { speaker, Content, talkHref: talk ? `/talks#${talk.id}` : '/talks' };
+    return { speaker, Content, talkHref };
   }),
 );
 ---

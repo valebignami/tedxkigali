@@ -5,9 +5,11 @@
 // built. Resolution and validation live in the same function on purpose — a
 // caller cannot take the titles and forget the check.
 
+import { editorError } from '~/lib/editor-error';
+
 export interface TalkEditionRef {
-  /** The talk's id, which is its file name — what the editor sees in the CMS. */
-  id: string;
+  /** The talk's title, which is how the CMS lists it and how a volunteer finds it. */
+  title: string;
   editionId?: string;
 }
 
@@ -25,21 +27,31 @@ export interface ResolvedEditions {
 }
 
 /**
- * The build-failure email a volunteer receives. It names the talk, names the
- * edition, and offers all three remedies.
+ * The build-failure email a volunteer receives.
  *
- * The order matters. A hidden event is the common case — the guide recommends
- * "Hide from the website" for postponing one — and for that case the fix is to
- * un-hide the event or hide the talk with it. Only when the event was really
- * deleted or renamed is re-pointing the talk right; offered first, it would
- * read as the instruction, and a volunteer following it would silently
- * attribute the talk to an edition it was never filmed at.
+ * Three different situations reach this message and it has to be true of all of
+ * them, because the volunteer cannot tell them apart from where they sit: the
+ * event is hidden, the event was deleted or renamed, or the value the CMS
+ * stores for an edition is not the value the website looks one up by — which
+ * the volunteer cannot fix at all, and which is why the last sentence sends
+ * them to somebody who can. It used to state that the event "does not exist or
+ * is hidden", which in the third case is the opposite of the truth.
+ *
+ * The order of the remedies matters. A hidden event is the common case — the
+ * guide recommends "Hide from the website" for postponing one — and for that
+ * case the fix is to un-hide the event or hide the talk with it. Only when the
+ * event was really deleted or renamed is re-pointing the talk right; offered
+ * first, it would read as the instruction, and a volunteer following it would
+ * silently attribute the talk to an edition it was never filmed at.
  */
-export function missingEditionMessage(talkId: string, editionId: string): string {
+export function missingEditionMessage(talkTitle: string, editionId: string): string {
   return (
-    `Talk "${talkId}" points at the event "${editionId}", which does not exist or is hidden. ` +
-    'Either make that event visible again, or hide this talk too, ' +
-    'or open the talk in the CMS and pick a different edition.'
+    `The talk "${talkTitle}" is filed under an edition saved as "${editionId}", and no ` +
+    'event on the website answers to that. If you hid that event, make it visible again, ' +
+    'or hide this talk with it. If you deleted or renamed it, open the talk in the CMS, ' +
+    'pick the edition again from the list, and save. If you pick it again and this keeps ' +
+    'happening, send this whole message to the site maintainer: what the CMS saves and ' +
+    'what the website looks for have drifted apart, and only they can put that right.'
   );
 }
 
@@ -59,7 +71,7 @@ export function resolveEditions(
   for (const talk of talks) {
     if (!talk.editionId) continue;
     const edition = byId.get(talk.editionId);
-    if (!edition) throw new Error(missingEditionMessage(talk.id, talk.editionId));
+    if (!edition) throw editorError(missingEditionMessage(talk.title, talk.editionId));
     used.set(edition.id, edition);
   }
 

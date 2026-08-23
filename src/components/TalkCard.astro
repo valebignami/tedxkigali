@@ -28,7 +28,7 @@ const year = date.getUTCFullYear();
   id={talk.id}
   class="group flex scroll-mt-24 flex-col overflow-hidden rounded-lg border border-line bg-surface"
   data-talk
-  data-edition={talk.data.edition?.id ?? ''}
+  data-edition={talk.data.edition ?? ''}
   data-tags={tags.join('|')}
 >
   <button
