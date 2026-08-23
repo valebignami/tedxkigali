@@ -3,6 +3,7 @@ import * as messages from '~/lib/content-messages';
 import { BOOKING_URL_MESSAGE, unknownFieldMessage } from '~/lib/content-rules';
 import { missingEditionMessage } from '~/lib/editions';
 import { offKigaliTimeMessage } from '~/lib/event-times';
+import { notAnImageMessage } from '~/lib/image-files';
 import { imageNotFoundMessage } from '~/lib/images';
 import { missingTalkMessage } from '~/lib/speaker-talk';
 import { YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
@@ -22,6 +23,7 @@ const entries: Array<[string, string]> = [
   ['missingTalkMessage', missingTalkMessage('Aline Uwase', 'the-hills-that-listen')],
   ['offKigaliTimeMessage', offKigaliTimeMessage('TEDxKigali 2026', ['Start date and time'])],
   ['imageNotFoundMessage', imageNotFoundMessage('IMG_1234.JPG')],
+  ['notAnImageMessage', notAnImageMessage('IMG_1234.JPG')],
   [
     'siteSettingsErrorMessage',
     settingsFailure.success ? '' : siteSettingsErrorMessage(settingsFailure.error),
