@@ -3461,21 +3461,36 @@ Aggiornare `contactEmail`, `socials` e `tedxLicenceNotice` in `src/content/setti
 
 - [ ] **Step 3: Sostituire i contenuti di esempio con quelli reali**
 
-Rimuovere tutti i contenuti di esempio (quattro talk, quattro eventi, una scheda speaker), inserendo i contenuti reali:
+Rimuovere tutti i contenuti di esempio (sedici talk, sette eventi, una scheda speaker), inserendo i contenuti reali:
 
 ```bash
 rm src/content/talks/2025-10-18-the-hills-that-listen.md
 rm src/content/talks/2025-10-18-rebuilding-trust.md
 rm src/content/talks/2024-09-21-the-market-at-dawn.md
 rm src/content/talks/2025-03-08-the-quiet-economics-of-a-market-stall.md
+rm src/content/talks/2024-05-25-the-homework-i-never-handed-in.md
+rm src/content/talks/2025-06-14-what-is-inside-a-radio.md
+rm src/content/talks/2025-11-08-the-ten-years-we-have.md
+rm src/content/talks/2024-09-21-the-tailors-of-nyamirambo.md
+rm src/content/talks/2025-03-08-the-loan-nobody-offered-me.md
+rm src/content/talks/2025-03-08-what-the-courtroom-taught-me-about-listening.md
+rm src/content/talks/2024-05-25-i-built-a-radio-station-in-a-cupboard.md
+rm src/content/talks/2024-05-25-nobody-asked-the-class.md
+rm src/content/talks/2025-06-14-why-is-the-sky-not-green.md
+rm src/content/talks/2025-06-14-how-to-ask-a-good-question.md
+rm src/content/talks/2025-11-08-the-map-of-every-tree-in-the-district.md
+rm src/content/talks/2025-11-08-cooling-a-building-without-switching-anything-on.md
 rm src/content/speakers/aline-uwase.md
 rm src/content/events/tedxkigali-2026.md
 rm src/content/events/tedxkigali-2025.md
 rm src/content/events/tedxkigali-2024.md
 rm src/content/events/tedxkigali-women-2025.md
+rm src/content/events/tedxkigali-youth-2024.md
+rm src/content/events/tedxkigali-kids-2025.md
+rm src/content/events/tedxkigali-countdown-2025.md
 ```
 
-> **Nessun contenuto di esempio deve sopravvivere al lancio.** I nove file elencati sopra sono l'intero contenuto di esempio del sito: quattro talk che puntano tutti allo stesso video segnaposto, quattro eventi inventati e una scheda speaker inventata. `src/content/sponsors/` e' vuoto e `src/content/settings/site.json` non e' contenuto di esempio, ma va comunque rivisto allo Step 2. L'edizione 2026 ha in piu' un `bookingUrl` verso `example-ticketing.com`, una `schedule` di esempio e una descrizione estesa con nomi di relatori inventati (Diane Uwimana, Eric Niyonzima, Aline Mukamana, Jean Bosco Habimana, Grace Ingabire, Patrick Nsengimana, Solange Umutoni, Claudine Mutesi, Robert Kayitare, Belise Ishimwe): anche questi sono fittizi e vanno via con il resto del file quando viene rimosso, non copiati nel contenuto reale. Su un sito TEDx reale sarebbero contenuti falsi.
+> **Nessun contenuto di esempio deve sopravvivere al lancio.** I ventiquattro file elencati sopra sono l'intero contenuto di esempio del sito: sedici talk che puntano tutti allo stesso video segnaposto, sette eventi inventati e una scheda speaker inventata. Sei di quei talk hanno `featured: true` e sono quelli che riempiono la home; sostituendoli con contenuti reali, ricordarsi di rimettere il flag su sei talk veri, altrimenti la home mostra semplicemente i sei piu' recenti. `src/content/sponsors/` e' vuoto e `src/content/settings/site.json` non e' contenuto di esempio, ma va comunque rivisto allo Step 2. L'edizione 2026 ha in piu' un `bookingUrl` verso `example-ticketing.com`, una `schedule` di esempio e una descrizione estesa con nomi di relatori inventati (Diane Uwimana, Eric Niyonzima, Aline Mukamana, Jean Bosco Habimana, Grace Ingabire, Patrick Nsengimana, Solange Umutoni, Claudine Mutesi, Robert Kayitare, Belise Ishimwe): anche questi sono fittizi e vanno via con il resto del file quando viene rimosso, non copiati nel contenuto reale. Su un sito TEDx reale sarebbero contenuti falsi.
 >
 > **I contenuti di esempio non si dichiarano piu' tali.** Portavano un avviso "Sample content" visibile in cima a ogni pagina e in testa a ogni riassunto; il cliente ha chiesto di toglierlo il 23 agosto 2026 e l'avviso e' stato rimosso. Non c'e' quindi piu' alcun segnale, ne' sulla pagina ne' nel testo, che distingua un'edizione inventata da una vera: l'unico modo di accorgersene e' la lista qui sotto. Chi pubblica il sito deve fidarsi di questa checklist, non della pagina.
 >
@@ -3487,9 +3502,9 @@ rm src/content/events/tedxkigali-women-2025.md
 > visibile li raggiunge. E' un altro motivo per cui il contenuto di esempio deve
 > sparire **prima** che il dominio sia collegato, non dopo.
 >
-> **L'edizione TEDxKigali Women 2025 e' li' per far vedere una funzione, non per raccontare un fatto.** E' stata aggiunta il 23 agosto 2026 insieme ai programmi TEDx: e' l'unica edizione di esempio con un `programme` diverso da `flagship`, ed e' quella che fa comparire i titoli per programma nell'archivio, i gruppi di pulsanti nella pagina Talks e il blocco "Our programmes" nella pagina About. Rimuovendola, tutte e tre quelle cose spariscono da sole finche' non esiste una seconda edizione vera: e' il comportamento voluto, non un guasto. Anche i nomi che contiene sono inventati (Chantal Mukagasana, Josiane Uwera, Divine Kamikazi, Immaculee Nyirahabimana, Sandrine Ineza), come il talk "The quiet economics of a market stall" che le e' collegato.
+> **Le quattro edizioni Women, Youth, Kids e Countdown sono li' per far vedere una funzione, non per raccontare un fatto.** Sono state aggiunte il 23 agosto 2026 insieme ai programmi TEDx: sono le uniche edizioni di esempio con un `programme` diverso da `flagship`, e sono quelle che fanno comparire i titoli per programma nell'archivio, i gruppi di pulsanti nella pagina Talks e le cinque righe del blocco "Our programmes" nella pagina About. Rimuovendole, tutte e tre quelle cose spariscono da sole finche' non esiste una seconda edizione vera in un programma diverso: e' il comportamento voluto, non un guasto — con un solo programma il sito torna esattamente all'aspetto che aveva prima. Anche i nomi che contengono sono inventati (Chantal Mukagasana, Josiane Uwera, Divine Kamikazi, Immaculee Nyirahabimana, Sandrine Ineza, Keza Munyaneza, Yves Rugema, Neema Byiringiro, Alain Tuyishime, Peace Iradukunda, Ange Uwitonze, Fabrice Mugabo, Gloria Umurerwa, Olivier Bizimana, Shema Ndayisaba, Kevin Rurangwa, Innocent Habineza), come i tredici talk collegati. Inventate sono anche le sedi accostate a questi eventi (Lycee de Kigali, Norrsken House Kigali, Impact Hub Kigali sono luoghi reali che non hanno mai ospitato nulla di tutto questo).
 >
-> Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ`, `example-ticketing.com`, `Diane Uwimana`, `Rising`, `Roots`, `Threads` e `In the Room` che non ne resti traccia.
+> Verificare con `ls src/content/talks src/content/events src/content/speakers` che restino solo i contenuti reali, e con una ricerca di `dQw4w9WgXcQ`, `example-ticketing.com`, `Diane Uwimana`, `Rising`, `Roots`, `Threads`, `In the Room`, `First Draft`, `Why? Why? Why?` e `Ten Years` che non ne resti traccia.
 
 Creare gli eventi e i talk reali seguendo la stessa struttura di frontmatter. Verificare dopo ogni aggiunta con `npm run build`.
 

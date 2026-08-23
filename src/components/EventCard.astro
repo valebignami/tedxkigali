@@ -9,9 +9,21 @@ import { internalHref } from '~/lib/base-path';
 interface Props {
   event: CollectionEntry<'events'>;
   now?: Date;
+  /**
+   * The level of the card's own title. Three wherever a row of cards sits
+   * straight under an h2 — "Upcoming", "Next event" — and four inside the
+   * archive once it is split by programme, because the programme name is then
+   * an h3 above it. Getting this wrong shows up nowhere on the screen and
+   * plainly to anyone moving through the page by heading: the group and the
+   * things inside it would rank the same.
+   */
+  headingLevel?: 3 | 4;
 }
 
-const { event, now = new Date() } = Astro.props;
+const { event, now = new Date(), headingLevel = 3 } = Astro.props;
+// Capitalised so it is rendered as the tag name rather than as an element
+// called "heading".
+const Heading = `h${headingLevel}` as 'h3' | 'h4';
 const data = event.data;
 const ticketStatus = data.ticketStatus;
 
@@ -46,9 +58,9 @@ const dateLabel = formatEventDate(data.startDate);
       Happening now
     </p>
 
-    <h3 class="text-2xl font-bold leading-tight">
+    <Heading data-event-title class="text-2xl font-bold leading-tight">
       <a class="hover:underline" href={internalHref(`/events/${event.id}`)}>{data.title}</a>
-    </h3>
+    </Heading>
 
     <p class="text-sm uppercase tracking-wide text-muted">
       <time datetime={data.startDate.toISOString()}>{dateLabel}</time> · {data.venue}

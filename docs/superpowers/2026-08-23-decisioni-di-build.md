@@ -265,11 +265,16 @@ Kigali, Women, Youth, Kids e Countdown.
 filtri per categoria. Il committente ha obiettato ("sicuro che abbia senso
 cosi'? non ci sono modi migliori?") e aveva ragione. Un filtro risponde a
 "mostrami di meno"; la domanda vera di un visitatore davanti a "TEDxKigali
-Women" e' "che cos'e'?", e nessuno filtra per una parola che non capisce. Con
-tre edizioni e quattro talk, cinque pulsanti in piu' sopra a quelli per edizione
-e per argomento sarebbero stati una pulsantiera sopra dieci elementi, e
-soprattutto un filtro *nasconde* l'esistenza delle categorie invece di
-mostrarla: chi non clicca non scopre mai che i programmi sono cinque.
+Women" e' "che cos'e'?", e nessuno filtra per una parola che non capisce. Il
+motivo che conta davvero, e che non dipende da quanti contenuti ci sono: un
+filtro *nasconde* l'esistenza delle categorie invece di mostrarla, e chi non
+clicca non scopre mai che i programmi sono cinque. C'era anche un motivo di
+scala: quando la decisione e' stata presa il sito aveva tre edizioni e quattro
+talk, e cinque pulsanti in piu' sopra a quelli per edizione e per argomento
+sarebbero stati una pulsantiera sopra dieci elementi. Quel numero e' poi
+cresciuto — sette edizioni e sedici talk, tutti di esempio, aggiunti su
+richiesta del committente per far vedere tutti e cinque i programmi — ma la
+conclusione no.
 
 Quindi: l'archivio degli eventi e i pulsanti della pagina Talks si raggruppano
 sotto un titolo per programma, e la pagina About guadagna un blocco "Our

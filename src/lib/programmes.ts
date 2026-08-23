@@ -1,8 +1,7 @@
 // The TEDx programmes an edition can belong to.
 //
-// Same shape as SPONSOR_TIERS in src/lib/sponsors.ts: the Zod enum, the pages
-// and the CMS select all read this list, so renaming one cannot leave the
-// others behind. The select in .pages.yml is the one copy YAML cannot avoid —
+// Same shape as SPONSOR_TIERS in src/lib/sponsors.ts: the Zod enum and the pages both read this
+// list, so renaming one cannot leave the other behind. The select in .pages.yml is the one copy YAML cannot avoid —
 // src/lib/pages-config.test.ts compares it to this file on every push.
 //
 // The names are TED's, not ours. TED's guidance for youth events is explicit —

@@ -33,9 +33,12 @@ const pastGroups = programmes.map((programme) => ({
 }));
 
 // Upcoming editions are not grouped. There are rarely more than one or two, and
-// each already carries its programme in the title it was given — "TEDxKigali
-// Women 2025 — In the Room" — so a heading above a single card would only
-// repeat it.
+// the guide asks for titles that carry the programme — "TEDxKigali Women 2025 —
+// In the Room" — so a heading above a single card would usually only repeat it.
+// Usually, not always: nothing stops an editor titling an edition anything they
+// like, and then the programme of an upcoming event is not written anywhere on
+// this page. It is on the event's own page, in its title, and in the archive
+// once the event is over.
 ---
 
 <BaseLayout title="Events" description="Upcoming TEDxKigali events and the archive of past editions.">
@@ -71,7 +74,9 @@ const pastGroups = programmes.map((programme) => ({
             >
               <h3 class="text-sm font-bold uppercase tracking-widest text-muted">{group.name}</h3>
               <div class="mt-4 grid gap-6 md:grid-cols-2" data-past-grid={group.programme}>
-                {group.events.map((event) => <EventCard event={event} now={now} />)}
+                {group.events.map((event) => (
+                  <EventCard event={event} now={now} headingLevel={4} />
+                ))}
               </div>
             </div>
           ))}

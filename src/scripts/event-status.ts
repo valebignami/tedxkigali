@@ -49,6 +49,7 @@ function refresh(): void {
     const home = pastGridFor(card);
     if (state === 'past' && home && card.parentElement !== home) home.prepend(card);
     if (state !== 'past' && upcoming && card.parentElement !== upcoming) upcoming.append(card);
+    rankTitle(card);
   });
 
   // Any page can host event cards outside the events index — the home page's
@@ -74,6 +75,31 @@ function refresh(): void {
   // nothing but the archive.
   const none = document.querySelector<HTMLElement>('#events-none');
   if (none && upcoming) none.hidden = upcoming.children.length > 0;
+}
+
+/**
+ * Keeps a card's title one rank below whatever it is now sitting under.
+ *
+ * The level is decided at build time — three under "Upcoming", four under a
+ * programme name in the split archive — and moving a card here would otherwise
+ * leave a title ranked the same as the heading of the group it just landed in.
+ * The page looks identical either way; the difference is only audible, to
+ * someone moving through the page by heading, which is exactly why it would
+ * never be noticed.
+ *
+ * aria-level rather than a new element: it overrides the rank of a heading that
+ * already is one, and it needs no rebuilding of the element and its link.
+ *
+ * Set in both directions, never merely cleared. Clearing was the first version
+ * of this and it was wrong in the other direction: a card built as an h4 inside
+ * a programme group, then moved up to "Upcoming" because the visitor's clock
+ * says the event has not happened yet, would fall back to its own h4 under an
+ * h2 and skip a rank.
+ */
+function rankTitle(card: HTMLElement): void {
+  const title = card.querySelector<HTMLElement>('[data-event-title]');
+  if (!title) return;
+  title.setAttribute('aria-level', card.closest('[data-past-grid]') ? '4' : '3');
 }
 
 /**

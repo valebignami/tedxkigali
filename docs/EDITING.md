@@ -176,12 +176,14 @@ one into a heading on the website.
 Picking a programme changes three things, all by itself:
 
 - **Events** groups the past editions under a heading for each programme.
-- **Talks** groups the filter buttons the same way.
+- **Talks** groups the filter buttons the same way — but there is only a
+  button for an edition that has talks in it, so this one waits until two
+  programmes have a published talk between them.
 - **About** gains an "Our programmes" block explaining what each one is.
 
-All three appear only once there is more than one programme with a published
-event, and a programme joins the About page on the day its first edition goes
-live. That is on purpose: a programme named on the About page before it has ever
+Each of the three appears only once that page has more than one programme to
+tell apart, and a programme joins the About page on the day its first edition
+goes live. That is on purpose: a programme named on the About page before it has ever
 happened reads to a visitor as a promise that one is coming.
 
 Write the event title with the programme in it — *TEDxKigali Women 2025 — In the
