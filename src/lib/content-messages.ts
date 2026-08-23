@@ -2,7 +2,7 @@
 // their wording binding: a volunteer meets them in the CMS or in the email the
 // failed build sends, never in a stack trace. They must say what to do next and
 // must not name a field by its code name — the CMS shows "Booking link",
-// "Exact map link", "Website", never bookingUrl, mapUrl or url.
+// "Map link", "Website", never bookingUrl, mapUrl or url.
 //
 // Astro prints a content message as "<code path>: <message>". There is a way to
 // stop it — an issue carrying params.isHoistedAstroError makes Astro throw that
@@ -12,6 +12,16 @@
 // names on its own what it is about, so that it still reads as a whole sentence
 // to a volunteer who skips past the prefix. src/lib/settings.ts is the one form
 // where the whole message is ours to write.
+//
+// The prefix is not the only thing Astro adds to a content-collection failure.
+// It also appends its own "Hint:", an "Error reference:" URL, a "Location:" and
+// a "Stack trace:" of frames inside node_modules, because it constructs that
+// error itself from the issues we return. editorError() strips all of that from
+// the checks this project throws by hand — settings, editions, speaker/talk,
+// images, event times — but it cannot reach the four content collections. A
+// volunteer who saves a bad field therefore still receives the sentence with
+// Astro's tail under it; the sentence is the first thing in the block, which is
+// as far as this project can take it without giving up multi-error reporting.
 
 import { MAX_TEXT_LENGTH } from '~/lib/content-rules';
 
@@ -195,3 +205,51 @@ export const SPEAKER_PHOTO_ALT_MESSAGE =
 export const PARTNER_LOGO_ALT_MESSAGE =
   'The logo needs a description. Write in "Logo description" whose logo it is, ' +
   'for example "Acme Ltd logo" — it is read aloud to visitors who cannot see it.';
+
+/**
+ * Shown when a talk's edition holds something other than the value the CMS
+ * writes when an edition is picked from the list — a number typed straight into
+ * the file, most likely, since the form itself only offers the list.
+ */
+export const TALK_EDITION_MESSAGE =
+  'The edition of a talk is picked from the list of events, not typed. Open the ' +
+  'talk in the CMS, choose the edition under "Event edition", and save. If the ' +
+  'event is not in the list yet, add it under Events first.';
+
+/** Shown when a speaker's talk holds something other than a talk from the list. */
+export const SPEAKER_TALK_MESSAGE =
+  'The talk a speaker gave is picked from the list of talks, not typed. Open the ' +
+  'speaker in the CMS, choose the talk under "Their talk", and save. Leave it ' +
+  'empty if this person has no talk on the website yet.';
+
+/** Shown when the edition theme holds something that is not writing. */
+export const EVENT_THEME_MESSAGE =
+  'The edition theme has to be words, because it is printed on the event page, ' +
+  'for example "Rising". Type the theme in "Edition theme", or leave it empty.';
+
+/** Shown when the venue address holds something that is not writing. */
+export const ADDRESS_MESSAGE =
+  'The address has to be written out, for example "KG 2 Roundabout, Kigali" — ' +
+  'the website builds the map link from it. Type it in "Address", or leave it empty.';
+
+/** Shown when a speaker's role holds something that is not writing. */
+export const SPEAKER_ROLE_MESSAGE =
+  'The role has to be words, because it is printed under the name on the ' +
+  'speakers page, for example "Environmental researcher, University of Rwanda". ' +
+  'Type it in "Role or organisation", or leave it empty.';
+
+/** Shown when a programme row's "Speaker" holds something that is not a name. */
+export const SCHEDULE_SPEAKER_MESSAGE =
+  'One of the programme rows has something other than a name in "Speaker". ' +
+  'Write the name of the person on stage at that point in the day, or empty the ' +
+  'field for a row with nobody on stage, such as a break.';
+
+/** Shown when a programme row's "Note" holds something that is not writing. */
+export const SCHEDULE_NOTE_MESSAGE =
+  'One of the programme rows has something other than writing in "Note". Write ' +
+  'whatever is worth knowing about that row in words, or empty the field.';
+
+/** Shown when a tag holds something that is not a word. */
+export const TAG_TEXT_MESSAGE =
+  'A tag has to be a word, for example "climate" — it becomes a button on the ' +
+  'talks page. Open the talk in the CMS, type the tag again, and save.';

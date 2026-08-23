@@ -13,25 +13,33 @@ import {
   unknownFieldMessage,
 } from '~/lib/content-rules';
 import {
+  ADDRESS_MESSAGE,
   BOOKING_LABEL_MESSAGE,
   DATE_MESSAGE,
   DISPLAY_ORDER_MESSAGE,
   EVENT_END_BEFORE_START_MESSAGE,
   EVENT_IMAGE_ALT_MESSAGE,
   EVENT_SUMMARY_MESSAGE,
+  EVENT_THEME_MESSAGE,
   EVENT_TITLE_MESSAGE,
   IMAGE_FILE_TYPE_MESSAGE,
   LINK_NAME_MESSAGE,
   PARTNER_LEVEL_MESSAGE,
   PARTNER_LOGO_ALT_MESSAGE,
   PARTNER_NAME_MESSAGE,
+  SCHEDULE_NOTE_MESSAGE,
+  SCHEDULE_SPEAKER_MESSAGE,
   SCHEDULE_TIME_MESSAGE,
   SCHEDULE_TITLE_MESSAGE,
   SPEAKER_NAME_MESSAGE,
   SPEAKER_PHOTO_ALT_MESSAGE,
+  SPEAKER_ROLE_MESSAGE,
+  SPEAKER_TALK_MESSAGE,
   TAG_EMPTY_MESSAGE,
   TAG_SEPARATOR_MESSAGE,
+  TAG_TEXT_MESSAGE,
   TALK_COVER_ALT_MESSAGE,
+  TALK_EDITION_MESSAGE,
   TALK_SPEAKER_MESSAGE,
   TALK_TITLE_MESSAGE,
   TEXT_TOO_LONG_MESSAGE,
@@ -68,7 +76,7 @@ const uploadPath = z
 // would lose control of the running order they typed.
 const scheduleEntry = strictObject({
   time: z
-    .string()
+    .string(SCHEDULE_TIME_MESSAGE)
     .trim()
     .optional()
     .refine((value) => !value || isValidScheduleTime(value), {
@@ -80,8 +88,8 @@ const scheduleEntry = strictObject({
   // the first, the volunteer gets Zod's own "expected string, received
   // undefined" in the failed-build email.
   title: z.string(SCHEDULE_TITLE_MESSAGE).trim().min(1, { message: SCHEDULE_TITLE_MESSAGE }),
-  speaker: z.string().trim().optional(),
-  note: z.string().trim().optional(),
+  speaker: z.string(SCHEDULE_SPEAKER_MESSAGE).trim().optional(),
+  note: z.string(SCHEDULE_NOTE_MESSAGE).trim().optional(),
 });
 
 // The edition and the talk a speaker gave are plain stored ids, not Astro
@@ -91,7 +99,11 @@ const scheduleEntry = strictObject({
 // deleted out from under a speaker publishes a half-broken card. src/lib/
 // editions.ts and src/pages/speakers.astro make the same check themselves, in
 // words an editor can act on, and stop the build.
-const storedId = () => z.string().trim().optional();
+//
+// Every mistake these two fields can hold reaches the same message, because
+// the CMS only ever writes them by picking from a list: anything else in there
+// was typed into the file by hand.
+const storedId = (message: string) => z.string(message).trim().optional();
 
 const talks = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/talks' }),
@@ -102,10 +114,10 @@ const talks = defineCollection({
       message: YOUTUBE_HELP_MESSAGE,
     }),
     date: z.coerce.date({ error: DATE_MESSAGE }),
-    edition: storedId(),
+    edition: storedId(TALK_EDITION_MESSAGE),
     summary: z.string().max(MAX_TEXT_LENGTH, { message: TEXT_TOO_LONG_MESSAGE }).optional(),
     thumbnail: uploadPath.optional(),
-    thumbnailAlt: z.string().optional(),
+    thumbnailAlt: z.string(TALK_COVER_ALT_MESSAGE).optional(),
     featured: yesNo(),
     // TalkCard joins these with "|" into data-tags and talk-filters.ts splits
     // them again, so a tag containing that character would vanish from its
@@ -113,7 +125,7 @@ const talks = defineCollection({
     tags: z
       .array(
         z
-          .string()
+          .string(TAG_TEXT_MESSAGE)
           .trim()
           .min(1, { message: TAG_EMPTY_MESSAGE })
           .refine((tag) => !tag.includes('|'), { message: TAG_SEPARATOR_MESSAGE }),
@@ -164,11 +176,11 @@ const events = defineCollection({
     // Trimmed like venue above: venueLabel and the map link's accessible name
     // both test this with plain truthiness, so an untrimmed "   " would render
     // a link reading "Kigali Convention Centre —" with nothing after the dash.
-    address: z.string().trim().optional(),
+    address: z.string(ADDRESS_MESSAGE).trim().optional(),
     mapUrl: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
     image: uploadPath.optional(),
-    imageAlt: z.string().optional(),
-    theme: z.string().optional(),
+    imageAlt: z.string(EVENT_IMAGE_ALT_MESSAGE).optional(),
+    theme: z.string(EVENT_THEME_MESSAGE).optional(),
     summary: z
       .string({ error: EVENT_SUMMARY_MESSAGE })
       .min(1, { message: EVENT_SUMMARY_MESSAGE })
@@ -200,10 +212,10 @@ const speakers = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/speakers' }),
   schema: strictObject({
     name: z.string({ error: SPEAKER_NAME_MESSAGE }).min(1, { message: SPEAKER_NAME_MESSAGE }),
-    role: z.string().optional(),
+    role: z.string(SPEAKER_ROLE_MESSAGE).optional(),
     photo: uploadPath.optional(),
-    photoAlt: z.string().optional(),
-    talk: storedId(),
+    photoAlt: z.string(SPEAKER_PHOTO_ALT_MESSAGE).optional(),
+    talk: storedId(SPEAKER_TALK_MESSAGE),
     links: z
       .array(
         strictObject({
