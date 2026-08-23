@@ -8,10 +8,17 @@ const speakers = (await getCollection('speakers', ({ data }) => !data.draft)).so
   return byOrder !== 0 ? byOrder : a.data.name.localeCompare(b.data.name);
 });
 
+// getEntry resolves hidden entries as happily as published ones, while the
+// pages that render them exclude drafts. Linking one straight from here would
+// point at a page the build never produced, which is exactly what the "Hide
+// from the website" toggle is meant to be safe to use.
+const published = <T extends { data: { draft: boolean } }>(entry: T | undefined): T | undefined =>
+  entry && !entry.data.draft ? entry : undefined;
+
 const rendered = await Promise.all(
   speakers.map(async (speaker) => {
-    const talk = speaker.data.talk ? await getEntry(speaker.data.talk) : undefined;
-    const edition = talk?.data.edition ? await getEntry(talk.data.edition) : undefined;
+    const talk = published(speaker.data.talk ? await getEntry(speaker.data.talk) : undefined);
+    const edition = published(talk?.data.edition ? await getEntry(talk.data.edition) : undefined);
     const { Content } = await render(speaker);
     return { speaker, Content, talkHref: edition ? `/events/${edition.id}` : '/talks' };
   }),
