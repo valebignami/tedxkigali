@@ -1,90 +1,158 @@
 import { describe, expect, it } from 'vitest';
 import {
-  isOnKigaliTime,
+  kigaliInstant,
   missingTimeOfDayFields,
   missingTimeOfDayMessage,
-  offKigaliTimeFields,
-  offKigaliTimeMessage,
+  withKigaliEventTimes,
   writtenEventTitle,
 } from '~/lib/event-times';
 
-describe('isOnKigaliTime', () => {
+// 09:00 in Kigali, every day of the year, is 07:00 UTC.
+const NINE_IN_KIGALI = '2026-11-14T07:00:00.000Z';
+
+describe('kigaliInstant', () => {
+  // The point of the whole change: whatever offset marker the file carries, the
+  // numbers on the clock are Kigali's. Pages CMS stamps +00:00 on whatever the
+  // editor picked; a file written by hand before this change carries +02:00;
+  // the CMS now writes neither. All three say 09:00 and mean 09:00 in Kigali.
   it.each([
-    '2026-11-14T09:00:00+02:00',
-    '2026-11-14T09:00+02:00',
-    '2026-11-14T09:00:00.000+02:00',
-    '2026-11-14T09:00:00+0200',
-    '2026-11-14 09:00:00 +02:00',
-  ])('accepts %s', (written) => {
-    expect(isOnKigaliTime(written)).toBe(true);
+    ['the offset Pages CMS stamps on everything', '2026-11-14T09:00:00+00:00'],
+    ['the offset older hand-written files carry', '2026-11-14T09:00:00+02:00'],
+    ['no offset at all, which is what the CMS writes now', '2026-11-14T09:00:00'],
+    ['a Z from a machine set to UTC', '2026-11-14T09:00:00Z'],
+    ['an offset from a laptop in New York', '2026-11-14T09:00:00-05:00'],
+    ['an offset written without its colon', '2026-11-14T09:00:00+0000'],
+    ['a space where YAML allows one instead of the T', '2026-11-14 09:00:00 +01:00'],
+    ['no seconds', '2026-11-14T09:00+00:00'],
+    ['fractional seconds', '2026-11-14T09:00:00.000+00:00'],
+  ])('reads %s as Kigali time', (_why, written) => {
+    expect(kigaliInstant(written)?.toISOString()).toBe(NINE_IN_KIGALI);
   });
 
-  // Not in this list: +02:00 written from Brussels in July. CEST is the same
-  // offset as CAT, so that value names the right instant wherever it was typed
-  // and passes — correctly. The check is on the offset, not on where the laptop
-  // was, which is why an offset nobody's clock is really on is used below to
-  // stand for "a minute out".
+  it('gives one and the same instant for every offset form', () => {
+    const instants = ['+00:00', '+02:00', '', 'Z', '-05:00'].map(
+      (offset) => kigaliInstant(`2026-11-14T09:00:00${offset}`)?.getTime(),
+    );
+    expect(new Set(instants).size).toBe(1);
+  });
+
+  // Rwanda keeps one offset all year, so a fixed one is exact in July as well
+  // as in January — see the note on KIGALI_UTC_OFFSET.
+  it('reads a July time the same way as a November one', () => {
+    expect(kigaliInstant('2026-07-14T09:00:00+00:00')?.toISOString()).toBe('2026-07-14T07:00:00.000Z');
+  });
+
   it.each([
-    ['a European winter laptop', '2026-11-14T09:00:00+01:00'],
-    ['an offset a minute away from Kigali', '2026-11-14T09:00:00+02:01'],
-    ['a laptop in New York', '2026-11-14T09:00:00-05:00'],
-    ['a machine set to UTC', '2026-11-14T09:00:00Z'],
-    ['no time zone at all, which YAML reads as UTC', '2026-11-14T09:00:00'],
     ['a day with no time on it', '2026-11-14'],
     ['something that is not a date', 'next Friday'],
-  ])('rejects %s', (_why, written) => {
-    expect(isOnKigaliTime(written)).toBe(false);
+    ['an empty value', ''],
+  ])('returns nothing for %s, leaving it to the checks that name it', (_why, written) => {
+    expect(kigaliInstant(written)).toBeNull();
   });
 });
 
 const eventFile = (start: string, end?: string) =>
-  ['---', 'title: "TEDxKigali 2026 — Rising"', `startDate: ${start}`, ...(end ? [`endDate: ${end}`] : []), 'venue: "Kigali Convention Centre"', '---', '', 'Body.'].join('\n');
+  [
+    '---',
+    'title: "TEDxKigali 2026 — Rising"',
+    `startDate: ${start}`,
+    ...(end ? [`endDate: ${end}`] : []),
+    'venue: "Kigali Convention Centre"',
+    '---',
+    '',
+    'Body.',
+  ].join('\n');
 
-describe('offKigaliTimeFields', () => {
-  it('finds nothing wrong with an event written on Kigali time', () => {
-    expect(offKigaliTimeFields(eventFile('2026-11-14T09:00:00+02:00', '2026-11-14T18:00:00+02:00'))).toEqual([]);
+// What the YAML parser hands over: a bare or +00:00 time becomes an instant two
+// hours early, because the parser reads an unmarked time as UTC.
+const asYamlRead = (written: string) => new Date(`${written.replace(/\+00:00$/, '')}Z`);
+
+describe('withKigaliEventTimes', () => {
+  it('moves a start the CMS stamped +00:00 onto Kigali time', () => {
+    const source = eventFile('2026-11-14T09:00:00+00:00');
+    const data = { title: 'Rising', startDate: asYamlRead('2026-11-14T09:00:00+00:00') };
+    expect((withKigaliEventTimes(data, source).startDate as Date).toISOString()).toBe(NINE_IN_KIGALI);
   });
 
-  it('names the field, by the label the CMS shows', () => {
-    expect(offKigaliTimeFields(eventFile('2026-11-14T09:00:00+01:00'))).toEqual(['Start date and time']);
+  it('leaves a start already written on Kigali time where it is', () => {
+    const source = eventFile('2026-11-14T09:00:00+02:00');
+    const data = { startDate: new Date(NINE_IN_KIGALI) };
+    expect((withKigaliEventTimes(data, source).startDate as Date).toISOString()).toBe(NINE_IN_KIGALI);
   });
 
-  it('names both fields when both are wrong', () => {
-    expect(offKigaliTimeFields(eventFile('2026-11-14T09:00:00Z', '2026-11-14T18:00:00Z'))).toEqual([
-      'Start date and time',
-      'End date and time',
-    ]);
+  it('reads the end time as well as the start', () => {
+    const source = eventFile('2026-11-14T09:00:00', '2026-11-14T18:00:00');
+    const data = {
+      startDate: asYamlRead('2026-11-14T09:00:00'),
+      endDate: asYamlRead('2026-11-14T18:00:00'),
+    };
+    const fixed = withKigaliEventTimes(data, source);
+    expect((fixed.startDate as Date).toISOString()).toBe(NINE_IN_KIGALI);
+    expect((fixed.endDate as Date).toISOString()).toBe('2026-11-14T16:00:00.000Z');
   });
 
-  // The end time is optional, and an event without one is not a mistake.
-  it('ignores an end time that was never filled in', () => {
-    expect(offKigaliTimeFields(eventFile('2026-11-14T09:00:00+02:00'))).toEqual([]);
+  it('adds no end time to an event that has none', () => {
+    const fixed = withKigaliEventTimes({ startDate: new Date(NINE_IN_KIGALI) }, eventFile('2026-11-14T09:00:00'));
+    expect('endDate' in fixed).toBe(false);
   });
 
-  it('reads a quoted value as well as a bare one', () => {
-    expect(offKigaliTimeFields(eventFile('"2026-11-14T09:00:00+01:00"'))).toEqual(['Start date and time']);
+  it('leaves every other field exactly as it was', () => {
+    const source = eventFile('2026-11-14T09:00:00+00:00');
+    const data = { title: 'Rising', venue: 'KCC', startDate: asYamlRead('2026-11-14T09:00:00+00:00') };
+    const fixed = withKigaliEventTimes(data, source);
+    expect(fixed.title).toBe('Rising');
+    expect(fixed.venue).toBe('KCC');
   });
 
-  // A programme row's "time" is a string like "09:00" and lives indented under
-  // schedule:, so it must not be mistaken for the event's own start.
-  it('ignores the times inside the programme rows', () => {
+  it('returns a new object rather than editing the one it was given', () => {
+    const data = { startDate: asYamlRead('2026-11-14T09:00:00+00:00') };
+    const before = (data.startDate as Date).toISOString();
+    withKigaliEventTimes(data, eventFile('2026-11-14T09:00:00+00:00'));
+    expect((data.startDate as Date).toISOString()).toBe(before);
+  });
+
+  // Both of these have their own message. Touching the value here would hide
+  // the mistake behind an hour the editor never typed.
+  it('leaves a day with no time of day for the check that names it', () => {
+    const parsed = new Date('2026-11-14T00:00:00.000Z');
+    expect(withKigaliEventTimes({ startDate: parsed }, eventFile('2026-11-14')).startDate).toBe(parsed);
+  });
+
+  it('leaves something that is not a date at all for the schema to refuse', () => {
+    expect(withKigaliEventTimes({ startDate: 'next Friday' }, eventFile('next Friday')).startDate).toBe(
+      'next Friday',
+    );
+  });
+
+  // A programme row's "time" is a string like "09:00" indented under schedule:,
+  // and must never be mistaken for the event's own start.
+  it('does not read the times inside the programme rows', () => {
     const source = [
       '---',
       'title: "TEDxKigali 2026 — Rising"',
-      'startDate: 2026-11-14T09:00:00+02:00',
+      'startDate: 2026-11-14T09:00:00',
       'schedule:',
-      '  - time: "09:00"',
+      '  - time: "08:00"',
       '    title: "Doors open"',
       '---',
       '',
     ].join('\n');
-    expect(offKigaliTimeFields(source)).toEqual([]);
+    expect((withKigaliEventTimes({ startDate: new Date(0) }, source).startDate as Date).toISOString()).toBe(
+      NINE_IN_KIGALI,
+    );
+  });
+
+  it('reads a quoted value as well as a bare one', () => {
+    const source = eventFile('"2026-11-14T09:00:00+00:00"');
+    expect((withKigaliEventTimes({ startDate: new Date(0) }, source).startDate as Date).toISOString()).toBe(
+      NINE_IN_KIGALI,
+    );
   });
 });
 
 describe('missingTimeOfDayFields', () => {
   it('finds nothing wrong with a full date and time', () => {
-    expect(missingTimeOfDayFields(eventFile('2026-11-14T09:00:00+02:00'))).toEqual([]);
+    expect(missingTimeOfDayFields(eventFile('2026-11-14T09:00:00'))).toEqual([]);
   });
 
   it('names a start that is a day with no time on it', () => {
@@ -92,25 +160,20 @@ describe('missingTimeOfDayFields', () => {
   });
 
   it('names an end that is a day with no time on it', () => {
-    expect(missingTimeOfDayFields(eventFile('2026-11-14T09:00:00+02:00', '2026-11-15'))).toEqual([
+    expect(missingTimeOfDayFields(eventFile('2026-11-14T09:00:00', '2026-11-15'))).toEqual([
       'End date and time',
     ]);
   });
 
-  // A wrong time zone is a different mistake with a different remedy, so the
-  // two lists never hold the same field and never contradict each other.
-  it('leaves a wrong time zone to the time-zone check', () => {
-    expect(missingTimeOfDayFields(eventFile('2026-11-14T09:00:00+01:00'))).toEqual([]);
+  it('names both fields when both are days with no time on them', () => {
+    expect(missingTimeOfDayFields(eventFile('2026-11-14', '2026-11-15'))).toEqual([
+      'Start date and time',
+      'End date and time',
+    ]);
   });
 
-  it('leaves something that is not a date at all to the time-zone check', () => {
+  it('leaves something that is not a date at all to the schema', () => {
     expect(missingTimeOfDayFields(eventFile('next Friday'))).toEqual([]);
-  });
-});
-
-describe('offKigaliTimeFields, against a day with no time on it', () => {
-  it('says nothing, because the other check has already named it', () => {
-    expect(offKigaliTimeFields(eventFile('2026-11-14'))).toEqual([]);
   });
 });
 
@@ -120,8 +183,9 @@ describe('missingTimeOfDayMessage', () => {
     expect(message).toContain('TEDxKigali 2026 — Rising');
     expect(message).toContain('"Start date and time"');
     expect(message).toMatch(/time of day/i);
-    // The remedy for a wrong time zone is not the remedy for this.
-    expect(message).not.toMatch(/set the clock on your computer/i);
+    // Nothing about the clock on the editor's computer: it no longer matters,
+    // and moving it was a remedy that never worked.
+    expect(message).not.toMatch(/clock on your computer|time zone/i);
   });
 
   it('opens with a whole sentence, not a fragment', () => {
@@ -132,23 +196,6 @@ describe('missingTimeOfDayMessage', () => {
 
 describe('writtenEventTitle', () => {
   it('reads the title the editor typed', () => {
-    expect(writtenEventTitle(eventFile('2026-11-14T09:00:00+02:00'))).toBe('TEDxKigali 2026 — Rising');
-  });
-});
-
-describe('offKigaliTimeMessage', () => {
-  it('names the event and the fields, and says what to do', () => {
-    const message = offKigaliTimeMessage('TEDxKigali 2026 — Rising', ['Start date and time']);
-    expect(message).toContain('TEDxKigali 2026 — Rising');
-    expect(message).toContain('"Start date and time"');
-    expect(message).toMatch(/Kigali time/);
-    expect(message).not.toMatch(/startDate|offset|UTC|\+02:00/);
-  });
-
-  // It used to open "The event "X", in "Start date and time"." — a clause with
-  // no verb in it, which is the first thing a second-language reader meets.
-  it('opens with a whole sentence, not a fragment', () => {
-    const [opening] = offKigaliTimeMessage('TEDxKigali 2026', ['Start date and time']).split('. ');
-    expect(opening).toMatch(/\b(has|have|is|are|was|were)\b/);
+    expect(writtenEventTitle(eventFile('2026-11-14T09:00:00'))).toBe('TEDxKigali 2026 — Rising');
   });
 });

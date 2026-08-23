@@ -137,28 +137,23 @@ export const DATE_MESSAGE =
   'This date cannot be read. Pick the day from the calendar in the CMS instead ' +
   'of typing it, then save again.';
 
-/** Shown when an event's end time is not after its start time. */
-export const EVENT_END_BEFORE_START_MESSAGE =
-  'This event ends before it starts. Check the end date and time — a mistyped ' +
-  'year is the usual cause — or empty it, and the website will assume four hours.';
-
 /**
- * Shown when a saved start or end time is not on Kigali time. The clock in the
- * CMS takes its time zone from the computer the editor is sitting at, so a
- * volunteer working from abroad types the right numbers against the wrong zone,
- * and the website then shows the event at an hour nobody chose.
+ * Shown when an event's end time is not after its start time. Equal times reach
+ * this too — the first event ever saved from the CMS had them, because the form
+ * offers the same moment in both fields until one of them is changed — so the
+ * sentence has to be true of "the same time twice" and not only of "earlier".
  */
-export const EVENT_TIME_ZONE_MESSAGE =
-  'This date and time was not saved on Kigali time, so the website would show ' +
-  'the event at the wrong hour. Set the clock on your computer to Kigali time, ' +
-  'or ask somebody in Rwanda to do it, then open the event again, pick the date ' +
-  'and time once more, and save.';
+export const EVENT_END_NOT_AFTER_START_MESSAGE =
+  'This event ends at the same moment it starts, or earlier. Check the end date ' +
+  'and time — the same time left in both fields, or a mistyped year, is the ' +
+  'usual cause — or empty it, and the website will assume four hours.';
 
 /**
  * Shown when a start or end holds a day with no time of day on it. The website
- * prints the hour an event starts, and a day on its own does not carry one; the
- * time zone message is the wrong answer here, because there is no time to have
- * saved on the wrong clock.
+ * prints the hour an event starts, and a day on its own does not carry one.
+ * Nothing here is about time zones: the numbers written in an event file are
+ * read as Kigali's whatever the file marks them with, so the only thing missing
+ * is the time itself.
  */
 export const MISSING_TIME_OF_DAY_MESSAGE =
   'It holds a day but no time of day, so the website cannot say what time the ' +

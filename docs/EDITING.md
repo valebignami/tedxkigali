@@ -48,13 +48,14 @@ work down the page.
    **Start date and time**, **Venue**, **Short summary** and **Ticket status**.
    - **Event title** (required).
    - **Start date and time** (required) — enter the time as it will show on a
-     clock in Kigali. The time you pick is saved together with the time zone of
-     the computer you are sitting at, so **set that computer's clock to Kigali
-     time before you edit**. If you forget, the website will not publish the
-     wrong hour: the rebuild stops and tells you (see section 8).
-   - **End date and time** — if you leave this empty, the website assumes the
-     event lasts four hours. Same rule about your computer's clock. It has to be
-     after the start; if it is not, the rebuild stops.
+     clock in Kigali. **You do not have to convert anything.** Wherever in the
+     world you are sitting, and whatever your own computer clock says, the
+     website reads what you pick here as Kigali time. Pick 09:00 and the website
+     says 09:00.
+   - **End date and time** — read as Kigali time in the same way as the start.
+     If you leave it empty, the website assumes the event lasts four hours. It
+     has to be later than the start: if it is the same time, or earlier, the
+     rebuild stops and tells you (see section 8).
    - **Venue** (required).
    - **Address** — the website builds its own "open in Google Maps" link from
      the venue and address, so you do not need to go and find a map link

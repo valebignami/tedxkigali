@@ -3605,17 +3605,20 @@ la promessa corrispondente.
 
 Eseguire ora tutti i punti dello Step 3 del Task 13 sul repository reale, incluso il test di creazione e cancellazione di un talk di prova.
 
-In piu', queste sei domande non sono mai state verificate contro il CMS vero e
-si chiudono tutte in una decina di minuti, creando **un evento, un talk che lo
-indica e uno speaker con foto**. Vanno chiuse **prima** che i volontari entrino.
+In piu', c'erano sei domande mai verificate contro il CMS vero. Il primo
+evento creato dal proprietario nel CMS reale, il 23/08/2026, ne ha chiuse tre
+(la 1, la 3 e la 4): le risposte sono scritte qui sotto al posto delle
+domande. Le altre tre si chiudono in una decina di minuti, creando **un talk
+che indica un evento e uno speaker con foto**, e vanno chiuse **prima** che i
+volontari entrino.
 
-1. **Come si chiama il file che il CMS crea.** `filename: '{fields.title}.md'`:
-   la documentazione di Pages CMS dice che `{fields.<name>}` viene *slugificato*,
-   quindi un evento intitolato `TEDxKigali 2026 — Rising` dovrebbe atterrare come
-   `tedxkigali-2026-rising.md`. Guardare il file che compare su GitHub. Se il
-   nome non e' uno slug (spazi, maiuscole, il trattino lungo), l'URL della pagina
-   evento sara' di una forma diversa da quella dei contenuti scritti a mano, e la
-   decisione su `filename` va ripresa qui, con il CMS davanti.
+1. **RISPOSTA (23/08/2026): il CMS slugifica il titolo.** `filename:
+   '{fields.title}.md'`: un evento intitolato `Test` e' atterrato su GitHub come
+   `src/content/events/test.md` — minuscolo, senza spazi. La domanda era se il
+   nome fosse uno slug; lo e'. `filename` resta com'e'. Non e' ancora stato
+   provato un titolo con un trattino lungo o un accento (`TEDxKigali 2026 —
+   Rising`), quindi la forma esatta dello slug per quei caratteri resta da
+   guardare al primo evento vero.
 2. **Che cosa scrive `value: '{name}'` in un campo `reference`.** La
    documentazione elenca `{path}`, `{name}`, `{primary}` e `{fields.<path>}`, e
    descrive `{name}` come "Entry name" senza dire se comprende `.md`. Il sito
@@ -3626,17 +3629,24 @@ indica e uno speaker con foto**. Vanno chiuse **prima** che i volontari entrino.
    edizione e il messaggio che il volontario ricevera' e' quello di
    `src/lib/editions.ts`, che in quel caso gli dice di scrivere al manutentore.
    La correzione e' cambiare `value` in `.pages.yml`.
-3. **Dove finisce il campo `body`.** Gli schemi sono `strictObject`: se Pages CMS
-   scrive `body:` dentro il frontmatter invece di usarlo come corpo Markdown,
-   **il primo salvataggio di ogni evento e di ogni speaker fallisce**. Salvare un
-   evento con qualcosa scritto in **Full description** e guardare il file: il
-   testo deve stare sotto il `---` di chiusura, non dentro.
-4. **Il fuso orario del datetime.** Coperto anche dallo Step 9.7, ma si prova
-   qui in un minuto: creare un evento da un browser **non** impostato su
-   Africa/Kigali. Il build ora rifiuta un orario che non porta l'offset di
-   Kigali, quindi il risultato atteso e' un build fallito con il messaggio di
-   `EVENT_TIME_ZONE_MESSAGE`. Se invece passa, controllare che cosa il CMS ha
-   davvero scritto nel file.
+3. **RISPOSTA (23/08/2026): il CMS non scrive `body` nel frontmatter.** Il
+   primo evento salvato dal CMS ha prodotto un frontmatter con `title`,
+   `startDate`, `endDate`, `venue`, `summary`, `ticketStatus`, `bookingLabel` e
+   `draft`, e nient'altro: nessuna chiave `body`. Gli schemi `strictObject`
+   reggono. Quell'evento aveva **Full description** vuoto, quindi resta da
+   guardare, al primo evento con del testo lungo, che finisca sotto il `---` di
+   chiusura e non dentro.
+4. **RISPOSTA (23/08/2026): il CMS timbra `+00:00` su qualunque orario.** Un
+   evento creato con l'orologio del redattore sulle 15:21, mentre a Kigali erano
+   le 13:21, e' stato scritto come `startDate: 2026-08-23T15:21:00+00:00`: il
+   CMS non converte l'orario e non usa nemmeno il fuso vero del redattore —
+   prende i numeri scelti e ci timbra sopra `+00:00`. La domanda e' quindi
+   chiusa, e con essa il controllo che pretendeva l'offset di Kigali: il suo
+   rimedio ("metti l'orologio del computer su Kigali e ripicka la data") non
+   poteva funzionare, perche' il CMS avrebbe riscritto `+00:00` comunque. Ora
+   `.pages.yml` salva senza offset e i numeri scritti nel file vengono letti
+   come ora di Kigali qualunque marcatore portino — vedi
+   `src/lib/event-times.ts`. Non c'e' piu' niente da provare qui.
 5. **Se `type: string` accetta un `pattern`.** `.pages.yml:160` dichiara
    **Contact email** come `type: string`, mentre `src/lib/settings.ts` la
    valida con `z.email()`: il modulo accetta qualunque cosa e il volontario
@@ -3677,7 +3687,7 @@ Annotare ogni punto in cui si è bloccata e correggere `docs/EDITING.md` o le et
 4. **Lighthouse mobile** su home, `/talks` e `/events`: ≥ 95 nelle quattro categorie. Se Performance scende sotto la soglia, verificare per prima cosa il peso delle immagini caricate.
 5. **Dati strutturati**: Rich Results Test sull'URL pubblico dell'evento.
 6. **Accessibilità**: navigazione completa da tastiera, contrasti, testo alternativo su tutte le immagini.
-7. **Fuso orario del CMS**: creare un evento di prova da un browser **non** impostato su Africa/Kigali e verificare che il valore salvato in `startDate` finisca in `+02:00`. Se il widget del CMS deriva l'offset dal fuso del redattore, un volontario che scrive dall'estero salverebbe l'istante sbagliato e l'orario mostrato sul sito sarebbe errato.
+7. **Fuso orario del CMS**: creare un evento di prova da un browser **non** impostato su Africa/Kigali e verificare che l'orario mostrato sulla pagina pubblica sia esattamente quello scelto nel modulo. Il valore salvato nel file non porta piu' un offset, e i suoi numeri vengono letti come ora di Kigali: non c'e' quindi nessun `+02:00` da cercare nel file, solo l'ora sulla pagina da confrontare con quella scelta.
 8. **Riferimento normativo**: far confermare da qualcuno con conoscenza legale locale che la citazione della legge rwandese 058/2021 nella pagina privacy sia corretta per numero e titolo. Una citazione sbagliata su una pagina privacy pubblica e' di per se' un problema di credibilita'.
 9. **Marchio TEDx**: footer con la dicitura di licenza e la spiegazione della `x` su ogni pagina; confronto con la guida ufficiale per gli organizzatori TEDx.
 

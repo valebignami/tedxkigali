@@ -17,8 +17,8 @@ content:
         order: desc
     fields:
       - { name: title, label: Event title, type: string, required: true, description: 'For example: TEDxKigali 2026 — Rising' }
-      - { name: startDate, label: Start date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ssxxx", time: true }, required: true, description: 'Enter the time as it will show on a clock in Kigali. The time you pick is saved together with the time zone of the computer you are sitting at, so set that computer to Kigali time before you edit. If it was not, the website stops and tells you — it does not publish the wrong hour.' }
-      - { name: endDate, label: End date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ssxxx", time: true }, description: 'Optional, and on Kigali time like the start. If empty, the event is assumed to last four hours.' }
+      - { name: startDate, label: Start date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ss", time: true }, required: true, description: 'Enter the time as it will show on a clock in Kigali. You do not have to convert anything: wherever in the world you are sitting, and whatever your own computer clock says, the website reads what you pick here as Kigali time.' }
+      - { name: endDate, label: End date and time, type: date, options: { format: "yyyy-MM-dd'T'HH:mm:ss", time: true }, description: 'Optional, and read as Kigali time in the same way as the start. It has to be later than the start. If you leave it empty, the event is assumed to last four hours.' }
       - { name: venue, label: Venue, type: string, required: true }
       - { name: address, label: Address, type: string }
       - { name: mapUrl, label: Map link, type: string, description: "Optional. The website already builds a Google Maps link from the venue and address above, so you usually don't need this. Fill it in only if searching for the venue and address sends people to the wrong place. If you do: open the place in Google Maps and copy the link out of your browser's address bar. Do not use the Share button — the short maps.app.goo.gl link it gives you is not guaranteed to keep working." }

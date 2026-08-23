@@ -1,16 +1,37 @@
-// The one editor mistake the site cannot notice on its own once the file is
-// loaded. YAML turns "2026-11-14T09:00:00+01:00" into a Date before any schema
-// sees it, and a Date is an instant with no time zone left on it, so by then
-// "09:00 in Brussels" and "10:00 in Kigali" are the same value and neither one
-// looks wrong. The offset only exists in the text of the file, which is why
-// these functions read the file and not the parsed entry.
+// Where an event's start and end stop being "the numbers a volunteer typed" and
+// become an instant. YAML turns "2026-11-14T09:00:00+00:00" into a Date before
+// any schema sees it, and a Date is an instant with no time zone left on it, so
+// by then the offset written in the file has already been applied and cannot be
+// taken back off. These functions therefore read the text of the file, not the
+// parsed entry.
+//
+// The first real save from Pages CMS settled what that text looks like. The
+// editor's computer read 15:21 and a clock in Kigali read 13:21, and the CMS
+// wrote `startDate: 2026-08-23T15:21:00+00:00`: it neither converted the time
+// nor used the editor's own offset — it stamped +00:00 on the wall-clock numbers
+// the editor picked. So the offset in an event file says nothing true about
+// where the editor was, and the only meaning it can be given that is right for
+// everybody is the one the CMS help text already asks for: the numbers are the
+// numbers a clock in Kigali will show.
 
-import { EVENT_TIME_ZONE_MESSAGE, MISSING_TIME_OF_DAY_MESSAGE } from '~/lib/content-messages';
+import { MISSING_TIME_OF_DAY_MESSAGE } from '~/lib/content-messages';
 
-/** Kigali is on CAT all year: no daylight saving, so one offset covers every date. */
-export const KIGALI_UTC_OFFSET = '+02:00';
+/**
+ * Rwanda keeps one offset all year, so a fixed one is exact on every date and
+ * no daylight-saving rule has to be carried here. Checked against the time-zone
+ * data Node ships: Africa/Kigali formats as GMT+02:00 on the 1st, 15th and 28th
+ * of every month of 2024–2027, and in January and July of every year from 1990
+ * to 2040 — one offset, in every sample.
+ */
+const KIGALI_UTC_OFFSET = '+02:00';
 
-const WRITTEN_DATE_TIME = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?)\s*([+-]\d{2}:?\d{2}|Z)$/i;
+/**
+ * A written day and time of day, with any offset marker the file happens to
+ * carry — or none. The offset is matched but not captured, because it is the
+ * one part of the value this project does not believe.
+ */
+const WRITTEN_DATE_TIME =
+  /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?)\s*(?:[+-]\d{2}:?\d{2}|Z)?$/i;
 
 /** A day on its own, with nothing after it: "2026-11-14". */
 const WRITTEN_DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
@@ -22,14 +43,15 @@ const EVENT_DATE_FIELDS: ReadonlyArray<readonly [key: string, label: string]> = 
 ];
 
 /**
- * True when a written date and time says, in the file, that it is Kigali time.
- * A value with no time zone on it is not: YAML reads it as UTC, which is two
- * hours out, and nothing downstream can tell that apart from a deliberate one.
+ * The instant a written day and time names, reading its numbers as Kigali's
+ * however the file marks them. Null when the value is not a day plus a time of
+ * day at all — a bare day, or something that is not a date — because those have
+ * their own messages and inventing an hour for them would hide the mistake.
  */
-export function isOnKigaliTime(written: string): boolean {
+export function kigaliInstant(written: string): Date | null {
   const match = WRITTEN_DATE_TIME.exec(written.trim());
-  if (!match) return false;
-  return match[3].toUpperCase().replace(':', '') === KIGALI_UTC_OFFSET.replace(':', '');
+  if (!match) return null;
+  return new Date(`${match[1]}T${match[2]}${KIGALI_UTC_OFFSET}`);
 }
 
 function frontmatterOf(source: string): string {
@@ -47,27 +69,35 @@ export function writtenEventTitle(source: string): string {
 }
 
 /**
+ * The event's own fields, with the start and end replaced by the instants their
+ * written numbers name in Kigali. Called on the raw data on its way into the
+ * schema, so that everything downstream — the end-after-start check, the page,
+ * the structured data — works on the instant the volunteer meant.
+ *
+ * A value this cannot read is passed through untouched, so the check or the
+ * schema rule that speaks for it still gets to.
+ */
+export function withKigaliEventTimes<T extends Record<string, unknown>>(data: T, source: string): T {
+  const frontmatter = frontmatterOf(source);
+  const onKigaliTime: Record<string, unknown> = { ...data };
+  for (const [key] of EVENT_DATE_FIELDS) {
+    const instant = kigaliInstant(writtenValue(frontmatter, key));
+    if (instant) onKigaliTime[key] = instant;
+  }
+  return onKigaliTime as T;
+}
+
+/**
  * The CMS labels of the date fields in this file that carry a day and no time
- * of day. Refusing these is right — YAML reads a bare date as midnight UTC,
- * which is 02:00 in Kigali, an hour nobody chose — but the remedy is to pick a
- * time, not to move the computer's clock, so they are told apart from the
- * fields the time-zone check below answers for.
+ * of day. Refusing these is right — the website prints the hour an event starts
+ * and a day on its own does not carry one — and the remedy is to pick a time,
+ * which the CMS calendar does.
  */
 export function missingTimeOfDayFields(source: string): string[] {
   const frontmatter = frontmatterOf(source);
   return EVENT_DATE_FIELDS.filter(([key]) => WRITTEN_DATE_ONLY.test(writtenValue(frontmatter, key))).map(
     ([, label]) => label,
   );
-}
-
-/** The CMS labels of the date fields in this file that are not on Kigali time. */
-export function offKigaliTimeFields(source: string): string[] {
-  const frontmatter = frontmatterOf(source);
-  return EVENT_DATE_FIELDS.filter(([key]) => {
-    const written = writtenValue(frontmatter, key);
-    if (written === '' || WRITTEN_DATE_ONLY.test(written)) return false;
-    return !isOnKigaliTime(written);
-  }).map(([, label]) => label);
 }
 
 /**
@@ -79,11 +109,6 @@ export function offKigaliTimeFields(source: string): string[] {
 function aboutTheEvent(eventTitle: string, labels: ReadonlyArray<string>): string {
   const which = labels.map((label) => `"${label}"`).join(' and ');
   return `The event "${eventTitle}" has a problem in ${which}.`;
-}
-
-/** The build-failure message a volunteer receives for a mistimed event. */
-export function offKigaliTimeMessage(eventTitle: string, labels: ReadonlyArray<string>): string {
-  return `${aboutTheEvent(eventTitle, labels)} ${EVENT_TIME_ZONE_MESSAGE}`;
 }
 
 /** The build-failure message for an event given a day but no time of day. */
