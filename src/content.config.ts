@@ -5,10 +5,13 @@ import { parseYouTubeId, YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { TICKET_STATUSES } from '~/lib/events';
 import { BOOKING_URL_MESSAGE, requiresBookingUrl } from '~/lib/content-rules';
 import {
+  SCHEDULE_TIME_MESSAGE,
+  SCHEDULE_TITLE_MESSAGE,
   TAG_EMPTY_MESSAGE,
   TAG_SEPARATOR_MESSAGE,
   WEB_ADDRESS_MESSAGE,
 } from '~/lib/content-messages';
+import { isValidScheduleTime } from '~/lib/schedule';
 import { SPONSOR_TIERS } from '~/lib/sponsors';
 
 const uploadPath = z
@@ -16,6 +19,24 @@ const uploadPath = z
   .refine((value) => /\.(jpe?g|png|webp|avif|svg)$/i.test(value.trim()), {
     message: 'Image file name must end with .jpg, .png, .webp, .avif or .svg.',
   });
+
+// A row of the event Programme. Order matters and is never re-sorted: a break
+// with no time would otherwise jump to an arbitrary position, and the editor
+// would lose control of the running order they typed.
+const scheduleEntry = z
+  .object({
+    time: z
+      .string()
+      .trim()
+      .optional()
+      .refine((value) => !value || isValidScheduleTime(value), {
+        message: SCHEDULE_TIME_MESSAGE,
+      }),
+    title: z.string().trim().min(1, { message: SCHEDULE_TITLE_MESSAGE }),
+    speaker: z.string().trim().optional(),
+    note: z.string().trim().optional(),
+  })
+  .strict();
 
 const talks = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/talks' }),
@@ -70,6 +91,7 @@ const events = defineCollection({
       imageAlt: z.string().optional(),
       theme: z.string().optional(),
       summary: z.string().min(1).max(300),
+      schedule: z.array(scheduleEntry).default([]),
       bookingUrl: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
       bookingLabel: z.string().default('Book your seat'),
       ticketStatus: z.enum(TICKET_STATUSES),

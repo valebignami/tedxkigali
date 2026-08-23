@@ -26,3 +26,17 @@ export const TAG_SEPARATOR_MESSAGE =
   'A tag cannot contain the "|" character, because the talks page uses it to ' +
   'separate one tag from the next. Write two tags instead, for example ' +
   '"climate" and "policy".';
+
+/** Shown when a programme row was left without a "What happens" entry. */
+export const SCHEDULE_TITLE_MESSAGE =
+  'One of the programme rows has nothing written in "What happens". Either ' +
+  'describe what happens at that point in the day, or delete the row.';
+
+/**
+ * Shown when a programme row's time cannot be understood. The rest of the
+ * website prints times on a 24-hour clock, so the message spells out the
+ * exact format rather than naming the rule it broke.
+ */
+export const SCHEDULE_TIME_MESSAGE =
+  'This time is not in the right format. Use 24-hour time like "09:00", or a ' +
+  'range like "09:00 - 09:20".';

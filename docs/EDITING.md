@@ -65,6 +65,17 @@ The talk appears on the website about one minute later.
      description** (screen reader text).
    - **Full description** — the main body text of the event page. Use this for
      anything that does not fit in the short summary.
+   - **Programme** — the running order of the day. Click **Add an entry** for
+     each row: a welcome, a talk, a break, anything that happens on the day.
+     Fill in **What happens** (required) and, if you have them, **Time**,
+     **Speaker** and **Note**. Rows appear on the website in the order you put
+     them in here, so use **Move up** / **Move down** to get the order right —
+     the website never reorders them for you. A row with no time is fine; that
+     is how you add a break like lunch or a coffee break, which does not have
+     a speaker either. If you do fill in **Time**, write it as a 24-hour time,
+     for example `09:00`, or a range like `09:00 - 09:20`. Anything else (an
+     "am"/"pm" time, or a time with a full stop instead of a colon) will stop
+     the rebuild — see section 7 for what happens next.
 4. Choose the **Ticket status** (this field is required):
    - *Tickets coming soon* — the event is announced, no booking button yet.
    - *Tickets on sale* / *Free entry — registration required* — a booking

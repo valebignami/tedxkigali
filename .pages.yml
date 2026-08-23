@@ -26,6 +26,16 @@ content:
       - { name: imageAlt, label: Image description, type: string, description: 'Required if you upload an image. Describe it for people using a screen reader.' }
       - { name: theme, label: Edition theme, type: string, description: 'One or two words, for example: Rising.' }
       - { name: summary, label: Short summary, type: text, required: true, description: 'Max 300 characters. Shown in listings and when the page is shared.' }
+      - name: schedule
+        label: Programme
+        type: object
+        list: true
+        description: 'The running order of the day. Rows appear on the website in the order you write them here — use "Move up" / "Move down" to reorder, and "Add an entry" to add a row.'
+        fields:
+          - { name: time, label: Time, type: string, description: 'Optional. Use 24-hour time, for example "09:00", or a range like "09:00 - 09:20". Leave empty for a row with no fixed time, such as a break.' }
+          - { name: title, label: What happens, type: string, required: true, description: 'For example: "Opening remarks" or "Coffee break".' }
+          - { name: speaker, label: Speaker, type: string, description: 'Optional. Leave empty for a row that has no speaker, such as a break.' }
+          - { name: note, label: Note, type: string, description: 'Optional. Anything extra worth knowing about this row.' }
       - name: ticketStatus
         label: Ticket status
         type: select

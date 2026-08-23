@@ -116,6 +116,28 @@ const organiserUrl = Astro.site?.toString() ?? canonicalUrl(Astro.url.pathname, 
       <Content />
     </div>
 
+    {data.schedule.length > 0 && (
+      <section class="mt-16">
+        <h2 class="text-2xl font-bold uppercase tracking-wide">Programme</h2>
+        <ol class="mt-6 space-y-4">
+          {data.schedule.map((entry) => (
+            <li class="rounded-lg border border-line bg-surface p-4 sm:flex sm:gap-6">
+              {entry.time && (
+                <p class="text-sm font-semibold uppercase tracking-wide text-muted sm:w-32 sm:flex-none sm:text-right">{entry.time}</p>
+              )}
+              <div class="mt-1 sm:mt-0">
+                <p>
+                  <span class="font-bold">{entry.title}</span>
+                  {entry.speaker && <span class="text-muted"> — {entry.speaker}</span>}
+                </p>
+                {entry.note && <p class="mt-1 text-sm text-muted">{entry.note}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
     {talks.length > 0 && (
       <section class="mt-16">
         <h2 class="text-2xl font-bold uppercase tracking-wide">Talks from this edition</h2>
