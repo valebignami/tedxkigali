@@ -323,6 +323,15 @@ describe('repeatComment', () => {
     expect(comment).toContain('> The event "Rising 2027" has a problem');
     expect(comment).toContain(RUN_URL);
   });
+
+  it('leaves no gap where the name of an entry would have gone', () => {
+    const comment = repeatComment({
+      mention: '@kigali-volunteer',
+      failure: editorFailure(SENTENCE_LOG),
+      runUrl: RUN_URL,
+    });
+    expect(comment).not.toMatch(/\n\n\n/);
+  });
 });
 
 describe('recoveryComment', () => {

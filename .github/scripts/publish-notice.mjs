@@ -266,7 +266,9 @@ export function issueBody({ mention, failure, runUrl, commitUrl, sha, subject })
  */
 export function repeatComment({ mention, failure, runUrl }) {
   const said = failure
-    ? [quoted(failure.messages), entryLine(failure)]
+    ? // entryLine is empty when the failure named no entry, and an empty line
+      // here would open a gap in the middle of a very short comment.
+      [quoted(failure.messages), entryLine(failure)].filter(Boolean)
     : ['The rebuild stopped again, for a technical reason rather than anything typed in the CMS.'];
   return [
     `${mention} — this has happened again with the save just made, so the website is still unchanged.`,
