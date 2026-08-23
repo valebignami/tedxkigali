@@ -2,12 +2,16 @@
   <title>TEDxKigali</title>
   <!-- Self-authored, no external assets: the site background (#0A0A0A) with the
        TED red x mark (#EB0028). Red on black is used as a shape here, never as
-       small text, so the body-copy contrast rule does not apply. The bars are
-       sized and dropped toward the baseline to match a lowercase x (more room
-       above than below), not the full square, or it reads as an uppercase X. -->
+       small text, so the body-copy contrast rule does not apply.
+       Two constraints fight each other here, and both were verified by looking
+       at the file rendered down to 16x16, the size a browser tab uses:
+       the mark sits low in the tile (more room above than below) so it reads as
+       the lowercase x of the TEDx wordmark rather than a capital X, but it still
+       spans about two thirds of the tile, because a smaller mark turns into an
+       unreadable smudge at 16 pixels. -->
   <rect width="64" height="64" rx="8" fill="#0A0A0A" />
   <g fill="#EB0028">
-    <rect x="18.5" y="31" width="27" height="10" rx="2" transform="rotate(45 32 36)" />
-    <rect x="18.5" y="31" width="27" height="10" rx="2" transform="rotate(-45 32 36)" />
+    <rect x="8" y="29.5" width="48" height="11" rx="2" transform="rotate(45 32 35)" />
+    <rect x="8" y="29.5" width="48" height="11" rx="2" transform="rotate(-45 32 35)" />
   </g>
 </svg>
