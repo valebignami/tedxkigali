@@ -27,3 +27,24 @@ export function unknownFieldMessage(keys: ReadonlyArray<PropertyKey>): string {
     'somewhere, the site maintainer has to add the field to the form first.'
   );
 }
+
+/** The words on the booking button when nobody has written any of their own. */
+export const DEFAULT_BOOKING_LABEL = 'Book your seat';
+
+/**
+ * The words to print on an event's booking button.
+ *
+ * The button is a red block of colour whose only content is this text, on the
+ * event page and on every card that lists the event, so a blank one is a link
+ * with no accessible name on the site's most important call to action. Nothing
+ * else on the page says what it does.
+ *
+ * Blank is not something the CMS itself can save: a field emptied there is
+ * dropped from the file on its way to GitHub, and the schema's default takes
+ * over — which is why "empty the field" is honest advice to give a volunteer.
+ * A single space left behind survives that, and a file edited by hand never
+ * passes through the form at all. Both land here.
+ */
+export function bookingButtonLabel(written: string | undefined): string {
+  return written?.trim() || DEFAULT_BOOKING_LABEL;
+}

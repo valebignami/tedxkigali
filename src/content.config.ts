@@ -8,7 +8,9 @@ import { parseYouTubeId, YOUTUBE_HELP_MESSAGE } from '~/lib/youtube';
 import { TICKET_STATUSES } from '~/lib/events';
 import {
   BOOKING_URL_MESSAGE,
+  DEFAULT_BOOKING_LABEL,
   MAX_TEXT_LENGTH,
+  bookingButtonLabel,
   requiresBookingUrl,
   unknownFieldMessage,
 } from '~/lib/content-rules';
@@ -242,7 +244,14 @@ const events = defineCollection({
       .max(MAX_TEXT_LENGTH, { message: TEXT_TOO_LONG_MESSAGE }),
     schedule: z.array(scheduleEntry).default([]),
     bookingUrl: z.url({ message: WEB_ADDRESS_MESSAGE }).optional(),
-    bookingLabel: z.string({ error: BOOKING_LABEL_MESSAGE }).default('Book your seat'),
+    // .default() only ever fires on a missing key, and the words on this
+    // button are the only thing that says what it does. bookingButtonLabel()
+    // covers the rest: a value that is nothing but spaces, which the CMS can
+    // save and .default() cannot see, and an empty one written by hand.
+    bookingLabel: z
+      .string({ error: BOOKING_LABEL_MESSAGE })
+      .transform(bookingButtonLabel)
+      .default(DEFAULT_BOOKING_LABEL),
     ticketStatus: z.enum(TICKET_STATUSES, { error: TICKET_STATUS_MESSAGE }),
     draft: yesNo(),
   })

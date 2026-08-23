@@ -172,10 +172,18 @@ export const PARTNER_LEVEL_MESSAGE =
   'partner", "Gold partner", "Partner" or "Community partner". Open the partner ' +
   'in the CMS and pick one of them.';
 
-/** Shown when the booking button holds something that is not writing. */
+/**
+ * Shown when the booking button holds something that is not writing at all — a
+ * number typed into the file by hand, most likely, since the CMS field is a
+ * text box. It no longer ends by suggesting the field be emptied: emptying it
+ * is harmless (the button falls back to "Book your seat"), but it is not a fix
+ * for anything, and it was the one instruction here a volunteer could follow
+ * and end up worse off.
+ */
 export const BOOKING_LABEL_MESSAGE =
   'The booking button text has to be words, because they are printed on the ' +
-  'button, for example "Book your seat". Empty the field to use those words.';
+  'button. Open the event in the CMS, type what the button should say — for ' +
+  'example "Book your seat" — and save.';
 
 /** Shown when a yes/no switch holds something other than yes or no. */
 export const YES_NO_MESSAGE =
